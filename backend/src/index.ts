@@ -2,6 +2,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
+import apiRoute from './routes/api.routes';
 import testRoute from './routes/test.routes';
 
 // Load environment variables
@@ -21,6 +22,7 @@ app.use(express.json());
 
 // Register routes
 app.use('/test', testRoute);
+app.use('/api', apiRoute);
 
 // Start server
 app.listen(process.env.PORT, () => {
