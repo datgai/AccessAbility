@@ -1,6 +1,7 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
+import helmet from 'helmet';
 import testRoute from './routes/test.routes';
 
 // Load environment variables
@@ -15,6 +16,7 @@ app.use(
     origin: process.env.CORS!.split('|')
   })
 );
+app.use(helmet());
 app.use(express.json());
 
 // Register routes
