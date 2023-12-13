@@ -9,29 +9,6 @@ import { StatusCodes } from 'http-status-codes';
 import { auth } from '../firebase';
 
 export const register = async (request: Request, response: Response) => {
-  const requiredParams = ['email', 'password'];
-
-  /**
-   * =================================================================
-   * Start check if email and password are in the request body
-   * =================================================================
-   */
-  const keys = Object.keys(request.body).filter((key) =>
-    requiredParams.includes(key)
-  );
-
-  if (keys.length < requiredParams.length) {
-    return response.status(StatusCodes.BAD_REQUEST).json({
-      message: 'Missing parameters.',
-      missing: requiredParams.filter((key) => !keys.includes(key))
-    });
-  }
-  /**
-   * =================================================================
-   * End check if email and password are in the request body
-   * =================================================================
-   */
-
   createUserWithEmailAndPassword(
     auth,
     request.body.email,
