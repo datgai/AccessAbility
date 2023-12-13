@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-export const hasRequiredBody = (
+export const hasRequiredBody = async (
   request: Request,
   response: Response,
   next: NextFunction
