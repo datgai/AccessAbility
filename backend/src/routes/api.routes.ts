@@ -4,6 +4,6 @@ import { hasRequiredBody } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.post('/auth', hasRequiredBody, register);
+router.post('/auth/register', hasRequiredBody, register);
 
 export default router;
