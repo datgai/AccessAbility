@@ -14,5 +14,5 @@
     "forceConsistentCasingInFileNames": true,
     "composite": true
   },
-  "include": ["./src", "./src/serviceAccountKey.json"]
+  "include": ["./src"]
 }
