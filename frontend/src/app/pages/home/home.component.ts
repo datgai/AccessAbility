@@ -58,8 +58,8 @@ export class HomeComponent implements OnInit {
         this.responseMessage = response.message;
         this.user = response.user;
       },
-      error: (error: HttpErrorResponse) => {
-        this.responseMessage = error.error.message as string;
+      error: (response: HttpErrorResponse) => {
+        this.responseMessage = response.error.message as string;
       },
     });
   }
