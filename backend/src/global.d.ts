@@ -16,6 +16,11 @@ declare global {
       FIREBASE_UNIVERSE_DOMAIN: string;
     }
   }
+  namespace Express {
+    interface Request {
+      user: import('firebase-admin/lib/auth/token-verifier').DecodedIdToken;
+    }
+  }
 }
 
 export {};
