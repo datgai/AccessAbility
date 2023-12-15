@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
             this.authenticationService.userKey,
             JSON.stringify(user)
           );
-          this.router.navigate(['home']);
+          this.router.navigate(['']);
         },
         error: (error: Error) => {
           console.log(error.message);
