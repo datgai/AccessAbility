@@ -1,13 +1,9 @@
-import { Response, Router } from 'express';
-import { firebase } from '../firebase';
+import { Router } from 'express';
+import { getTest } from '../controllers/auth.contoller';
+import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/auth/test', async (_, res: Response) => {
-  const user = await firebase
-    .auth()
-    .getUserByEmail('williamlaw.3001@gmail.com');
-  res.status(200).json({ message: 'testing authentication', user });
-});
+router.get('/auth/test', isAuthenticated, getTest);
 
 export default router;
