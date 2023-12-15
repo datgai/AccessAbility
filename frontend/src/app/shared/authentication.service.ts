@@ -4,6 +4,7 @@ import {
   Auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from '@angular/fire/auth';
 import { catchError, from, throwError } from 'rxjs';
 
@@ -41,7 +42,7 @@ export class AuthenticationService {
   }
 
   logout() {
-    return from(this.auth.signOut()).pipe(
+    return from(signOut(this.auth)).pipe(
       catchError((error: FirebaseError) =>
         throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
       )
