@@ -1,6 +1,7 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import {
   ScreenTrackingService,
   UserTrackingService,
@@ -22,6 +23,7 @@ export const appConfig: ApplicationConfig = {
     ),
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),
+    provideHttpClient(withFetch()),
     ScreenTrackingService,
     UserTrackingService,
   ],
