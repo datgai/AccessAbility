@@ -7,7 +7,6 @@ export const isAuthenticated = async (
   response: Response,
   next: NextFunction
 ) => {
-  console.log(request.headers.authorization);
   const idToken = request.headers.authorization?.split('Bearer ')[1] || '';
 
   await auth
