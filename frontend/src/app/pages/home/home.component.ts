@@ -30,7 +30,6 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     onAuthStateChanged(this.auth, (user) => {
       this.isAuthenticated = user ? true : false;
-      if (user) console.log(user);
     });
   }
 
