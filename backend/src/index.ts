@@ -14,7 +14,11 @@ const app = express();
 // Express middleware
 app.use(
   cors({
-    origin: process.env.CORS!.split('|')
+    origin: process.env
+      .CORS!.split('|')
+      .map((domain) =>
+        domain.startsWith('http') ? domain : `http://${domain}`
+      )
   })
 );
 app.use(helmet());
