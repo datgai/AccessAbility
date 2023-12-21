@@ -1,0 +1,20 @@
+<p>home works!</p>
+
+@if (isAuthenticated) {
+<form (ngSubmit)="onSubmitLogout()">
+  <button type="submit">Logout</button>
+</form>
+}
+
+<form (ngSubmit)="onSubmit()">
+  @if (responseMessage) {
+  <h1>{{ responseMessage }}</h1>
+  <p>
+    User: @if (user) {
+    {{ user.email }}
+    } @else { Not logged in }
+  </p>
+  }
+
+  <button type="submit">Test Auth Endpoint</button>
+</form>
