@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Subscription, map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
+import { LoginService } from './services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBulder: FormBuilder,
     private authenticationService: AuthenticationService,
+    private loginService: LoginService,
     private router: Router
   ) {}
 
@@ -51,12 +53,31 @@ export class LoginComponent implements OnInit {
       })
       .pipe(map((credential) => credential.user))
       .subscribe({
-        next: (user) => {
-          localStorage.setItem(
-            this.authenticationService.userKey,
-            JSON.stringify(user)
-          );
-          this.router.navigate(['']);
+        next: async (user) => {
+          const userToken = await user.getIdToken();
+
+          // Create a profile for the user if the user does not have a profile
+          this.loginService
+            .getProfile(userToken)
+            .subscribe(async (response) => {
+              if (!response.profile) {
+                this.loginService.createProfile(userToken).subscribe((res) => {
+                  localStorage.setItem(
+                    this.authenticationService.userKey,
+                    JSON.stringify({ ...user, profile: res.user?.profile })
+                  );
+                  return;
+                });
+              }
+
+              localStorage.setItem(
+                this.authenticationService.userKey,
+                JSON.stringify({ ...user, profile: response.profile })
+              );
+
+              // Redirect to home page
+              this.router.navigate(['']);
+            });
         },
         error: (error: Error) => {
           console.log(error.message);
