@@ -1,3 +1,6 @@
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { UserProfile } from '../../shared/src/types/user';
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -18,7 +21,7 @@ declare global {
   }
   namespace Express {
     interface Request {
-      user: import('firebase-admin/lib/auth/token-verifier').DecodedIdToken;
+      user: DecodedIdToken | (DecodedIdToken & UserProfile);
     }
   }
 }
