@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { UserProfile } from '../../../shared/src/types/user';
 import { profilesRef } from '../database';
 import { auth } from '../firebase';
 
@@ -14,14 +15,9 @@ export const isAuthenticated = async (
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
       const profile = await profilesRef.doc(decodedToken.uid).get();
+      const profileData = (profile.data() ?? {}) as UserProfile;
 
-      if (!profile.exists) {
-        request.user = decodedToken;
-      } else {
-        const profileData = profile.data();
-        request.user = { ...decodedToken, ...profileData };
-      }
-
+      request.user = { ...decodedToken, profile: profileData };
       next();
     })
     .catch(() => {
