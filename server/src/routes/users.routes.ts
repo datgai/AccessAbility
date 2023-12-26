@@ -9,8 +9,8 @@ import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/users/profile', isAuthenticated, getProfile);
-router.post('/users/profile', isAuthenticated, createProfile);
+router.get('/user/profile', isAuthenticated, getProfile);
+router.post('/user/profile', isAuthenticated, createProfile);
 router.get('/users/:token?', getUsers);
 router.get('/user/:id', getUserById);
 

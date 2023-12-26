@@ -12,7 +12,7 @@ export class LoginService {
 
   getProfile(token: string) {
     return this.http.get<{ profile?: UserProfile }>(
-      `${environment.baseUrl}/api/users/profile`,
+      `${environment.baseUrl}/api/user/profile`,
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
   }
@@ -22,7 +22,7 @@ export class LoginService {
       message: string;
       user?: User & { profile: UserProfile };
     }>(
-      `${environment.baseUrl}/api/users/profile`,
+      `${environment.baseUrl}/api/user/profile`,
       { role: UserRole.USER },
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
