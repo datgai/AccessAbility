@@ -1,4 +1,4 @@
-import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import { UserProfile } from '../../shared/src/types/user';
 
 declare global {
@@ -21,7 +21,7 @@ declare global {
   }
   namespace Express {
     interface Request {
-      user: DecodedIdToken & { profile: UserProfile };
+      user: Omit<UserRecord, 'toJSON'> & { profile: UserProfile };
     }
   }
 }

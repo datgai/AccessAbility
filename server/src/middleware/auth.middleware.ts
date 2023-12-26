@@ -14,12 +14,13 @@ export const isAuthenticated = async (
   await auth
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
-      const profile = await profilesRef.doc(decodedToken.uid).get();
+      const user = await auth.getUser(decodedToken.uid);
+      const profile = await profilesRef.doc(user.uid).get();
       const profileData = (
         profile.exists ? profile.data() ?? {} : {}
       ) as UserProfile;
 
-      request.user = { ...decodedToken, profile: profileData };
+      request.user = { ...user, profile: profileData };
       next();
     })
     .catch(() => {
