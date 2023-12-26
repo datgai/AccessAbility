@@ -41,8 +41,6 @@ export const createProfile = async (request: Request, response: Response) => {
     premium: false
   };
 
-  profilesRef.doc(user.uid).set(profileData);
-
   return response.status(StatusCodes.CREATED).json({
     message: 'Profile added successfully.',
     user: { ...user, profile: profileData }
