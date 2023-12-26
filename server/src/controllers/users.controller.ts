@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserProfile, UserRole } from '../../../shared/src/types/user';
-import { profilesRef } from '../database';
+import { getProfileById } from '../database';
 import { auth } from '../firebase';
 
 export const getProfile = async (request: Request, response: Response) => {
@@ -15,13 +15,11 @@ export const getUserById = async (request: Request, response: Response) => {
   await auth
     .getUser(userId)
     .then(async (user) => {
-      const profile = await profilesRef.doc(user.uid).get();
-
       return response.status(StatusCodes.OK).json({
         message: 'User found.',
         user: {
           ...user,
-          profile: profile.exists ? profile.data() ?? {} : {}
+          profile: await getProfileById(user.uid)
         }
       });
     })

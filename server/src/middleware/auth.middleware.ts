@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserProfile } from '../../../shared/src/types/user';
-import { profilesRef } from '../database';
+import { getProfileById } from '../database';
 import { auth } from '../firebase';
 
 export const isAuthenticated = async (
@@ -15,12 +14,7 @@ export const isAuthenticated = async (
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
       const user = await auth.getUser(decodedToken.uid);
-      const profile = await profilesRef.doc(user.uid).get();
-      const profileData = (
-        profile.exists ? profile.data() ?? {} : {}
-      ) as UserProfile;
-
-      request.user = { ...user, profile: profileData };
+      request.user = { ...user, profile: await getProfileById(user.uid) };
       next();
     })
     .catch(() => {
