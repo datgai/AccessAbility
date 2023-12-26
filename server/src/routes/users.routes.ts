@@ -8,8 +8,8 @@ import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/users/:id', getUserById);
 router.get('/users/profile', isAuthenticated, getProfile);
 router.post('/users/profile', isAuthenticated, createProfile);
+router.get('/user/:id', getUserById);
 
 export default router;
