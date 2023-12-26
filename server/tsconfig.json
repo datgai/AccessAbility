@@ -12,8 +12,15 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
   },
   "ts-node": { "files": true },
-  "include": ["./src"]
+  "include": ["./src"],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
 }
