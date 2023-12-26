@@ -21,7 +21,7 @@ declare global {
   }
   namespace Express {
     interface Request {
-      user: DecodedIdToken | (DecodedIdToken & UserProfile);
+      user: DecodedIdToken & { profile: UserProfile };
     }
   }
 }
