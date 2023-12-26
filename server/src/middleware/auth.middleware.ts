@@ -15,7 +15,9 @@ export const isAuthenticated = async (
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
       const profile = await profilesRef.doc(decodedToken.uid).get();
-      const profileData = (profile.data() ?? {}) as UserProfile;
+      const profileData = (
+        profile.exists ? profile.data() ?? {} : {}
+      ) as UserProfile;
 
       request.user = { ...decodedToken, profile: profileData };
       next();
