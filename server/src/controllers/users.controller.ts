@@ -9,6 +9,23 @@ export const getProfile = async (request: Request, response: Response) => {
   return response.status(StatusCodes.OK).json({ profile: user.profile });
 };
 
+export const getUsers = async (request: Request, response: Response) => {
+  const token = request.params.token;
+
+  auth.listUsers(10, token).then(async (list) => {
+    const users = await Promise.all(
+      list.users.map(async (user) => {
+        return { ...user, profile: await getProfileById(user.uid) };
+      })
+    );
+
+    return response.status(StatusCodes.OK).json({
+      users,
+      nextPageToken: list.pageToken
+    });
+  });
+};
+
 export const getUserById = async (request: Request, response: Response) => {
   const userId = request.params.id ?? '';
 
