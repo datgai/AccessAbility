@@ -9,7 +9,7 @@ export const getProfile = async (request: Request, response: Response) => {
   return response.status(StatusCodes.OK).json({ profile: user.profile });
 };
 
-export const getProfileById = async (request: Request, response: Response) => {
+export const getUserById = async (request: Request, response: Response) => {
   const userId = request.params.id ?? '';
 
   await auth
