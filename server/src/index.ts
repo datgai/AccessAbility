@@ -4,6 +4,7 @@ import express from 'express';
 import helmet from 'helmet';
 import authRoute from './routes/auth.routes';
 import testRoute from './routes/test.routes';
+import usersRoute from './routes/users.routes';
 
 // Load environment variables
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(express.json());
 // Register routes
 app.use('/test', testRoute);
 app.use('/api', authRoute);
+app.use('/api', usersRoute);
 
 // Start server
 app.listen(process.env.PORT, () => {
