@@ -10,14 +10,12 @@ import {
 } from '@angular/fire/analytics';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-import { provideClientHydration } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideClientHydration(),
     importProvidersFrom(
       provideFirebaseApp(() => initializeApp(environment.firebase))
     ),

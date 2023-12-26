@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
-import { Auth, User, getIdToken, onAuthStateChanged } from '@angular/fire/auth';
+import { Component, inject } from '@angular/core';
+import { Auth, User, getIdToken } from '@angular/fire/auth';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -14,11 +14,16 @@ import { TestService } from './services/test.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit {
-  public isAuthenticated = false;
+export class HomeComponent {
   public logoutForm!: FormGroup;
   public responseMessage: string | undefined = undefined;
   public user: User | undefined = undefined;
+
+  public isAuthenticated: boolean = localStorage.getItem(
+    this.authenticationService.userKey
+  )
+    ? true
+    : false;
 
   constructor(
     private auth: Auth = inject(Auth),
@@ -26,12 +31,6 @@ export class HomeComponent implements OnInit {
     private testService: TestService,
     private router: Router
   ) {}
-
-  ngOnInit(): void {
-    onAuthStateChanged(this.auth, (user) => {
-      this.isAuthenticated = user ? true : false;
-    });
-  }
 
   onSubmitLogout(): void {
     const sub: Subscription = this.authenticationService.logout().subscribe({
