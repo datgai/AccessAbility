@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { profilesRef } from '../database';
 import { auth } from '../firebase';
 
 export const isAuthenticated = async (
@@ -11,8 +12,16 @@ export const isAuthenticated = async (
 
   await auth
     .verifyIdToken(idToken)
-    .then((decodedToken) => {
-      request.user = decodedToken;
+    .then(async (decodedToken) => {
+      const profile = await profilesRef.doc(decodedToken.uid).get();
+
+      if (!profile.exists) {
+        request.user = decodedToken;
+      } else {
+        const profileData = profile.data();
+        request.user = { ...decodedToken, ...profileData };
+      }
+
       next();
     })
     .catch(() => {
