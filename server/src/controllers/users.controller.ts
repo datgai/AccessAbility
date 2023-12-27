@@ -6,6 +6,13 @@ import { auth } from '../firebase';
 
 export const getProfile = async (request: Request, response: Response) => {
   const user = request.user;
+
+  if (Object.keys(user.profile).length === 0) {
+    return response.status(StatusCodes.NOT_FOUND).json({
+      message: 'User has no profile.'
+    });
+  }
+
   return response.status(StatusCodes.OK).json({ profile: user.profile });
 };
 
