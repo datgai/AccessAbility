@@ -56,15 +56,8 @@ export class RegisterComponent {
           const userToken = await user.getIdToken();
 
           this.authenticationService.createProfile(userToken).subscribe({
-            next: (res) => {
-              localStorage.setItem(
-                this.authenticationService.userKey,
-                JSON.stringify({ ...user, profile: res.user?.profile })
-              );
-            },
+            complete: async () => await sendEmailVerification(user),
           });
-
-          await sendEmailVerification(user);
         },
         error: (error: Error) => console.log(error.message),
         complete: () => this.router.navigate(['login']),
