@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
             error: (error: HttpErrorResponse) => {
               if (error.status === 404) {
                 // User does not have a profile so create it
-                this.loginService.createProfile(userToken).subscribe({
+                this.authenticationService.createProfile(userToken).subscribe({
                   next: (res) => {
                     localStorage.setItem(
                       this.authenticationService.userKey,
