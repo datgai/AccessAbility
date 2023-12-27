@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserProfile, UserRole } from '../../../shared/src/types/user';
-import { getProfileById } from '../database';
+import { getProfileById, profilesRef } from '../database';
 import { auth } from '../firebase';
 
 export const getProfile = async (request: Request, response: Response) => {
@@ -62,6 +62,8 @@ export const createProfile = async (request: Request, response: Response) => {
     role: userRole,
     premium: false
   };
+
+  profilesRef.doc(user.uid).set(profileData);
 
   return response.status(StatusCodes.CREATED).json({
     message: 'Profile added successfully.',
