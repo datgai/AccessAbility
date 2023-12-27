@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
 import { LoginService } from './services/login.service';
 
@@ -47,7 +47,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const sub: Subscription = this.authenticationService
+    this.authenticationService
       .login({
         email,
         password,
@@ -82,11 +82,7 @@ export class LoginComponent implements OnInit {
             complete: () => this.router.navigate(['']), // Redirect to home page
           });
         },
-        error: (error: Error) => {
-          console.log(error.message);
-          sub.unsubscribe();
-        },
-        complete: () => sub.unsubscribe(),
+        error: (error: Error) => console.log(error.message),
       });
 
     this.loginForm.reset();

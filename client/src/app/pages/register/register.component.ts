@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class RegisterComponent {
       return;
     }
 
-    const sub: Subscription = this.authenticationService
+    this.authenticationService
       .register({
         email,
         password,
@@ -56,11 +56,7 @@ export class RegisterComponent {
           await sendEmailVerification(user);
           this.router.navigate(['login']);
         },
-        error: (error: Error) => {
-          console.log(error.message);
-          sub.unsubscribe();
-        },
-        complete: () => sub.unsubscribe(),
+        error: (error: Error) => console.log(error.message),
       });
 
     this.registrationForm.reset();
