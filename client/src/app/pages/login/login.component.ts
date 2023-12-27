@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -56,28 +57,30 @@ export class LoginComponent implements OnInit {
         next: async (user) => {
           const userToken = await user.getIdToken();
 
-          // Create a profile for the user if the user does not have a profile
-          this.loginService
-            .getProfile(userToken)
-            .subscribe(async (response) => {
-              if (!response.profile) {
-                this.loginService.createProfile(userToken).subscribe((res) => {
-                  localStorage.setItem(
-                    this.authenticationService.userKey,
-                    JSON.stringify({ ...user, profile: res.user?.profile })
-                  );
-                  return;
-                });
-              }
-
+          // Find the user profile to set in local storage
+          this.loginService.getProfile(userToken).subscribe({
+            next: async (response) => {
               localStorage.setItem(
                 this.authenticationService.userKey,
                 JSON.stringify({ ...user, profile: response.profile })
               );
-
-              // Redirect to home page
-              this.router.navigate(['']);
-            });
+            },
+            error: (error: HttpErrorResponse) => {
+              if (error.status === 404) {
+                // User does not have a profile so create it
+                this.loginService.createProfile(userToken).subscribe({
+                  next: (res) => {
+                    localStorage.setItem(
+                      this.authenticationService.userKey,
+                      JSON.stringify({ ...user, profile: res.user?.profile })
+                    );
+                  },
+                  complete: () => this.router.navigate(['']), // Redirect to home page
+                });
+              }
+            },
+            complete: () => this.router.navigate(['']), // Redirect to home page
+          });
         },
         error: (error: Error) => {
           console.log(error.message);
