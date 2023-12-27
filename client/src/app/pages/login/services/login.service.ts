@@ -11,7 +11,7 @@ export class LoginService {
 
   getProfile(token: string) {
     return this.http.get<{ profile?: UserProfile }>(
-      `${environment.baseUrl}/api/user/profile`,
+      `${environment.baseUrl}/user/profile`,
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
   }

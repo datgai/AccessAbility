@@ -58,7 +58,7 @@ export class AuthenticationService {
       message: string;
       user?: User & { profile: UserProfile };
     }>(
-      `${environment.baseUrl}/api/user/profile`,
+      `${environment.baseUrl}/user/profile`,
       { role: UserRole.USER },
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
