@@ -53,10 +53,21 @@ export class RegisterComponent {
       .pipe(map((credential) => credential.user))
       .subscribe({
         next: async (user) => {
+          const userToken = await user.getIdToken();
+
+          this.authenticationService.createProfile(userToken).subscribe({
+            next: (res) => {
+              localStorage.setItem(
+                this.authenticationService.userKey,
+                JSON.stringify({ ...user, profile: res.user?.profile })
+              );
+            },
+          });
+
           await sendEmailVerification(user);
-          this.router.navigate(['login']);
         },
         error: (error: Error) => console.log(error.message),
+        complete: () => this.router.navigate(['login']),
       });
 
     this.registrationForm.reset();
