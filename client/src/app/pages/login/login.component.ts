@@ -19,6 +19,7 @@ import { AuthenticationService } from '../../shared/authentication.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
+  public componentTitle: string = 'Sign Into Your Account'; 
 
   constructor(
     private formBulder: FormBuilder,

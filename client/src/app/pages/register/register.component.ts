@@ -20,6 +20,7 @@ import { AuthenticationService } from '../../shared/authentication.service';
 })
 export class RegisterComponent {
   public registrationForm!: FormGroup;
+  public componentTitle: string = 'Create An Account'; 
 
   constructor(
     private formBulder: FormBuilder,

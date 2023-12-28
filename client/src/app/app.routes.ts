@@ -7,6 +7,7 @@ import { JobDetailsComponent } from './pages/job-details/job-details.component';
 import { JobListingComponent } from './pages/job-listing/job-listing.component';
 import { MyJobsComponent } from './pages/my-jobs/my-jobs.component';
 import { CreateJobComponent } from './pages/create-job/create-job.component';
+import { ForumComponent } from './pages/forum/forum.component';
 
 export const routes: Routes = [
   { path: '',  redirectTo:'home', pathMatch: 'full'},
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'job-listing', component: JobListingComponent},
   { path: 'my-jobs', component: MyJobsComponent},
   { path: 'create-job', component: CreateJobComponent},
+  { path: 'forum', component: ForumComponent},
   { path: '**', component: HomeComponent },
 ];
 
