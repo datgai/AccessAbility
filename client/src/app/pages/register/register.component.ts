@@ -21,7 +21,7 @@ import { AuthenticationService } from '../../shared/authentication.service';
 })
 export class RegisterComponent {
   public registrationForm!: FormGroup;
-  public componentTitle: string = 'Create An Account'; 
+  public componentTitle: string = 'Create An Account';
   public errorMessage: string = '';
   public isJobSeeker: Boolean = true;
 
@@ -29,7 +29,7 @@ export class RegisterComponent {
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.buildForm();
@@ -65,19 +65,33 @@ export class RegisterComponent {
 
   onRoleChange(event: any): void {
     this.isJobSeeker = event.target.value === 'jobseeker';
-    this.buildForm(); // Rebuild the form when the role changesS
+    this.buildForm();
+  }
+
+  checkEmptyFields(): boolean {
+    return Object.values(this.registrationForm.value).some(value => value === '' || value === null);
   }
 
   onSubmit(): void {
     const { email, password, confirmationPassword } = this.registrationForm.value;
 
-    if (!email || !password || confirmationPassword) {
+    if (this.checkEmptyFields()) {
       this.errorMessage = "All fields are required";
       return;
     }
 
+    if (!this.registrationForm.controls['email'].valid) {
+      this.errorMessage = 'Invalid email format';
+      return;
+    }
+
+    if (!this.registrationForm.controls['password'].valid) {
+      this.errorMessage = 'Password must be at least 6 characters';
+      return;
+    }
+
     if (password !== confirmationPassword) {
-      this.errorMessage = "Passwords do not match";
+      this.errorMessage = 'Passwords do not match';
       return;
     }
 
@@ -93,7 +107,6 @@ export class RegisterComponent {
           this.router.navigate(['login']);
         },
         error: (error: Error) => {
-    
           switch (error?.message) {
             case 'Firebase: Error (auth/email-already-in-use).':
               this.errorMessage = 'Email is already registered';
@@ -107,14 +120,13 @@ export class RegisterComponent {
             default:
               this.errorMessage = 'Registration failed: An unknown error occurred.';
           }
-          
           sub.unsubscribe();
         },
         complete: () => sub.unsubscribe(),
       });
 
-      const formData = this.registrationForm.value;
-      console.log(formData);
+    const formData = this.registrationForm.value;
+    console.log(formData);
 
     this.registrationForm.reset();
   }
