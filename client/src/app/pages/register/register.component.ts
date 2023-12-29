@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription, map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
@@ -14,12 +15,14 @@ import { AuthenticationService } from '../../shared/authentication.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   public registrationForm!: FormGroup;
+  public componentTitle: string = 'Create An Account'; 
+  public errorMessage: string = '';
 
   constructor(
     private formBulder: FormBuilder,
@@ -41,7 +44,7 @@ export class RegisterComponent {
     const { email, password } = this.registrationForm.value;
 
     if (!email || !password) {
-      console.log(this.registrationForm.errors);
+      this.errorMessage = "All fields are required";
       return;
     }
 
@@ -57,7 +60,21 @@ export class RegisterComponent {
           this.router.navigate(['login']);
         },
         error: (error: Error) => {
-          console.log(error.message);
+    
+          switch (error?.message) {
+            case 'Firebase: Error (auth/email-already-in-use).':
+              this.errorMessage = 'Email is already registered';
+              break;
+            case 'Firebase: Error (auth/invalid-email).':
+              this.errorMessage = 'Invalid email format';
+              break;
+            case 'Firebase: Password should be at least 6 characters (auth/weak-password).':
+              this.errorMessage = 'Password should be at least 6 characters';
+              break;
+            default:
+              this.errorMessage = 'Registration failed: An unknown error occurred.';
+          }
+          
           sub.unsubscribe();
         },
         complete: () => sub.unsubscribe(),

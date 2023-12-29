@@ -6,6 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription, map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
@@ -14,12 +15,14 @@ import { LoginService } from './services/login.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
+  public componentTitle: string = 'Sign Into Your Account'; 
+  public errorMessage: string = '';
 
   constructor(
     private formBulder: FormBuilder,
@@ -42,7 +45,7 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     if (!email || !password) {
-      console.log(this.loginForm.errors);
+      this.errorMessage = "All fields are required";
       return;
     }
 
@@ -80,7 +83,18 @@ export class LoginComponent implements OnInit {
             });
         },
         error: (error: Error) => {
-          console.log(error.message);
+    
+          switch (error?.message) {
+            case 'Firebase: Error (auth/invalid-email).':
+              this.errorMessage = 'Invalid email format';
+              break;
+            case 'Firebase: Error (auth/invalid-credential).':
+              this.errorMessage = 'Invalid email or password';
+              break;
+            default:
+              this.errorMessage = 'Login failed: An unknown error occurred.';
+          }
+          
           sub.unsubscribe();
         },
         complete: () => sub.unsubscribe(),
