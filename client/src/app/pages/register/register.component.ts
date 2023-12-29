@@ -23,6 +23,7 @@ export class RegisterComponent {
   public registrationForm!: FormGroup;
   public componentTitle: string = 'Create An Account'; 
   public errorMessage: string = '';
+  public isJobSeeker: Boolean = true;
 
   constructor(
     private formBulder: FormBuilder,
@@ -40,11 +41,20 @@ export class RegisterComponent {
     });
   }
 
-  onSubmit(): void {
-    const { email, password } = this.registrationForm.value;
+  onRoleChange(event: any): void {
+    this.isJobSeeker = (event.target.value == 'jobseeker') ? true : false;
+  }
 
-    if (!email || !password) {
+  onSubmit(): void {
+    const { email, password, confirmationPassword } = this.registrationForm.value;
+
+    if (!email || !password || confirmationPassword) {
       this.errorMessage = "All fields are required";
+      return;
+    }
+
+    if (password !== confirmationPassword) {
+      this.errorMessage = "Passwords do not match";
       return;
     }
 
