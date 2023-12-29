@@ -95,6 +95,7 @@ export class RegisterComponent {
       return;
     }
 
+  
     const sub: Subscription = this.authenticationService
       .register({
         email,
@@ -124,10 +125,6 @@ export class RegisterComponent {
         },
         complete: () => sub.unsubscribe(),
       });
-
-    const formData = this.registrationForm.value;
-    console.log(formData);
-
     this.registrationForm.reset();
   }
 }
