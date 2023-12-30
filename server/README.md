@@ -117,7 +117,7 @@ Status `201` - Profile created
 ```ts
 {
   "message": string,
-  "user": UserRecord & UserProfile
+  "user": UserRecord & { "profile": UserProfile }
 }
 ```
 
@@ -135,7 +135,7 @@ Status `200` - Successful request
 
 ```ts
 {
-  "users": (UserRecord & UserProfile)[]
+  "users": (UserRecord & { "profile": UserProfile })[]
   "nextPageToken": string | undefined
 }
 ```
