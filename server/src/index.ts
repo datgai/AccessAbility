@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
+import { cacheControl } from './middleware/cache.middleware';
 import authRoute from './routes/auth.routes';
 import testRoute from './routes/test.routes';
 import usersRoute from './routes/users.routes';
@@ -26,6 +27,7 @@ app.use(
 );
 app.use(helmet());
 app.use(express.json());
+app.use(cacheControl({ cacheDays: 3 }));
 
 // Register routes
 app.use('/test', testRoute);
