@@ -153,7 +153,7 @@ Get a specific user by their ID.
 Status `200` - Successful request
 
 ```ts
-{ "user": UserRecord & UserProfile }
+{ "user": UserRecord & { "profile": UserProfile } }
 ```
 
 Status `404`- User not found
