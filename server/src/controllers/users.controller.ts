@@ -141,10 +141,10 @@ export const createProfile = async (request: Request, response: Response) => {
 
     const baseUrl = `${request.protocol}://${request.get('host')}`;
     const avatar = request.file!;
-    const tempPath = avatar.path;
+    const buffer = avatar.buffer;
     const originalName = avatar.originalname;
 
-    saveAvatar(baseUrl, tempPath, originalName, (error, profilePictureUrl) => {
+    saveAvatar(baseUrl, buffer, originalName, (error, profilePictureUrl) => {
       if (error) {
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           message: `Something went wrong processing the file: ${error.message}`

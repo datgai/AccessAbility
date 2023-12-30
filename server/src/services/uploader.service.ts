@@ -8,7 +8,7 @@ export const MAX_UPLOAD_SIZE = 5; // in MiB
 export const UPLOADS_FOLDER = 'uploads';
 
 export const uploadAvatar = multer({
-  dest: path.join(__dirname, '../temp'),
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: MAX_UPLOAD_SIZE * 1024 * 1024 // 5 MiB
   },
@@ -69,7 +69,8 @@ export const getFilePath = (
 
 export const saveAvatar = (
   baseUrl: string,
-  tempPath: string,
+  // tempPath: string,
+  avatarBuffer: Buffer,
   originalName: string,
   callback: (error: NodeJS.ErrnoException | null, avatarUrl: string) => void
 ) => {
@@ -80,8 +81,10 @@ export const saveAvatar = (
   );
   const fileName = path.basename(targetPath);
 
-  fs.rename(tempPath, targetPath, (err) => {
+  fs.writeFile(targetPath, avatarBuffer, (err) => {
     if (err) return callback(err, '');
     return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
   });
+
+  // fs.rename(tempPath, targetPath, (err) => {});
 };
