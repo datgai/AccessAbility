@@ -1,9 +1,16 @@
 import { Request, Response } from 'express';
+import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { skillsRef } from '../database';
 
 export const getSkills = async (request: Request, response: Response) => {
-  const skills = await skillsRef.get();
+  const filter = request.query.filter;
+
+  const skills = await skillsRef
+    .orderBy(firestore.FieldPath.documentId())
+    .startAt(filter)
+    .endAt(`${filter}\uf8ff`)
+    .get();
 
   return response
     .status(StatusCodes.OK)
