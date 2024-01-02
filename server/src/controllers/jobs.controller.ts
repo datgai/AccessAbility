@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Job, JobLocationType, JobType } from '../../../shared/src/types/job';
-import { jobsRef } from '../database';
+import { jobsRef, skillsRef } from '../database';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
@@ -15,9 +15,26 @@ export const createJob = async (request: Request, response: Response) => {
     return response.status(status).json(resBody);
   }
 
+  // Add the skills
+  const skillIds = await Promise.all(
+    body.skills.map(async (skill) => {
+      const id = skill.toLowerCase();
+
+      return await skillsRef
+        .doc(id)
+        .get()
+        .then(async (sk) => {
+          if (sk.exists) return sk.id;
+          await skillsRef.doc(id).set({ name: skill });
+          return id;
+        });
+    })
+  );
+
   const jobDetails: Job = {
     ...body,
-    businessId: user.uid
+    businessId: user.uid,
+    skills: skillIds
   };
 
   return await jobsRef
@@ -171,7 +188,9 @@ const hasInvalidParams = async (request: Request, editing: boolean) => {
     'type'
   ];
 
+  const body = request.body as Body;
   const missingParams = getMissingParameters(request, requiredParams);
+
   if (editing) {
     if (
       missingParams.length <= 0 ||
@@ -184,16 +203,16 @@ const hasInvalidParams = async (request: Request, editing: boolean) => {
       };
     }
   } else {
-    if (missingParams.length > 0) {
+    if (missingParams.length > 0 || !body.skills || body.skills.length === 0) {
       return {
         status: StatusCodes.BAD_REQUEST,
         message: 'Missing parameters.',
-        missing: missingParams
+        missing: !body.skills?.length
+          ? [...missingParams, 'skills']
+          : missingParams
       };
     }
   }
-
-  const body = request.body as Body;
 
   if (body.type) {
     if (!Object.values(JobType).includes(body.type as JobType)) {
