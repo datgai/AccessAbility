@@ -94,3 +94,38 @@ export const createPost = async (request: Request, response: Response) => {
     );
   });
 };
+
+export const deletePostById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await postsRef
+    .doc(id)
+    .get()
+    .then(async (post) => {
+      if (!post.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Post you are trying to delete cannot be found.'
+        });
+      }
+
+      return await post.ref
+        .delete()
+        .then(() => {
+          return response.status(StatusCodes.NO_CONTENT).json({
+            message: 'Post successfully deleted.'
+          });
+        })
+        .catch((err) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong while trying to delete the post.',
+            error: err
+          });
+        });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to delete the post.',
+        error: err
+      });
+    });
+};
