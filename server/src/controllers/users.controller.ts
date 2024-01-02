@@ -13,7 +13,7 @@ import {
   FileTypeError,
   MAX_UPLOAD_SIZE,
   saveImage,
-  uploadAvatar
+  upload
 } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
 
@@ -70,7 +70,7 @@ export const getUserById = async (request: Request, response: Response) => {
 export const createProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  uploadAvatar(request, response, (error) => {
+  upload.single('avatar')(request, response, (error) => {
     type ProfileParam = Record<
       keyof Omit<UserProfile, 'profilePictureUrl'> | 'email' | 'password',
       string
