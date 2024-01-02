@@ -73,7 +73,7 @@ export const saveImage = (
   folder: string,
   imageBuffer: Buffer,
   originalName: string,
-  callback: (error: NodeJS.ErrnoException | null, avatarUrl: string) => void
+  callback: (error: NodeJS.ErrnoException | null, imageUrl: string) => void
 ) => {
   const targetPath = getFilePath(
     path.join(__dirname, '..', '..', UPLOADS_FOLDER, originalName),
