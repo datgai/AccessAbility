@@ -119,6 +119,52 @@ export const deleteJobById = async (request: Request, response: Response) => {
     });
 };
 
+export const editJobById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  const invalidParams = await hasInvalidParams(request, true);
+  if (invalidParams !== null) {
+    const { status, ...resBody } = invalidParams;
+    return response.status(status).json(resBody);
+  }
+
+  return await jobsRef
+    .doc(id)
+    .get()
+    .then(async (job) => {
+      if (!job.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Job you are trying to edit cannot be found.'
+        });
+      }
+
+      job.ref
+        .set({
+          id: job.id,
+          ...job.data(),
+          ...request.body
+        })
+        .then(() => {
+          return response.status(StatusCodes.OK).json({
+            message: 'Successfully updated job.',
+            job: { id: job.id, ...job.data() }
+          });
+        })
+        .catch((err) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong while trying to edit the job.',
+            error: err
+          });
+        });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to edit the job.',
+        error: err
+      });
+    });
+};
+
 const hasInvalidParams = async (request: Request, editing: boolean) => {
   type Body = Omit<Job, 'businessId' | 'createdAt'>;
   type Parameter = keyof Body;
