@@ -71,7 +71,7 @@ export const getFilePath = (
 export const saveImage = (
   baseUrl: string,
   folder: string,
-  avatarBuffer: Buffer,
+  imageBuffer: Buffer,
   originalName: string,
   callback: (error: NodeJS.ErrnoException | null, avatarUrl: string) => void
 ) => {
@@ -81,7 +81,7 @@ export const saveImage = (
   );
   const fileName = path.basename(targetPath);
 
-  fs.writeFile(targetPath, avatarBuffer, (err) => {
+  fs.writeFile(targetPath, imageBuffer, (err) => {
     if (err) return callback(err, '');
     return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
   });
