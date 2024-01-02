@@ -7,7 +7,7 @@ export class FileTypeError extends Error {}
 export const MAX_UPLOAD_SIZE = 5; // in MiB
 export const UPLOADS_FOLDER = 'uploads';
 
-export const uploadAvatar = multer({
+export const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: MAX_UPLOAD_SIZE * 1024 * 1024 // 5 MiB
@@ -27,7 +27,7 @@ export const uploadAvatar = multer({
 
     return callback(new FileTypeError('Only images are allowed.'));
   }
-}).single('avatar');
+});
 
 // Used to actually get the path of destination
 const getPath = (defaultFilePath: string, folder: string | undefined) => {
