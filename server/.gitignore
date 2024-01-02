@@ -131,3 +131,5 @@ dist
 
 # Public / Private key pairs
 keys/*/*_rsa_priv.key
+
+uploads/
