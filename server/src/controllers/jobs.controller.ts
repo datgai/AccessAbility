@@ -110,3 +110,38 @@ export const getJobById = async (request: Request, response: Response) => {
       });
     });
 };
+
+export const deleteJobById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await jobsRef
+    .doc(id)
+    .get()
+    .then(async (job) => {
+      if (!job.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Job you are trying to delete cannot be found.'
+        });
+      }
+
+      return await job.ref
+        .delete()
+        .then(() => {
+          return response.status(StatusCodes.NO_CONTENT).json({
+            message: 'Job successfully deleted.'
+          });
+        })
+        .catch((err) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong while trying to delete the job.',
+            error: err
+          });
+        });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to delete the job.',
+        error: err
+      });
+    });
+};
