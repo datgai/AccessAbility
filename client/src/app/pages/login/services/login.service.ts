@@ -1,17 +1,17 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '@angular/fire/auth';
+import { UserProfile } from '../../../../../../shared/src/types/user';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-export class TestService {
+export class LoginService {
   constructor(private http: HttpClient) {}
 
-  getTest(token: string) {
-    return this.http.get<{ message: string; user?: User }>(
-      `${environment.baseUrl}/auth/test`,
+  getProfile(token: string) {
+    return this.http.get<{ profile?: UserProfile }>(
+      `${environment.baseUrl}/user/profile`,
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
   }

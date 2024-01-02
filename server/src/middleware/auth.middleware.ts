@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { getProfileById } from '../database';
 import { auth } from '../firebase';
 
 export const isAuthenticated = async (
@@ -11,8 +12,9 @@ export const isAuthenticated = async (
 
   await auth
     .verifyIdToken(idToken)
-    .then((decodedToken) => {
-      request.user = decodedToken;
+    .then(async (decodedToken) => {
+      const user = await auth.getUser(decodedToken.uid);
+      request.user = { ...user, profile: await getProfileById(user.uid) };
       next();
     })
     .catch(() => {

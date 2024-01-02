@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -7,8 +8,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
+import { LoginService } from './services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +25,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBulder: FormBuilder,
     private authenticationService: AuthenticationService,
+    private loginService: LoginService,
     private router: Router
   ) {}
 
@@ -44,25 +47,42 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const sub: Subscription = this.authenticationService
+    this.authenticationService
       .login({
         email,
         password,
       })
       .pipe(map((credential) => credential.user))
       .subscribe({
-        next: (user) => {
-          localStorage.setItem(
-            this.authenticationService.userKey,
-            JSON.stringify(user)
-          );
-          this.router.navigate(['']);
+        next: async (user) => {
+          const userToken = await user.getIdToken();
+
+          // Find the user profile to set in local storage
+          this.loginService.getProfile(userToken).subscribe({
+            next: async (response) => {
+              localStorage.setItem(
+                this.authenticationService.userKey,
+                JSON.stringify({ ...user, profile: response.profile })
+              );
+            },
+            error: (error: HttpErrorResponse) => {
+              if (error.status === 404) {
+                // User does not have a profile so create it
+                this.authenticationService.createProfile(userToken).subscribe({
+                  next: (res) => {
+                    localStorage.setItem(
+                      this.authenticationService.userKey,
+                      JSON.stringify({ ...user, profile: res.user?.profile })
+                    );
+                  },
+                  complete: () => this.router.navigate(['']), // Redirect to home page
+                });
+              }
+            },
+            complete: () => this.router.navigate(['']), // Redirect to home page
+          });
         },
-        error: (error: Error) => {
-          console.log(error.message);
-          sub.unsubscribe();
-        },
-        complete: () => sub.unsubscribe(),
+        error: (error: Error) => console.log(error.message),
       });
 
     this.loginForm.reset();

@@ -1,12 +1,16 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 import {
   Auth,
+  User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from '@angular/fire/auth';
 import { catchError, from, throwError } from 'rxjs';
+import { UserProfile, UserRole } from '../../../../shared/src/types/user';
+import { environment } from '../../environments/environment';
 
 interface AuthenticationParams {
   email: string;
@@ -19,7 +23,7 @@ interface AuthenticationParams {
 export class AuthenticationService {
   public userKey: string = 'user';
 
-  constructor(private auth: Auth = inject(Auth)) {}
+  constructor(private auth: Auth = inject(Auth), private http: HttpClient) {}
 
   login(params: AuthenticationParams) {
     return from(
@@ -46,6 +50,17 @@ export class AuthenticationService {
       catchError((error: FirebaseError) =>
         throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
       )
+    );
+  }
+
+  createProfile(token: string) {
+    return this.http.post<{
+      message: string;
+      user?: User & { profile: UserProfile };
+    }>(
+      `${environment.baseUrl}/user/profile`,
+      { role: UserRole.USER },
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
   }
 
