@@ -19,4 +19,9 @@ export interface Job {
 	type: JobType;
 	locationType: JobLocationType;
 	description: string;
+	skills: string[];
+}
+
+export interface Skill {
+	name: string; // id of skill uses the name but lowercased
 }
