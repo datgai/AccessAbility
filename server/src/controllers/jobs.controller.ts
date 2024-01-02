@@ -145,9 +145,8 @@ export const editJobById = async (request: Request, response: Response) => {
           ...request.body
         })
         .then(() => {
-          return response.status(StatusCodes.OK).json({
-            message: 'Successfully updated job.',
-            job: { id: job.id, ...job.data() }
+          return response.status(StatusCodes.NO_CONTENT).json({
+            message: 'Successfully updated job.'
           });
         })
         .catch((err) => {
