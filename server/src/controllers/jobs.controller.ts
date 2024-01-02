@@ -85,3 +85,28 @@ export const getJobList = async (request: Request, response: Response) => {
     nextPageToken: jobs.docs.pop()?.ref.id
   });
 };
+
+export const getJobById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await jobsRef
+    .doc(id)
+    .get()
+    .then(async (job) => {
+      if (!job.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Job you are looking for cannot be found.'
+        });
+      }
+
+      return response.status(StatusCodes.OK).json({
+        job: { id: job.id, ...job.data() }
+      });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to find the job.',
+        error: err
+      });
+    });
+};
