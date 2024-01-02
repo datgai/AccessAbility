@@ -67,3 +67,19 @@ export const createJob = async (request: Request, response: Response) => {
       });
     });
 };
+
+export const getJobList = async (request: Request, response: Response) => {
+  // For some reason I need to set it to a random string if no token is provided
+  const token = request.params.token ?? 'a';
+
+  const jobs = await jobsRef
+    .orderBy(firestore.FieldPath.documentId())
+    .startAfter(token)
+    .limit(10)
+    .get();
+
+  return response.status(StatusCodes.OK).json({
+    jobs: jobs.docs.map((doc) => doc.data()),
+    nextPageToken: jobs.docs.pop()?.ref.id
+  });
+};
