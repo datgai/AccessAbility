@@ -19,5 +19,4 @@ export interface Job {
 	type: JobType;
 	locationType: JobLocationType;
 	description: string;
-	createdAt: Date;
 }

@@ -17,15 +17,11 @@ export const createJob = async (request: Request, response: Response) => {
 
   const jobDetails: Job = {
     ...body,
-    businessId: user.uid,
-    createdAt: new Date()
+    businessId: user.uid
   };
 
   return await jobsRef
-    .add({
-      ...jobDetails,
-      createdAt: firestore.Timestamp.fromDate(jobDetails.createdAt)
-    })
+    .add(jobDetails)
     .then(async (job) => {
       const jobData = await job.get();
 
