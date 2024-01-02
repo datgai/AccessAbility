@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
-import multer from 'multer';
 import {
   UserGender,
   UserProfile,
@@ -9,12 +8,7 @@ import {
 } from '../../../shared/src/types/user';
 import { getProfileById, profilesRef } from '../database';
 import { auth } from '../firebase';
-import {
-  FileTypeError,
-  MAX_UPLOAD_SIZE,
-  saveImage,
-  upload
-} from '../services/uploader.service';
+import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
 
 export const getProfile = async (request: Request, response: Response) => {
@@ -70,7 +64,7 @@ export const getUserById = async (request: Request, response: Response) => {
 export const createProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  upload.single('avatar')(request, response, (error) => {
+  upload.single('avatar')(request, response, (err) => {
     type ProfileParam = Record<
       keyof Omit<UserProfile, 'profilePictureUrl'> | 'email' | 'password',
       string
@@ -123,20 +117,9 @@ export const createProfile = async (request: Request, response: Response) => {
       });
     }
 
-    if (error) {
-      if (error instanceof FileTypeError) {
-        return response
-          .status(StatusCodes.UNPROCESSABLE_ENTITY)
-          .json({ message: 'Only images are allowed.' });
-      }
-
-      if (error instanceof multer.MulterError) {
-        if (error.code === 'LIMIT_FILE_SIZE') {
-          return response.status(StatusCodes.REQUEST_TOO_LONG).json({
-            message: `The image uploaded was larger than the max size limit of ${MAX_UPLOAD_SIZE}MiB.`
-          });
-        }
-      }
+    const error = getError(err);
+    if (error !== null) {
+      return response.status(error.status).json({ message: error.message });
     }
 
     const baseUrl = `${request.protocol}://${request.get('host')}`;

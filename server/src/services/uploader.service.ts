@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { StatusCodes } from 'http-status-codes';
 import multer from 'multer';
 import path from 'path';
 
@@ -84,4 +85,26 @@ export const saveImage = (
     if (err) return callback(err, '');
     return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
   });
+};
+
+export const getError = (error: any) => {
+  if (error) {
+    if (error instanceof FileTypeError) {
+      return {
+        status: StatusCodes.UNPROCESSABLE_ENTITY,
+        message: 'Only images are allowed.'
+      };
+    }
+
+    if (error instanceof multer.MulterError) {
+      if (error.code === 'LIMIT_FILE_SIZE') {
+        return {
+          status: StatusCodes.REQUEST_TOO_LONG,
+          message: `The image uploaded was larger than the max size limit of ${MAX_UPLOAD_SIZE}MiB.`
+        };
+      }
+    }
+  }
+
+  return null;
 };
