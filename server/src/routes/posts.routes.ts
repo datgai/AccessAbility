@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPost, deletePostById } from '../controllers/posts.contrller';
+import { createPost, deletePostById } from '../controllers/posts.controller';
 import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = Router();
