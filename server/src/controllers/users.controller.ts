@@ -12,7 +12,7 @@ import { auth } from '../firebase';
 import {
   FileTypeError,
   MAX_UPLOAD_SIZE,
-  saveAvatar,
+  saveImage,
   uploadAvatar
 } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
@@ -144,32 +144,38 @@ export const createProfile = async (request: Request, response: Response) => {
     const buffer = avatar.buffer;
     const originalName = avatar.originalname;
 
-    saveAvatar(baseUrl, buffer, originalName, (error, profilePictureUrl) => {
-      if (error) {
-        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          message: `Something went wrong processing the file: ${error.message}`
+    saveImage(
+      baseUrl,
+      'avatars',
+      buffer,
+      originalName,
+      (error, profilePictureUrl) => {
+        if (error) {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: `Something went wrong processing the file: ${error.message}`
+          });
+        }
+
+        const profileData: UserProfile = {
+          ...body,
+          gender: body.gender as UserGender,
+          dateOfBirth: new Date(body.dateOfBirth),
+          impairments: body.impairments as unknown as string[],
+          profilePictureUrl,
+          role: body.role as UserRole,
+          premium: body.premium === 'true'
+        };
+
+        profilesRef.doc(user.uid).set({
+          ...profileData,
+          dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
+        });
+
+        return response.status(StatusCodes.CREATED).json({
+          message: 'Profile added successfully.',
+          user: { ...user, profile: profileData }
         });
       }
-
-      const profileData: UserProfile = {
-        ...body,
-        gender: body.gender as UserGender,
-        dateOfBirth: new Date(body.dateOfBirth),
-        impairments: body.impairments as unknown as string[],
-        profilePictureUrl,
-        role: body.role as UserRole,
-        premium: body.premium === 'true'
-      };
-
-      profilesRef.doc(user.uid).set({
-        ...profileData,
-        dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
-      });
-
-      return response.status(StatusCodes.CREATED).json({
-        message: 'Profile added successfully.',
-        user: { ...user, profile: profileData }
-      });
-    });
+    );
   });
 };

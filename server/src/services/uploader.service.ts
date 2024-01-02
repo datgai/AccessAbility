@@ -67,14 +67,13 @@ export const getFilePath = (
   return filePath;
 };
 
-export const saveAvatar = (
+export const saveImage = (
   baseUrl: string,
-  // tempPath: string,
+  folder: string,
   avatarBuffer: Buffer,
   originalName: string,
   callback: (error: NodeJS.ErrnoException | null, avatarUrl: string) => void
 ) => {
-  const folder = 'avatars';
   const targetPath = getFilePath(
     path.join(__dirname, '..', '..', UPLOADS_FOLDER, originalName),
     folder
@@ -85,6 +84,4 @@ export const saveAvatar = (
     if (err) return callback(err, '');
     return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
   });
-
-  // fs.rename(tempPath, targetPath, (err) => {});
 };
