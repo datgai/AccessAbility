@@ -59,7 +59,8 @@ export const createJob = async (request: Request, response: Response) => {
       const jobData = await job.get();
 
       return response.status(StatusCodes.CREATED).json({
-        job: { id: jobData.id, ...jobData.data() }
+        id: jobData.id,
+        ...jobData.data()
       });
     })
     .catch((err) => {
@@ -100,7 +101,8 @@ export const getJobById = async (request: Request, response: Response) => {
       }
 
       return response.status(StatusCodes.OK).json({
-        job: { id: job.id, ...job.data() }
+        id: job.id,
+        ...job.data()
       });
     })
     .catch((err) => {
