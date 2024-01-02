@@ -108,6 +108,14 @@ export const deletePostById = async (request: Request, response: Response) => {
         });
       }
 
+      const user = request.user;
+      if ((post.data() as Post).authorId !== user.uid) {
+        return response.status(StatusCodes.FORBIDDEN).json({
+          message:
+            'You are not allowed to delete a post that you did not create.'
+        });
+      }
+
       return await post.ref
         .delete()
         .then(() => {
