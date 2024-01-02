@@ -56,8 +56,10 @@ export const createJob = async (request: Request, response: Response) => {
       createdAt: firestore.Timestamp.fromDate(jobDetails.createdAt)
     })
     .then(async (job) => {
+      const jobData = await job.get();
+
       return response.status(StatusCodes.CREATED).json({
-        job: (await job.get()).data()
+        job: { id: jobData.id, ...jobData.data() }
       });
     })
     .catch((err) => {
@@ -79,7 +81,7 @@ export const getJobList = async (request: Request, response: Response) => {
     .get();
 
   return response.status(StatusCodes.OK).json({
-    jobs: jobs.docs.map((doc) => doc.data()),
+    jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
     nextPageToken: jobs.docs.pop()?.ref.id
   });
 };
