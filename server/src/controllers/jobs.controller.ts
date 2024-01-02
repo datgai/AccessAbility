@@ -6,42 +6,13 @@ import { jobsRef } from '../database';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
-  type Body = Omit<Job, 'businessId' | 'createdAt'>;
-  type Parameter = keyof Body;
-
-  const requiredParams: Parameter[] = [
-    'description',
-    'locationType',
-    'position',
-    'type'
-  ];
-
-  const missingParams = getMissingParameters(request, requiredParams);
-  if (missingParams.length > 0) {
-    return response.status(StatusCodes.BAD_REQUEST).json({
-      message: 'Missing parameters.',
-      missing: missingParams
-    });
-  }
-
   const user = request.user;
-  const body = request.body as Body;
+  const body = request.body as Job;
 
-  if (!Object.values(JobType).includes(body.type as JobType)) {
-    return response.status(StatusCodes.BAD_REQUEST).json({
-      message: 'Unknown job type provided. Job type must be one of JobType.'
-    });
-  }
-
-  if (
-    !Object.values(JobLocationType).includes(
-      body.locationType as JobLocationType
-    )
-  ) {
-    return response.status(StatusCodes.BAD_REQUEST).json({
-      message:
-        'Unknown location type provided. Location type must be one of JobLocationType.'
-    });
+  const invalidParams = await hasInvalidParams(request, false);
+  if (invalidParams !== null) {
+    const { status, ...resBody } = invalidParams;
+    return response.status(status).json(resBody);
   }
 
   const jobDetails: Job = {
@@ -146,4 +117,65 @@ export const deleteJobById = async (request: Request, response: Response) => {
         error: err
       });
     });
+};
+
+const hasInvalidParams = async (request: Request, editing: boolean) => {
+  type Body = Omit<Job, 'businessId' | 'createdAt'>;
+  type Parameter = keyof Body;
+
+  const requiredParams: Parameter[] = [
+    'description',
+    'locationType',
+    'position',
+    'type'
+  ];
+
+  const missingParams = getMissingParameters(request, requiredParams);
+  if (editing) {
+    if (
+      missingParams.length <= 0 ||
+      missingParams.length >= requiredParams.length
+    ) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'Missing parameters.',
+        missing: missingParams
+      };
+    }
+  } else {
+    if (missingParams.length > 0) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'Missing parameters.',
+        missing: missingParams
+      };
+    }
+  }
+
+  const body = request.body as Body;
+
+  if (body.type) {
+    if (!Object.values(JobType).includes(body.type as JobType)) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'Unknown job type provided. Job type must be one of JobType.'
+      };
+    }
+  }
+
+  if (body.locationType) {
+    if (
+      !Object.values(JobLocationType).includes(
+        body.locationType as JobLocationType
+      )
+    ) {
+      return {
+        status: StatusCodes.BAD_REQUEST,
+        message:
+          'Unknown location type provided. Location type must be one of JobLocationType.'
+      };
+    }
+  }
+
+  return null;
 };
