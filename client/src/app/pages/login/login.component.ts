@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -8,7 +9,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subscription, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
 import { LoginService } from './services/login.service';
 
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    const sub: Subscription = this.authenticationService
+    this.authenticationService
       .login({
         email,
         password,
@@ -59,29 +60,32 @@ export class LoginComponent implements OnInit {
         next: async (user) => {
           const userToken = await user.getIdToken();
 
-          // Create a profile for the user if the user does not have a profile
-          this.loginService
-            .getProfile(userToken)
-            .subscribe(async (response) => {
-              if (!response.profile) {
-                this.loginService.createProfile(userToken).subscribe((res) => {
-                  localStorage.setItem(
-                    this.authenticationService.userKey,
-                    JSON.stringify({ ...user, profile: res.user?.profile })
-                  );
-                  return;
-                });
-              }
-
+          // Find the user profile to set in local storage
+          this.loginService.getProfile(userToken).subscribe({
+            next: async (response) => {
               localStorage.setItem(
                 this.authenticationService.userKey,
                 JSON.stringify({ ...user, profile: response.profile })
               );
-
-              // Redirect to home page
-              this.router.navigate(['']);
-            });
+            },
+            error: (error: HttpErrorResponse) => {
+              if (error.status === 404) {
+                // User does not have a profile so create it
+                this.authenticationService.createProfile(userToken).subscribe({
+                  next: (res) => {
+                    localStorage.setItem(
+                      this.authenticationService.userKey,
+                      JSON.stringify({ ...user, profile: res.user?.profile })
+                    );
+                  },
+                  complete: () => this.router.navigate(['']), // Redirect to home page
+                });
+              }
+            },
+            complete: () => this.router.navigate(['']), // Redirect to home page
+          });
         },
+<<<<<<< HEAD
         error: (error: Error) => {
     
           switch (error?.message) {
@@ -98,6 +102,9 @@ export class LoginComponent implements OnInit {
           sub.unsubscribe();
         },
         complete: () => sub.unsubscribe(),
+=======
+        error: (error: Error) => console.log(error.message),
+>>>>>>> main
       });
 
     this.loginForm.reset();

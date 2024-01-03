@@ -11,7 +11,7 @@ export class TestService {
 
   getTest(token: string) {
     return this.http.get<{ message: string; user?: User }>(
-      `${environment.baseUrl}/api/auth/test`,
+      `${environment.baseUrl}/auth/test`,
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
     );
   }

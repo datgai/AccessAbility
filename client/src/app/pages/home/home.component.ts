@@ -3,7 +3,6 @@ import { Component, inject } from '@angular/core';
 import { Auth, User, getIdToken } from '@angular/fire/auth';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
 import { TestService } from '../../service/test.service';
 
@@ -33,16 +32,12 @@ export class HomeComponent {
   ) {}
 
   onSubmitLogout(): void {
-    const sub: Subscription = this.authenticationService.logout().subscribe({
+    this.authenticationService.logout().subscribe({
       next: () => {
         localStorage.removeItem(this.authenticationService.userKey);
         this.router.navigate(['login']);
       },
-      error: (error: Error) => {
-        console.log(error.message);
-        sub.unsubscribe();
-      },
-      complete: () => sub.unsubscribe(),
+      error: (error: Error) => console.log(error.message),
     });
   }
 
