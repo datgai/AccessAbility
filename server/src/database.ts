@@ -8,5 +8,6 @@ export const getProfileById = async (userId: string) => {
   return (profile.exists ? profile.data() ?? {} : {}) as UserProfile;
 };
 
+export const postsRef = database.collection('posts');
 export const jobsRef = database.collection('jobs');
 export const skillsRef = database.collection('skills');

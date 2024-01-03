@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
-import multer from 'multer';
 import {
   UserGender,
   UserProfile,
@@ -9,12 +8,7 @@ import {
 } from '../../../shared/src/types/user';
 import { getProfileById, profilesRef } from '../database';
 import { auth } from '../firebase';
-import {
-  FileTypeError,
-  MAX_UPLOAD_SIZE,
-  saveAvatar,
-  uploadAvatar
-} from '../services/uploader.service';
+import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
 
 export const getProfile = async (request: Request, response: Response) => {
@@ -70,7 +64,7 @@ export const getUserById = async (request: Request, response: Response) => {
 export const createProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  uploadAvatar(request, response, (error) => {
+  upload.single('avatar')(request, response, (err) => {
     type ProfileParam = Record<
       keyof Omit<UserProfile, 'profilePictureUrl'> | 'email' | 'password',
       string
@@ -123,20 +117,9 @@ export const createProfile = async (request: Request, response: Response) => {
       });
     }
 
-    if (error) {
-      if (error instanceof FileTypeError) {
-        return response
-          .status(StatusCodes.UNPROCESSABLE_ENTITY)
-          .json({ message: 'Only images are allowed.' });
-      }
-
-      if (error instanceof multer.MulterError) {
-        if (error.code === 'LIMIT_FILE_SIZE') {
-          return response.status(StatusCodes.REQUEST_TOO_LONG).json({
-            message: `The image uploaded was larger than the max size limit of ${MAX_UPLOAD_SIZE}MiB.`
-          });
-        }
-      }
+    const error = getError(err);
+    if (error !== null) {
+      return response.status(error.status).json({ message: error.message });
     }
 
     const baseUrl = `${request.protocol}://${request.get('host')}`;
@@ -144,32 +127,38 @@ export const createProfile = async (request: Request, response: Response) => {
     const buffer = avatar.buffer;
     const originalName = avatar.originalname;
 
-    saveAvatar(baseUrl, buffer, originalName, (error, profilePictureUrl) => {
-      if (error) {
-        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          message: `Something went wrong processing the file: ${error.message}`
+    saveImage(
+      baseUrl,
+      'avatars',
+      buffer,
+      originalName,
+      (error, profilePictureUrl) => {
+        if (error) {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: `Something went wrong processing the file: ${error.message}`
+          });
+        }
+
+        const profileData: UserProfile = {
+          ...body,
+          gender: body.gender as UserGender,
+          dateOfBirth: new Date(body.dateOfBirth),
+          impairments: body.impairments as unknown as string[],
+          profilePictureUrl,
+          role: body.role as UserRole,
+          premium: body.premium === 'true'
+        };
+
+        profilesRef.doc(user.uid).set({
+          ...profileData,
+          dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
+        });
+
+        return response.status(StatusCodes.CREATED).json({
+          message: 'Profile added successfully.',
+          user: { ...user, profile: profileData }
         });
       }
-
-      const profileData: UserProfile = {
-        ...body,
-        gender: body.gender as UserGender,
-        dateOfBirth: new Date(body.dateOfBirth),
-        impairments: body.impairments as unknown as string[],
-        profilePictureUrl,
-        role: body.role as UserRole,
-        premium: body.premium === 'true'
-      };
-
-      profilesRef.doc(user.uid).set({
-        ...profileData,
-        dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
-      });
-
-      return response.status(StatusCodes.CREATED).json({
-        message: 'Profile added successfully.',
-        user: { ...user, profile: profileData }
-      });
-    });
+    );
   });
 };

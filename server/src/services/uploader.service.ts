@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { StatusCodes } from 'http-status-codes';
 import multer from 'multer';
 import path from 'path';
 
@@ -7,7 +8,7 @@ export class FileTypeError extends Error {}
 export const MAX_UPLOAD_SIZE = 5; // in MiB
 export const UPLOADS_FOLDER = 'uploads';
 
-export const uploadAvatar = multer({
+export const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: MAX_UPLOAD_SIZE * 1024 * 1024 // 5 MiB
@@ -27,7 +28,7 @@ export const uploadAvatar = multer({
 
     return callback(new FileTypeError('Only images are allowed.'));
   }
-}).single('avatar');
+});
 
 // Used to actually get the path of destination
 const getPath = (defaultFilePath: string, folder: string | undefined) => {
@@ -67,24 +68,43 @@ export const getFilePath = (
   return filePath;
 };
 
-export const saveAvatar = (
+export const saveImage = (
   baseUrl: string,
-  // tempPath: string,
-  avatarBuffer: Buffer,
+  folder: string,
+  imageBuffer: Buffer,
   originalName: string,
-  callback: (error: NodeJS.ErrnoException | null, avatarUrl: string) => void
+  callback: (error: NodeJS.ErrnoException | null, imageUrl: string) => void
 ) => {
-  const folder = 'avatars';
   const targetPath = getFilePath(
     path.join(__dirname, '..', '..', UPLOADS_FOLDER, originalName),
     folder
   );
   const fileName = path.basename(targetPath);
 
-  fs.writeFile(targetPath, avatarBuffer, (err) => {
+  fs.writeFile(targetPath, imageBuffer, (err) => {
     if (err) return callback(err, '');
     return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
   });
+};
 
-  // fs.rename(tempPath, targetPath, (err) => {});
+export const getError = (error: any) => {
+  if (error) {
+    if (error instanceof FileTypeError) {
+      return {
+        status: StatusCodes.UNPROCESSABLE_ENTITY,
+        message: 'Only images are allowed.'
+      };
+    }
+
+    if (error instanceof multer.MulterError) {
+      if (error.code === 'LIMIT_FILE_SIZE') {
+        return {
+          status: StatusCodes.REQUEST_TOO_LONG,
+          message: `The image uploaded was larger than the max size limit of ${MAX_UPLOAD_SIZE}MiB.`
+        };
+      }
+    }
+  }
+
+  return null;
 };
