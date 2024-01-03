@@ -1,7 +1,7 @@
-<section class="flex flex-col md:flex-row gap-1 px-2 py-2">
+<section class="flex flex-col md:flex-row gap-2">
   @for (job of jobs(); track job.jobDetails.id) {
     <app-mini-info-card
-      infoLink="job/{{ job.jobDetails.id }}"
+      infoLink="/job/{{ job.jobDetails.id }}"
       infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
       infoTitle="{{ job.jobDetails.position }}"
       infoName="{{ job.businessDetails.firstName }}"
