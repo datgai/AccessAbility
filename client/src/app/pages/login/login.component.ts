@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -7,7 +8,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
@@ -22,7 +22,7 @@ import { LoginService } from './services/login.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
-  public componentTitle: string = 'Sign Into Your Account'; 
+  public componentTitle: string = 'Sign Into Your Account';
   public errorMessage: string = '';
 
   constructor(
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     if (!email || !password) {
-      this.errorMessage = "All fields are required";
+      this.errorMessage = 'All fields are required';
       return;
     }
 
@@ -85,9 +85,7 @@ export class LoginComponent implements OnInit {
             complete: () => this.router.navigate(['']), // Redirect to home page
           });
         },
-<<<<<<< HEAD
         error: (error: Error) => {
-    
           switch (error?.message) {
             case 'Firebase: Error (auth/invalid-email).':
               this.errorMessage = 'Invalid email format';
@@ -98,13 +96,7 @@ export class LoginComponent implements OnInit {
             default:
               this.errorMessage = 'Login failed: An unknown error occurred.';
           }
-          
-          sub.unsubscribe();
         },
-        complete: () => sub.unsubscribe(),
-=======
-        error: (error: Error) => console.log(error.message),
->>>>>>> main
       });
 
     this.loginForm.reset();
