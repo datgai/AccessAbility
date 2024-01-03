@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import path from 'path';
 import { cacheControl } from './middleware/cache.middleware';
 import authRoute from './routes/auth.routes';
+import jobsRoute from './routes/jobs.routes';
+import skillsRoute from './routes/skills.routes';
 import testRoute from './routes/test.routes';
 import usersRoute from './routes/users.routes';
 import { UPLOADS_FOLDER } from './services/uploader.service';
@@ -33,6 +35,8 @@ app.use(cacheControl({ cacheDays: 3 }));
 app.use('/test', testRoute);
 app.use('/api', authRoute);
 app.use('/api', usersRoute);
+app.use('/api', jobsRoute);
+app.use('/api', skillsRoute);
 
 // Serve static files
 app.use(

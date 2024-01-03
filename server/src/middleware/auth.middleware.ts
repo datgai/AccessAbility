@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { UserRole } from '../../../shared/src/types/user';
 import { getProfileById } from '../database';
 import { auth } from '../firebase';
 
@@ -22,4 +23,18 @@ export const isAuthenticated = async (
         message: 'You are not authorized to access this endpoint.'
       });
     });
+};
+
+export const isBusiness = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const user = request.user;
+
+  if (user.profile.role === UserRole.BUSINESS) return next();
+
+  return response.status(StatusCodes.FORBIDDEN).json({
+    message: 'You are not a business and therefore cannot access this endpoint.'
+  });
 };
