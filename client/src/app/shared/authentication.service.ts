@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
+
 import {
   Auth,
   createUserWithEmailAndPassword,
@@ -20,6 +21,7 @@ export class AuthenticationService {
   public userKey: string = 'user';
 
   constructor(private auth: Auth = inject(Auth)) {}
+  
 
   login(params: AuthenticationParams) {
     return from(
@@ -59,4 +61,6 @@ export class AuthenticationService {
     }
     return message;
   }
+
+
 }

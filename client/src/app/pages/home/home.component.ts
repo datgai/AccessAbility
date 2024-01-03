@@ -5,7 +5,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../../shared/authentication.service';
-import { TestService } from './services/test.service';
+import { TestService } from '../../service/test.service';
 
 @Component({
   selector: 'app-home',

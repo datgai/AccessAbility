@@ -1,0 +1,9 @@
+<p>profile works!</p>
+@if (isAuthenticated) {
+<p>Logged in</p>
+} @else {
+    <img src="/assets/logged-out.png"/>
+    <h3>You're not logged in</h3>
+    <p>Log in or create an account first to view your profile.</p>
+    <button>Log In</button>
+}
