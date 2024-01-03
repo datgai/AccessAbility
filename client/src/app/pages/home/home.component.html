@@ -1,55 +1,15 @@
-<section class="relative text-gray-600 body-font bg-cover bg-center" style="background-image: url('assets/hero-bg.png');">
-  <div class="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-60"></div>
-  <div class="container relative z-10 px-5 py-48 mx-auto">
-    <h2 class="sm:text-5xl text-4xl text-white font-medium title-font mb-2">AccessAbility: Beyond Disabilities, Focused on Abilities.</h2>
-  </div>
-</section>
+@if (!isAuthenticated || user?.profile?.role === UserRole.ADMIN) {
+  <app-landing-view></app-landing-view>
+} @else {
+  @if (user?.profile?.role === UserRole.USER) {
+    <app-user-view></app-user-view>
+  } @else if (user?.profile?.role === UserRole.BUSINESS) {
+    <app-business-view></app-business-view>
+  }
+}
 
-<section class="text-gray-600 body-font">
-  <div class="container px-5 py-20 mx-auto">
-    <div class="flex flex-col text-center w-full">
-      <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">About Us</h1>
-      <p class="text-lg leading-relaxed mx-auto my-5 text-gray-500s">AccessAbility goes beyond job matching. We offer resources, opportunities and a community that understands the unique challenges you may face. Your success is our priority, and we're here to guide you every step of the way. Together, we're redefining success and building a future where every individual's potential is realized.</p>
-    </div>
-  </div>
-</section>
-
-<section class="text-gray-600 body-font">
-  <div class="container px-5 py-5 mx-auto">
-    <div class="flex flex-col text-center w-full">
-      <h1 class="sm:text-3xl text-2xl font-medium title-font text-gray-900">Our Mission</h1>
-      <p class="text-lg  leading-relaxed mx-auto my-5 text-gray-500s">To break employment barriers by connecting employers with exceptional talents and redefining the workplace for all abilities.</p>
-      </div>
-
-      <div class="container px-5 pt-20 mx-auto">
-    <div class="flex items-center lg:w-3/5 mx-auto border-b pb-10 mb-10 border-gray-200 sm:flex-row flex-col">
-      <div class="sm:w-32 sm:h-32 h-20 w-20 sm:mr-10 inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-500 flex-shrink-0">
-        <img src="assets/sdg4.png">
-      </div>
-      <div class="flex-grow sm:text-left text-center mt-6 sm:mt-0">
-        <h2 class="text-gray-900 text-lg title-font font-medium mb-2">SDG 4: QUALITY EDUCATION</h2>
-        <p class="leading-relaxed text-base">Goal 4 focuses on eliminating gender disparities in education and ensuring equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities. </p>
-      </div>
-    </div>
-    <div class="flex items-center lg:w-3/5 mx-auto border-b pb-10 mb-10 border-gray-200 sm:flex-row flex-col">
-      <div class="flex-grow sm:text-left text-center mt-6 sm:mt-0">
-        <h2 class="text-gray-900 text-lg title-font font-medium mb-2">SDG 8 : DECENT WORK AND ECONOMIC GROWTH</h2>
-        <p class="leading-relaxed text-base">International community aims to achieve full and productive employment and decent work for all women and men, including for persons with disabilities, and equal pay for work of equal value.</p>
-      </div>
-      <div class="sm:w-32 sm:order-none order-first sm:h-32 h-20 w-20 sm:ml-10 inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-500 flex-shrink-0">
-        <img src="assets/sdg8.png">
-      </div>
-    </div>
-    <div class="flex items-center lg:w-3/5 mx-auto sm:flex-row flex-col">
-      <div class="sm:w-32 sm:h-32 h-20 w-20 sm:mr-10 inline-flex items-center justify-center rounded-full bg-blue-100 text-blue-500 flex-shrink-0">
-        <img src="assets/sdg10.png">
-      </div>
-      <div class="flex-grow sm:text-left text-center mt-6 sm:mt-0">
-        <h2 class="text-gray-900 text-lg title-font font-medium mb-2">SDG 10 : REDUCED INEQUALITIES</h2>
-        <p class="leading-relaxed text-base">Empower and promote the social, economic and political inclusion of all, including persons with disabilities.</p>
-      </div>
-    </div>
-    <button class="flex mx-auto mt-20 text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg">Button</button>
-  </div>
-  </div>
-</section>
+@if (isAuthenticated) {
+  <form (ngSubmit)="onSubmitLogout()">
+    <button type="submit">Logout</button>
+  </form>
+}
