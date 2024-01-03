@@ -1,18 +1,11 @@
 <section class="flex flex-col md:flex-row gap-1 px-2 py-2">
   @for (job of jobs(); track job.jobDetails.id) {
-    <a routerLink="job/{{ job.jobDetails.id }}">
-      <div class="flex flex-row gap-2 bg-[#EEEEEE] rounded-md items-center">
-        <img
-          src="{{ job.businessDetails.profilePictureUrl }}"
-          alt="company logo"
-          class="aspect-square w-20 h-full rounded-md"
-        />
-        <div>
-          <h2>{{ job.jobDetails.position }}</h2>
-          <p>{{ job.businessDetails.firstName }}</p>
-          <p>{{ job.jobDetails.type }}</p>
-        </div>
-      </div>
-    </a>
+    <app-mini-info-card
+      infoLink="job/{{ job.jobDetails.id }}"
+      infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
+      infoTitle="{{ job.jobDetails.position }}"
+      infoName="{{ job.businessDetails.firstName }}"
+      infoType="{{ job.jobDetails.type }}"
+    />
   }
 </section>
