@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { TestService } from '../../service/test.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { TestService } from '../../services/test.service';
 
 @Component({
   selector: 'app-profile',
