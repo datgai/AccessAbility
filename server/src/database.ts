@@ -9,3 +9,5 @@ export const getProfileById = async (userId: string) => {
 };
 
 export const postsRef = database.collection('posts');
+export const jobsRef = database.collection('jobs');
+export const skillsRef = database.collection('skills');
