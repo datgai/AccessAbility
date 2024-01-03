@@ -4,7 +4,7 @@ import { Auth, User, getIdToken } from '@angular/fire/auth';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../shared/authentication.service';
-import { TestService } from './services/test.service';
+import { TestService } from '../../service/test.service';
 
 @Component({
   selector: 'app-home',

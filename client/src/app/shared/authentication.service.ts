@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
+
 import {
   Auth,
   User,
@@ -23,7 +24,12 @@ interface AuthenticationParams {
 export class AuthenticationService {
   public userKey: string = 'user';
 
+<<<<<<< HEAD
+  constructor(private auth: Auth = inject(Auth)) {}
+  
+=======
   constructor(private auth: Auth = inject(Auth), private http: HttpClient) {}
+>>>>>>> main
 
   login(params: AuthenticationParams) {
     return from(
@@ -74,4 +80,6 @@ export class AuthenticationService {
     }
     return message;
   }
+
+
 }
