@@ -1,12 +1,12 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { NextFunction, Response } from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import { cacheControl } from './middleware/cache.middleware';
 import authRoute from './routes/auth.routes';
-import postsRoute from './routes/posts.routes';
 import jobsRoute from './routes/jobs.routes';
+import postsRoute from './routes/posts.routes';
 import skillsRoute from './routes/skills.routes';
 import testRoute from './routes/test.routes';
 import usersRoute from './routes/users.routes';
@@ -43,6 +43,10 @@ app.use('/api', skillsRoute);
 // Serve static files
 app.use(
   '/uploads',
+  (_, response: Response, next: NextFunction) => {
+    response.set('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
   express.static(path.resolve(__dirname, '..', UPLOADS_FOLDER))
 );
 
