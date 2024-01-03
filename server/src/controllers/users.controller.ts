@@ -47,11 +47,8 @@ export const getUserById = async (request: Request, response: Response) => {
     .getUser(userId)
     .then(async (user) => {
       return response.status(StatusCodes.OK).json({
-        message: 'User found.',
-        user: {
-          ...user,
-          profile: await getProfileById(user.uid)
-        }
+        ...user,
+        profile: await getProfileById(user.uid)
       });
     })
     .catch(() => {
