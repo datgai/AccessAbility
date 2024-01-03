@@ -5,7 +5,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserProfile, UserRole } from '../../../../../shared/src/types/user';
 import { TestService } from '../../service/test.service';
-import { AuthenticationService } from '../../shared/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { BusinessViewComponent } from '../../views/home/business-view/business-view.component';
 import { LandingViewComponent } from '../../views/home/landing-view/landing-view.component';
 import { UserViewComponent } from '../../views/home/user-view/user-view.component';

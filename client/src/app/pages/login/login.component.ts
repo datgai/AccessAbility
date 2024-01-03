@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
-import { AuthenticationService } from '../../shared/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 import { LoginService } from './services/login.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     private formBulder: FormBuilder,
     private authenticationService: AuthenticationService,
     private loginService: LoginService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
             next: async (response) => {
               localStorage.setItem(
                 this.authenticationService.userKey,
-                JSON.stringify({ ...user, profile: response.profile })
+                JSON.stringify({ ...user, profile: response.profile }),
               );
             },
             error: (error: HttpErrorResponse) => {
@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit {
                   next: (res) => {
                     localStorage.setItem(
                       this.authenticationService.userKey,
-                      JSON.stringify({ ...user, profile: res.user?.profile })
+                      JSON.stringify({ ...user, profile: res.user?.profile }),
                     );
                   },
                   complete: () => this.router.navigate(['']), // Redirect to home page

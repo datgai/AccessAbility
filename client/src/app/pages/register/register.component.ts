@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { sendEmailVerification } from '@angular/fire/auth';
 import {
@@ -7,10 +8,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
-import { AuthenticationService } from '../../shared/authentication.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-register',
@@ -28,8 +28,8 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
@@ -38,29 +38,71 @@ export class RegisterComponent {
   buildForm(): void {
     this.registrationForm = this.formBuilder.group({
       email: new FormControl('', [Validators.email, Validators.required]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6),]),
-      confirmationPassword: new FormControl('', [Validators.required, Validators.minLength(6),]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+      ]),
+      confirmationPassword: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+      ]),
     });
 
     this.isJobSeeker ? this.addJobSeekerControls() : this.addEmployerControls();
   }
 
   addJobSeekerControls(): void {
-    this.registrationForm.addControl('firstName', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('lastName', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('dob', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('profilePic', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('mobileNumber', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('impairments', new FormControl('', [Validators.required]));
+    this.registrationForm.addControl(
+      'firstName',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'lastName',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'dob',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'profilePic',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'mobileNumber',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'impairments',
+      new FormControl('', [Validators.required]),
+    );
   }
 
   addEmployerControls(): void {
-    this.registrationForm.addControl('companyName', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('registrationNumber', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('companyPhoneNo', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('city', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('state', new FormControl('', [Validators.required]));
-    this.registrationForm.addControl('address', new FormControl('', [Validators.required]));
+    this.registrationForm.addControl(
+      'companyName',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'registrationNumber',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'companyPhoneNo',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'city',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'state',
+      new FormControl('', [Validators.required]),
+    );
+    this.registrationForm.addControl(
+      'address',
+      new FormControl('', [Validators.required]),
+    );
   }
 
   onRoleChange(event: any): void {
@@ -69,14 +111,17 @@ export class RegisterComponent {
   }
 
   checkEmptyFields(): boolean {
-    return Object.values(this.registrationForm.value).some(value => value === '' || value === null);
+    return Object.values(this.registrationForm.value).some(
+      (value) => value === '' || value === null,
+    );
   }
 
   onSubmit(): void {
-    const { email, password, confirmationPassword } = this.registrationForm.value;
+    const { email, password, confirmationPassword } =
+      this.registrationForm.value;
 
     if (this.checkEmptyFields()) {
-      this.errorMessage = "All fields are required";
+      this.errorMessage = 'All fields are required';
       return;
     }
 
