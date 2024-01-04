@@ -63,7 +63,9 @@ export const createProfile = async (request: Request, response: Response) => {
 
   upload.single('avatar')(request, response, (err) => {
     type ProfileParam = Record<
-      keyof Omit<UserProfile, 'profilePictureUrl'> | 'email' | 'password',
+      | keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>
+      | 'email'
+      | 'password',
       string
     >;
     type Parameter = keyof ProfileParam;
@@ -75,6 +77,7 @@ export const createProfile = async (request: Request, response: Response) => {
       'dateOfBirth',
       'phoneNumber',
       'impairments',
+      'skills',
       'city',
       'state',
       'address',
@@ -142,6 +145,7 @@ export const createProfile = async (request: Request, response: Response) => {
           dateOfBirth: new Date(body.dateOfBirth),
           impairments: body.impairments as unknown as string[],
           skills: body.skills as unknown as string[],
+          offers: [],
           profilePictureUrl,
           role: body.role as UserRole,
           premium: body.premium === 'true'

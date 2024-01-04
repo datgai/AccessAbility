@@ -18,6 +18,7 @@ export interface UserProfile {
 	phoneNumber: string;
 	impairments: string[];
 	skills: string[];
+	offers: string[];
 	city: string;
 	state: string;
 	address: string;
