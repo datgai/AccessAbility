@@ -6,6 +6,11 @@ import { environment } from '../../environments/environment';
 
 export type JobDetails = Job & { id: string };
 export interface JobResponse {
+  jobs: JobDetails[];
+  nextPageToken: string;
+}
+
+export interface JobInfo {
   jobDetails: JobDetails;
   businessDetails: UserProfile;
 }
@@ -16,10 +21,9 @@ export interface JobResponse {
 export class JobService {
   constructor(private http: HttpClient) {}
 
-  getJobList(token?: string) {
-    return this.http.get<{
-      jobs: JobDetails[];
-      nextPageToken: string;
-    }>(`${environment.baseUrl}/jobs/${token ?? ''}`);
+  getJobList(token?: string, filter: string = '') {
+    return this.http.get<JobResponse>(
+      `${environment.baseUrl}/jobs/${token ?? ''}?filter=${filter}`,
+    );
   }
 }
