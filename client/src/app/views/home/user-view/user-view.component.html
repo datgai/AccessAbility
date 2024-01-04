@@ -1,3 +1,29 @@
+<form [formGroup]="searchForm" (submit)="onSubmit()">
+  <label
+    for="default-search"
+    class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+  >
+    Search
+  </label>
+  <div class="flex w-full items-end">
+    <div class="relative mr-4 lg:w-full xl:w-1/2 w-2/4 md:w-full text-left">
+      <input
+        type="text"
+        id="hero-field"
+        name="hero-field"
+        placeholder="Serach Jobs..."
+        class="w-full bg-gray-100 bg-opacity-50 rounded focus:ring-2 focus:ring-indigo-200 focus:bg-transparent border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+        formControlName="searchTerm"
+      />
+    </div>
+    <button
+      class="inline-flex text-white bg-blue-100 border-0 py-2 px-6 focus:outline-none hover:bg-blue-200 rounded text-lg"
+    >
+      Search
+    </button>
+  </div>
+</form>
+
 <section class="flex flex-col md:flex-row gap-2">
   @for (job of jobs(); track job.jobDetails.id) {
     <app-mini-info-card
