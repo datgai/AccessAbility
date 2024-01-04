@@ -13,6 +13,7 @@ import {
   JobResponse,
   JobService,
 } from '../../../services/job.service';
+import { UserStoreService } from '../../../services/user-store.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -34,6 +35,7 @@ export class UserViewComponent implements OnInit {
     private jobService: JobService,
     private userService: UserService,
     private formBuilder: FormBuilder,
+    public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {

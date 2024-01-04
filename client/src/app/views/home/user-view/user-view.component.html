@@ -1,6 +1,49 @@
 <h1 class="text-5xl font-bold mb-2">Home</h1>
 
 <section
+  class="flex flex-col bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md mb-5"
+>
+  <h2 class="text-4xl font-bold mb-2">
+    Hello there, {{ userStore.user?.profile?.firstName }}.
+  </h2>
+  <div class="grid grid-cols-3 gap-2 text-center">
+    <div
+      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
+    >
+      <p>
+        Jobs Applied
+        <br />
+        18
+      </p>
+    </div>
+    <div
+      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
+    >
+      <p>
+        Job Offers
+        <br />
+        {{ userStore.user?.profile?.offers?.length ?? 0 }}
+      </p>
+    </div>
+    <div
+      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
+    >
+      <p>
+        Benefits
+        <br />
+        4
+      </p>
+    </div>
+  </div>
+  <a
+    routerLink="/profile"
+    class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
+  >
+    More... 🡒
+  </a>
+</section>
+
+<section
   class="flex flex-col gap-2 bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md"
 >
   <form [formGroup]="searchForm" (submit)="onSubmit()">
