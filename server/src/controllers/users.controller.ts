@@ -141,6 +141,7 @@ export const createProfile = async (request: Request, response: Response) => {
           gender: body.gender as UserGender,
           dateOfBirth: new Date(body.dateOfBirth),
           impairments: body.impairments as unknown as string[],
+          skills: body.skills as unknown as string[],
           profilePictureUrl,
           role: body.role as UserRole,
           premium: body.premium === 'true'
