@@ -34,7 +34,8 @@ export const createJob = async (request: Request, response: Response) => {
   const jobDetails: Job = {
     ...body,
     businessId: user.uid,
-    skills: skillIds
+    skills: skillIds,
+    applicants: []
   };
 
   return await jobsRef
@@ -232,7 +233,7 @@ export const editJobById = async (request: Request, response: Response) => {
 };
 
 const hasInvalidParams = async (request: Request, editing: boolean) => {
-  type Body = Omit<Job, 'businessId' | 'createdAt'>;
+  type Body = Omit<Job, 'businessId' | 'createdAt' | 'applicants'>;
   type Parameter = keyof Body;
 
   const requiredParams: Parameter[] = [
