@@ -1,14 +1,17 @@
-@if (!isAuthenticated || user?.profile?.role === UserRole.ADMIN) {
+@if (
+  !userStore.isAuthenticated() ||
+  userStore.user?.profile?.role === UserRole.ADMIN
+) {
   <app-landing-view></app-landing-view>
 } @else {
-  @if (user?.profile?.role === UserRole.USER) {
+  @if (userStore.user?.profile?.role === UserRole.USER) {
     <app-user-view></app-user-view>
-  } @else if (user?.profile?.role === UserRole.BUSINESS) {
+  } @else if (userStore.user?.profile?.role === UserRole.BUSINESS) {
     <app-business-view></app-business-view>
   }
 }
 
-@if (isAuthenticated) {
+@if (userStore.isAuthenticated()) {
   <form (ngSubmit)="onSubmitLogout()">
     <button type="submit">Logout</button>
   </form>
