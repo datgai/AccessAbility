@@ -10,9 +10,3 @@
     <app-business-view></app-business-view>
   }
 }
-
-@if (userStore.isAuthenticated()) {
-  <form (ngSubmit)="onSubmitLogout()">
-    <button type="submit">Logout</button>
-  </form>
-}
