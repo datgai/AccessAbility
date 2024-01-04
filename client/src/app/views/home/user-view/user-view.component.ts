@@ -1,4 +1,4 @@
-import { Component, OnInit, WritableSignal, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -24,7 +24,7 @@ import { UserService } from '../../../services/user.service';
   styleUrl: './user-view.component.css',
 })
 export class UserViewComponent implements OnInit {
-  public jobs: WritableSignal<JobInfo[]> = signal([]);
+  public jobs = signal<JobInfo[]>([]);
   private nextPageToken: string = '';
 
   public searchForm!: FormGroup<{
