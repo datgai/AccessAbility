@@ -25,6 +25,7 @@ export class BusinessViewComponent implements OnInit {
       applicantDetails: UserResponse;
     }[]
   >([]);
+  public numOffers = signal<number>(0);
 
   constructor(
     private jobService: JobService,
@@ -54,14 +55,20 @@ export class BusinessViewComponent implements OnInit {
             // Load applicants
             from(job.applicants).subscribe({
               next: (applicantId) => {
-                if (loadedApplicantIds.includes(applicantId)) return;
-                loadedApplicantIds.push(applicantId);
-
-                // Load a maximum of 10 applicants
-                if (loadedApplicantIds.length >= 10) return;
-
                 this.userService.getUser(applicantId).subscribe({
                   next: (user) => {
+                    // Get number of offers the busines has given
+                    if (user.profile.offers.includes(job.id)) {
+                      this.numOffers.set(this.numOffers() + 1);
+                    }
+
+                    // Load all applications that the business has received
+                    if (loadedApplicantIds.includes(applicantId)) return;
+                    loadedApplicantIds.push(applicantId);
+
+                    // Load a maximum of 10 applicants
+                    if (loadedApplicantIds.length >= 10) return;
+
                     this.applications().push({
                       jobDetails: job,
                       applicantDetails: user,
