@@ -1,23 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import {
-  EMPTY,
-  Observable,
-  concatMap,
-  expand,
-  from,
-  map,
-  switchMap,
-  toArray,
-} from 'rxjs';
+import { EMPTY, expand, tap } from 'rxjs';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
-import {
-  JobInfo,
-  JobResponse,
-  JobService,
-} from '../../../services/job.service';
+import { JobInfo, JobService } from '../../../services/job.service';
 import { UserStoreService } from '../../../services/user-store.service';
 import { UserService } from '../../../services/user.service';
 
@@ -49,12 +36,18 @@ export class UserViewComponent implements OnInit {
 
   ngOnInit(): void {
     // Load intial jobs
-    this.formatJobList(
-      this.jobService.getJobList(this.nextPageToken),
-    ).subscribe({
-      next: (jobResponse) => this.jobs.set(jobResponse),
-      error: (err) => console.error(err),
-    });
+    this.jobService
+      .formatJobList(
+        this.jobService
+          .getJobList(this.nextPageToken)
+          .pipe(
+            tap((response) => (this.nextPageToken = response.nextPageToken)),
+          ),
+      )
+      .subscribe({
+        next: (jobResponse) => this.jobs.set(jobResponse),
+        error: (err) => console.error(err),
+      });
 
     // Get all jobs user applied to
     let nextPageToken: string | undefined = '';
@@ -81,40 +74,17 @@ export class UserViewComponent implements OnInit {
   }
 
   onSubmit() {
-    this.formatJobList(
-      this.jobService.getJobList(
-        this.nextPageToken,
-        this.searchTerm.value ?? '',
-      ),
-    ).subscribe({
-      next: (jobResponse) => this.jobs.set(jobResponse),
-      error: (err) => console.error(err),
-    });
-  }
-
-  private formatJobList(jobResponse: Observable<JobResponse>) {
-    return jobResponse.pipe(
-      switchMap((response) => {
-        this.nextPageToken = response.nextPageToken;
-
-        const businessIds = Array.from(
-          new Set(response.jobs.map((job) => job.businessId)),
-        );
-        return from(businessIds).pipe(
-          concatMap((businessId) => this.userService.getUser(businessId)),
-          toArray(),
-          map((businesses) =>
-            response.jobs.map((job) => {
-              return {
-                jobDetails: job,
-                businessDetails: businesses.find(
-                  (business) => business.uid === job.businessId,
-                )!.profile,
-              };
-            }),
+    this.jobService
+      .formatJobList(
+        this.jobService
+          .getJobList(this.nextPageToken, this.searchTerm.value ?? '')
+          .pipe(
+            tap((response) => (this.nextPageToken = response.nextPageToken)),
           ),
-        );
-      }),
-    );
+      )
+      .subscribe({
+        next: (jobResponse) => this.jobs.set(jobResponse),
+        error: (err) => console.error(err),
+      });
   }
 }
