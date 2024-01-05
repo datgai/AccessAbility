@@ -1,15 +1,13 @@
-@if (!isAuthenticated || user?.profile?.role === UserRole.ADMIN) {
+@if (
+  !userStore.isAuthenticated() ||
+  userStore.user?.profile?.role === UserRole.ADMIN
+) {
   <app-landing-view></app-landing-view>
 } @else {
-  @if (user?.profile?.role === UserRole.USER) {
+  <h1 class="text-5xl font-bold mb-2">Home</h1>
+  @if (userStore.user?.profile?.role === UserRole.USER) {
     <app-user-view></app-user-view>
-  } @else if (user?.profile?.role === UserRole.BUSINESS) {
+  } @else if (userStore.user?.profile?.role === UserRole.BUSINESS) {
     <app-business-view></app-business-view>
   }
-}
-
-@if (isAuthenticated) {
-  <form (ngSubmit)="onSubmitLogout()">
-    <button type="submit">Logout</button>
-  </form>
 }

@@ -20,6 +20,7 @@ export interface Job {
 	locationType: JobLocationType;
 	description: string;
 	skills: string[];
+	applicants: string[];
 }
 
 export interface Skill {

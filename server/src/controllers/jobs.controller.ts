@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Job, JobLocationType, JobType } from '../../../shared/src/types/job';
-import { jobsRef, skillsRef } from '../database';
+import { jobsRef, profilesRef, skillsRef } from '../database';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
@@ -34,7 +34,8 @@ export const createJob = async (request: Request, response: Response) => {
   const jobDetails: Job = {
     ...body,
     businessId: user.uid,
-    skills: skillIds
+    skills: skillIds,
+    applicants: []
   };
 
   return await jobsRef
@@ -56,18 +57,72 @@ export const createJob = async (request: Request, response: Response) => {
 };
 
 export const getJobList = async (request: Request, response: Response) => {
-  // For some reason I need to set it to a random string if no token is provided
-  const token = request.params.token ?? 'a';
+  const token = request.params.token ?? ' ';
+  const filter = (request.query.filter ?? '') as string;
+  const end =
+    filter.slice(0, filter.length - 1) +
+    String.fromCharCode(filter.charCodeAt(filter.length - 1) + 1);
 
-  const jobs = await jobsRef
+  let jobs;
+  if (!filter) {
+    jobs = await jobsRef
+      .orderBy(firestore.FieldPath.documentId())
+      .startAfter(token)
+      .limit(10)
+      .get();
+
+    return response.status(StatusCodes.OK).json({
+      jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      nextPageToken: jobs.docs.at(-1)?.id
+    });
+  }
+
+  jobs = await jobsRef
+    .orderBy('position')
+    .where('position', '>=', filter)
+    .where('position', '<', end)
     .orderBy(firestore.FieldPath.documentId())
     .startAfter(token)
     .limit(10)
     .get();
 
+  if (jobs.size === 0) {
+    const businesses = await profilesRef
+      .orderBy('firstName')
+      .where('firstName', '>=', filter)
+      .where('firstName', '<', end)
+      .orderBy(firestore.FieldPath.documentId())
+      .startAfter(token)
+      .limit(10)
+      .get();
+
+    if (businesses.size > 0) {
+      const bizJobs = await Promise.all(
+        businesses.docs.map(async (business) => {
+          return await jobsRef
+            .orderBy('businessId')
+            .where('businessId', '==', business.id)
+            .orderBy(firestore.FieldPath.documentId())
+            .startAfter(token)
+            .limit(10)
+            .get();
+        })
+      );
+
+      const jobs = bizJobs
+        .map((job) => job.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
+        .reduce((acc, job) => acc.concat(job), []);
+
+      return response.status(StatusCodes.OK).json({
+        jobs: jobs,
+        nextPageToken: jobs.at(-1)?.id
+      });
+    }
+  }
+
   return response.status(StatusCodes.OK).json({
     jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-    nextPageToken: jobs.docs.pop()?.ref.id
+    nextPageToken: jobs.docs.at(-1)?.id
   });
 };
 
@@ -178,7 +233,7 @@ export const editJobById = async (request: Request, response: Response) => {
 };
 
 const hasInvalidParams = async (request: Request, editing: boolean) => {
-  type Body = Omit<Job, 'businessId' | 'createdAt'>;
+  type Body = Omit<Job, 'businessId' | 'createdAt' | 'applicants'>;
   type Parameter = keyof Body;
 
   const requiredParams: Parameter[] = [

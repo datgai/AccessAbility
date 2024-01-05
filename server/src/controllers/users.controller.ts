@@ -47,11 +47,8 @@ export const getUserById = async (request: Request, response: Response) => {
     .getUser(userId)
     .then(async (user) => {
       return response.status(StatusCodes.OK).json({
-        message: 'User found.',
-        user: {
-          ...user,
-          profile: await getProfileById(user.uid)
-        }
+        ...user,
+        profile: await getProfileById(user.uid)
       });
     })
     .catch(() => {
@@ -66,7 +63,9 @@ export const createProfile = async (request: Request, response: Response) => {
 
   upload.single('avatar')(request, response, (err) => {
     type ProfileParam = Record<
-      keyof Omit<UserProfile, 'profilePictureUrl'> | 'email' | 'password',
+      | keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>
+      | 'email'
+      | 'password',
       string
     >;
     type Parameter = keyof ProfileParam;
@@ -78,6 +77,7 @@ export const createProfile = async (request: Request, response: Response) => {
       'dateOfBirth',
       'phoneNumber',
       'impairments',
+      'skills',
       'city',
       'state',
       'address',
@@ -144,6 +144,8 @@ export const createProfile = async (request: Request, response: Response) => {
           gender: body.gender as UserGender,
           dateOfBirth: new Date(body.dateOfBirth),
           impairments: body.impairments as unknown as string[],
+          skills: body.skills as unknown as string[],
+          offers: [],
           profilePictureUrl,
           role: body.role as UserRole,
           premium: body.premium === 'true'

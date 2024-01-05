@@ -1,1 +1,81 @@
-<p>user-view works!</p>
+<section
+  class="flex flex-col bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md mb-5"
+>
+  <h2 class="text-4xl font-bold mb-2">
+    Hello there, {{ userStore.user?.profile?.firstName }}.
+  </h2>
+  <app-summary-card
+    [summaryInfo]="[
+      {
+        title: 'Jobs Applied',
+        stats: jobAppliedIds().length
+      },
+      {
+        title: 'Job Offers',
+        stats: userStore.user?.profile?.offers?.length ?? 0
+      },
+      {
+        title: 'Benefits',
+        stats: 4
+      }
+    ]"
+  />
+  <a
+    routerLink="/profile"
+    class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
+  >
+    More... 🡒
+  </a>
+</section>
+
+<section
+  class="flex flex-col gap-2 bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md"
+>
+  <form (ngSubmit)="onSubmit()">
+    <label
+      for="default-search"
+      class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+    >
+      Search
+    </label>
+    <div class="flex w-full items-end">
+      <div class="relative mr-4 w-full text-left">
+        <input
+          type="text"
+          id="hero-field"
+          name="hero-field"
+          placeholder="Search Jobs..."
+          class="w-full bg-gray-100 bg-opacity-50 rounded focus:ring-2 focus:ring-indigo-200 focus:bg-transparent border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+          [formControl]="searchTerm"
+        />
+      </div>
+      <button
+        class="inline-flex text-white bg-blue-100 border-0 py-2 px-6 focus:bg-blue-200 hover:bg-blue-200 rounded text-lg"
+      >
+        Search
+      </button>
+    </div>
+  </form>
+
+  <h2 class="text-4xl font-bold">Recommended Jobs</h2>
+  <div
+    class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
+  >
+    @for (job of jobs(); track job.jobDetails.id) {
+      <app-mini-info-card
+        infoLink="/jobs/{{ job.jobDetails.id }}"
+        infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
+        infoTitle="{{ job.jobDetails.position }}"
+        infoName="{{ job.businessDetails.firstName }}"
+        infoType="{{ job.jobDetails.type }}"
+      />
+    }
+  </div>
+
+  <a
+    routerLink="/jobs"
+    class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
+  >
+    More... 🡒
+  </a>
+</section>

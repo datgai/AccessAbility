@@ -1,1 +1,61 @@
-<p>business-view works!</p>
+<section
+  class="flex flex-col bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md mb-5"
+>
+  <h2 class="text-4xl font-bold mb-2">
+    Hello there, {{ userStore.user?.profile?.firstName }}.
+  </h2>
+  <app-summary-card
+    [summaryInfo]="[
+      {
+        title: 'Applications',
+        stats: jobApplicationIds().length
+      },
+      {
+        title: 'Job Offers',
+        stats: numOffers()
+      },
+      {
+        title: 'Workers',
+        stats: 0
+      }
+    ]"
+    class="mb-2"
+  />
+  <a
+    routerLink="/profile"
+    class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
+  >
+    More... 🡒
+  </a>
+</section>
+
+<section
+  class="flex flex-col gap-2 bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md"
+>
+  <h2 class="text-4xl font-bold">Applicants</h2>
+  <div
+    class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
+  >
+    @for (
+      application of applications();
+      track application.applicantDetails.uid
+    ) {
+      <app-mini-info-card
+        infoLink="/user/{{ application.applicantDetails.uid }}"
+        infoImageUrl="{{
+          application.applicantDetails.profile.profilePictureUrl
+        }}"
+        infoTitle="{{ application.applicantDetails.profile.firstName }}"
+        infoName="{{ application.jobDetails.position }}"
+        infoType="{{ application.jobDetails.type }}"
+      />
+    }
+  </div>
+
+  <a
+    routerLink="/applicants"
+    class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
+  >
+    More... 🡒
+  </a>
+</section>
