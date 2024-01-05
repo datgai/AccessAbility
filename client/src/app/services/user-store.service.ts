@@ -22,8 +22,4 @@ export class UserStoreService {
   set user(newUser: UserResponse | undefined) {
     localStorage.setItem(this.userKey, JSON.stringify(newUser));
   }
-
-  deleteUser() {
-    localStorage.removeItem(this.userKey);
-  }
 }

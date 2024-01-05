@@ -27,8 +27,8 @@ export class AppComponent implements OnInit {
 
   // Keep local storage in sync when loading the application
   ngOnInit(): void {
-    // Delete user from local storage if not logged in
-    if (!this.userStore.isAuthenticated()) return this.userStore.deleteUser();
+    // Nothing to do if user is not logged in
+    if (!this.userStore.isAuthenticated()) return;
 
     // Update profile
     this.userService.getUser(this.userStore.user?.uid ?? '').subscribe({
