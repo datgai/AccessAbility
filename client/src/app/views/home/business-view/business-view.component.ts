@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EMPTY, expand, from } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
 import { JobDetails, JobService } from '../../../services/job.service';
@@ -13,7 +14,12 @@ import { UserService } from '../../../services/user.service';
 @Component({
   selector: 'app-business-view',
   standalone: true,
-  imports: [SummaryCardComponent, RouterLink, MiniInfoCardComponent],
+  imports: [
+    SummaryCardComponent,
+    RouterLink,
+    MiniInfoCardComponent,
+    LoaderComponent,
+  ],
   templateUrl: './business-view.component.html',
   styleUrl: './business-view.component.css',
 })

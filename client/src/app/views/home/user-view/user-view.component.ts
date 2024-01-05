@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { EMPTY, expand, tap } from 'rxjs';
+import { LoaderComponent } from '../../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
 import { JobInfo, JobService } from '../../../services/job.service';
@@ -16,6 +17,7 @@ import { UserStoreService } from '../../../services/user-store.service';
     FormsModule,
     ReactiveFormsModule,
     SummaryCardComponent,
+    LoaderComponent,
   ],
   templateUrl: './user-view.component.html',
   styleUrl: './user-view.component.css',
