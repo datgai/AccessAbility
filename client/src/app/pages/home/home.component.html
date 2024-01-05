@@ -4,6 +4,7 @@
 ) {
   <app-landing-view></app-landing-view>
 } @else {
+  <h1 class="text-5xl font-bold mb-2">Home</h1>
   @if (userStore.user?.profile?.role === UserRole.USER) {
     <app-user-view></app-user-view>
   } @else if (userStore.user?.profile?.role === UserRole.BUSINESS) {
