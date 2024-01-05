@@ -46,7 +46,7 @@
 <section
   class="flex flex-col gap-2 bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md"
 >
-  <form [formGroup]="searchForm" (submit)="onSubmit()">
+  <form (ngSubmit)="onSubmit()">
     <label
       for="default-search"
       class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -61,7 +61,7 @@
           name="hero-field"
           placeholder="Search Jobs..."
           class="w-full bg-gray-100 bg-opacity-50 rounded focus:ring-2 focus:ring-indigo-200 focus:bg-transparent border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-          formControlName="searchTerm"
+          [formControl]="searchTerm"
         />
       </div>
       <button

@@ -1,10 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Observable, concatMap, from, map, switchMap, toArray } from 'rxjs';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
@@ -19,30 +14,30 @@ import { UserService } from '../../../services/user.service';
 @Component({
   selector: 'app-user-view',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, MiniInfoCardComponent],
+  imports: [
+    RouterLink,
+    MiniInfoCardComponent,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './user-view.component.html',
   styleUrl: './user-view.component.css',
 })
 export class UserViewComponent implements OnInit {
   public jobs = signal<JobInfo[]>([]);
-  private nextPageToken: string = '';
+  public jobAppliedIds = signal<string[]>([]);
+  public searchTerm = new FormControl<string>('');
 
-  public searchForm!: FormGroup<{
-    searchTerm: FormControl<string>;
-  }>;
+  private nextPageToken: string = '';
 
   constructor(
     private jobService: JobService,
     private userService: UserService,
-    private formBuilder: FormBuilder,
     public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
-    this.searchForm = this.formBuilder.group({
-      searchTerm: new FormControl<string>('') as FormControl<string>,
-    });
-
+    // Load intial jobs
     this.formatJobList(
       this.jobService.getJobList(this.nextPageToken),
     ).subscribe({
@@ -52,9 +47,11 @@ export class UserViewComponent implements OnInit {
   }
 
   onSubmit() {
-    const { searchTerm } = this.searchForm.value;
     this.formatJobList(
-      this.jobService.getJobList(this.nextPageToken, searchTerm),
+      this.jobService.getJobList(
+        this.nextPageToken,
+        this.searchTerm.value ?? '',
+      ),
     ).subscribe({
       next: (jobResponse) => this.jobs.set(jobResponse),
       error: (err) => console.error(err),
