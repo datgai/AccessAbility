@@ -17,7 +17,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'jobs', component: JobsComponent },
-  { path: 'job-details', component: JobDetailsComponent },
+  { path: 'jobs/:id', component: JobDetailsComponent },
   { path: 'job-listing', component: JobListingComponent },
   { path: 'my-jobs', component: MyJobsComponent },
   { path: 'create-job', component: CreateJobComponent },
