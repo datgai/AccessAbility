@@ -3,6 +3,8 @@ import { User } from '@angular/fire/auth';
 import { UserProfile } from '../../../../shared/src/types/user';
 import { AuthenticationService } from './authentication.service';
 
+export type UserResponse = User & { profile: UserProfile };
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,8 +19,6 @@ export class UserStoreService {
 
   get user() {
     const user = localStorage.getItem(this.authenticationService.userKey) ?? '';
-    return user
-      ? (JSON.parse(user) as (User & { profile: UserProfile }) | undefined)
-      : undefined;
+    return user ? (JSON.parse(user) as UserResponse | undefined) : undefined;
   }
 }
