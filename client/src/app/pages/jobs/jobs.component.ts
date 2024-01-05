@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { tap } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { JobInfo, JobService } from '../../services/job.service';
 import { UserStoreService } from '../../services/user-store.service';
@@ -8,7 +9,12 @@ import { UserStoreService } from '../../services/user-store.service';
 @Component({
   selector: 'app-jobs',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MiniInfoCardComponent],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MiniInfoCardComponent,
+    LoaderComponent,
+  ],
   templateUrl: './jobs.component.html',
   styleUrl: './jobs.component.css',
 })
