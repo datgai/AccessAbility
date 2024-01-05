@@ -28,6 +28,10 @@
         {{ job()!.jobDetails.position }}
       </p>
       <p>
+        <span class="font-bold">Skills Wanted:</span>
+        {{ job()!.jobDetails.skills.join(", ") }}
+      </p>
+      <p>
         <span class="font-bold">Job Description:</span>
         <span
           class="unreset"
