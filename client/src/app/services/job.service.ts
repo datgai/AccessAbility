@@ -32,6 +32,10 @@ export class JobService {
     );
   }
 
+  getJob(jobId: string) {
+    return this.http.get<JobDetails>(`${environment.baseUrl}/job/${jobId}`);
+  }
+
   formatJobList(jobResponse: Observable<JobResponse>) {
     return jobResponse.pipe(
       switchMap((response) => {
