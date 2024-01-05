@@ -6,7 +6,6 @@ import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-i
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
 import { JobInfo, JobService } from '../../../services/job.service';
 import { UserStoreService } from '../../../services/user-store.service';
-import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-user-view',
@@ -30,7 +29,6 @@ export class UserViewComponent implements OnInit {
 
   constructor(
     private jobService: JobService,
-    private userService: UserService,
     public userStore: UserStoreService,
   ) {}
 
