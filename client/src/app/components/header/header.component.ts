@@ -21,7 +21,7 @@ export class HeaderComponent {
   onSubmitLogout(): void {
     this.authenticationService.logout().subscribe({
       next: () => {
-        localStorage.removeItem(this.authenticationService.userKey);
+        localStorage.removeItem(this.userStore.userKey);
         this.router.navigate(['login']);
       },
       error: (error: Error) => console.log(error.message),

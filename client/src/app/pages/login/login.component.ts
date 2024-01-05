@@ -11,6 +11,7 @@ import {
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
 import { AuthenticationService } from '../../services/authentication.service';
+import { UserStoreService } from '../../services/user-store.service';
 import { LoginService } from './services/login.service';
 
 @Component({
@@ -29,6 +30,7 @@ export class LoginComponent implements OnInit {
     private formBulder: FormBuilder,
     private authenticationService: AuthenticationService,
     private loginService: LoginService,
+    private userStore: UserStoreService,
     private router: Router,
   ) {}
 
@@ -64,7 +66,7 @@ export class LoginComponent implements OnInit {
           this.loginService.getProfile(userToken).subscribe({
             next: async (response) => {
               localStorage.setItem(
-                this.authenticationService.userKey,
+                this.userStore.userKey,
                 JSON.stringify({ ...user, profile: response.profile }),
               );
             },
@@ -74,7 +76,7 @@ export class LoginComponent implements OnInit {
                 this.authenticationService.createProfile(userToken).subscribe({
                   next: (res) => {
                     localStorage.setItem(
-                      this.authenticationService.userKey,
+                      this.userStore.userKey,
                       JSON.stringify({ ...user, profile: res.user?.profile }),
                     );
                   },

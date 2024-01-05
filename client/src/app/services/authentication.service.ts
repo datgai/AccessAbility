@@ -12,6 +12,7 @@ import {
 import { catchError, from, throwError } from 'rxjs';
 import { UserProfile, UserRole } from '../../../../shared/src/types/user';
 import { environment } from '../../environments/environment';
+import { UserStoreService } from './user-store.service';
 
 interface AuthenticationParams {
   email: string;
@@ -22,35 +23,37 @@ interface AuthenticationParams {
   providedIn: 'root',
 })
 export class AuthenticationService {
-  public userKey: string = 'user';
-
-  constructor(private auth: Auth = inject(Auth), private http: HttpClient) {}
+  constructor(
+    private auth: Auth = inject(Auth),
+    private http: HttpClient,
+    private userStore: UserStoreService,
+  ) {}
 
   login(params: AuthenticationParams) {
     return from(
-      signInWithEmailAndPassword(this.auth, params.email, params.password)
+      signInWithEmailAndPassword(this.auth, params.email, params.password),
     ).pipe(
       catchError((error: FirebaseError) =>
-        throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
-      )
+        throwError(() => new Error(this.translateFirebaseErrorMessage(error))),
+      ),
     );
   }
 
   register(params: AuthenticationParams) {
     return from(
-      createUserWithEmailAndPassword(this.auth, params.email, params.password)
+      createUserWithEmailAndPassword(this.auth, params.email, params.password),
     ).pipe(
       catchError((error: FirebaseError) =>
-        throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
-      )
+        throwError(() => new Error(this.translateFirebaseErrorMessage(error))),
+      ),
     );
   }
 
   logout() {
     return from(signOut(this.auth)).pipe(
       catchError((error: FirebaseError) =>
-        throwError(() => new Error(this.translateFirebaseErrorMessage(error)))
-      )
+        throwError(() => new Error(this.translateFirebaseErrorMessage(error))),
+      ),
     );
   }
 
@@ -61,7 +64,7 @@ export class AuthenticationService {
     }>(
       `${environment.baseUrl}/user/profile`,
       { role: UserRole.USER },
-      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) }
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
     );
   }
 
