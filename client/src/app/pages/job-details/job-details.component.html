@@ -1,1 +1,41 @@
-<p>job-details works!</p>
+<section class="bg-neutral-300 bg-opacity-50 px-2 py-2 rounded-md">
+  <app-mini-info-card
+    infoLink="/jobs/{{ job()!.jobDetails.id }}"
+    infoImageUrl="{{ job()!.businessDetails.profilePictureUrl }}"
+    infoTitle="{{ job()!.jobDetails.position }}"
+    infoName="{{ job()!.businessDetails.firstName }}"
+    infoType="{{ job()!.jobDetails.type }}"
+    class="rounded-md"
+  />
+
+  <div class="flex flex-col gap-2 my-5">
+    <h2 class="text-4xl font-bold -mb-2">Job Information</h2>
+    <p>
+      <span class="font-bold">Workplace Type:</span>
+      {{ job()!.jobDetails.locationType }}
+    </p>
+    <p>
+      <span class="font-bold">Location:</span>
+      {{ job()!.businessDetails.address }}
+    </p>
+    <p>
+      <span class="font-bold">Company Name for Job:</span>
+      {{ job()!.businessDetails.firstName }}
+    </p>
+    <p>
+      <span class="font-bold">Position Title:</span>
+      {{ job()!.jobDetails.position }}
+    </p>
+    <p>
+      <span class="font-bold">Job Description:</span>
+      <br />
+      {{ job()!.jobDetails.description }}
+    </p>
+  </div>
+
+  <button
+    class="bg-blue-100 hover:bg-blue-200 rounded-full font-bold text-lg w-full text-neutral-300 py-2"
+  >
+    Apply
+  </button>
+</section>
