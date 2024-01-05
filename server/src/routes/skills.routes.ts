@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { getSkills } from '../controllers/skills.controller';
+import { getSkillById, getSkills } from '../controllers/skills.controller';
 
 const router = Router();
 
 router.get('/skills', getSkills);
+router.get('/skill/:id', getSkillById);
 
 export default router;
