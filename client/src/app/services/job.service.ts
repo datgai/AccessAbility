@@ -36,6 +36,13 @@ export class JobService {
     return this.http.get<JobDetails>(`${environment.baseUrl}/job/${jobId}`);
   }
 
+  editJob(jobId: string, body: Partial<Job>) {
+    return this.http.patch<JobDetails>(
+      `${environment.baseUrl}/job/${jobId}`,
+      body,
+    );
+  }
+
   formatJobList(jobResponse: Observable<JobResponse>) {
     return jobResponse.pipe(
       switchMap((response) => {
