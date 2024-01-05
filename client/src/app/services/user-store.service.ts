@@ -21,4 +21,15 @@ export class UserStoreService {
     const user = localStorage.getItem(this.authenticationService.userKey) ?? '';
     return user ? (JSON.parse(user) as UserResponse | undefined) : undefined;
   }
+
+  set user(newUser: UserResponse | undefined) {
+    localStorage.setItem(
+      this.authenticationService.userKey,
+      JSON.stringify(newUser),
+    );
+  }
+
+  deleteUser() {
+    localStorage.removeItem(this.authenticationService.userKey);
+  }
 }
