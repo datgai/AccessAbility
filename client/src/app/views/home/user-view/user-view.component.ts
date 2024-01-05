@@ -12,6 +12,7 @@ import {
   toArray,
 } from 'rxjs';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
+import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
 import {
   JobInfo,
   JobResponse,
@@ -28,6 +29,7 @@ import { UserService } from '../../../services/user.service';
     MiniInfoCardComponent,
     FormsModule,
     ReactiveFormsModule,
+    SummaryCardComponent,
   ],
   templateUrl: './user-view.component.html',
   styleUrl: './user-view.component.css',

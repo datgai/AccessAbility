@@ -4,35 +4,22 @@
   <h2 class="text-4xl font-bold mb-2">
     Hello there, {{ userStore.user?.profile?.firstName }}.
   </h2>
-  <div class="grid grid-cols-3 gap-2 text-center">
-    <div
-      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
-    >
-      <p>
-        Jobs Applied
-        <br />
-        {{ jobAppliedIds().length }}
-      </p>
-    </div>
-    <div
-      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
-    >
-      <p>
-        Job Offers
-        <br />
-        {{ userStore.user?.profile?.offers?.length ?? 0 }}
-      </p>
-    </div>
-    <div
-      class="grid place-items-center bg-blue-100 px-5 py-5 rounded-md text-neutral-300 font-bold text-lg"
-    >
-      <p>
-        Benefits
-        <br />
-        4
-      </p>
-    </div>
-  </div>
+  <app-summary-card
+    [summaryInfo]="[
+      {
+        title: 'Jobs Applied',
+        stats: jobAppliedIds().length
+      },
+      {
+        title: 'Job Offers',
+        stats: userStore.user?.profile?.offers?.length ?? 0
+      },
+      {
+        title: 'Benefits',
+        stats: 4
+      }
+    ]"
+  />
   <a
     routerLink="/profile"
     class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
