@@ -1,6 +1,9 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MarkdownPipe } from 'ngx-markdown';
 import { concatMap, from, map, switchMap, toArray } from 'rxjs';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { JobInfo, JobService } from '../../services/job.service';
 import { SkillsService } from '../../services/skills.service';
@@ -9,7 +12,7 @@ import { UserService } from '../../services/user.service';
 @Component({
   selector: 'app-job-details',
   standalone: true,
-  imports: [MiniInfoCardComponent],
+  imports: [MiniInfoCardComponent, MarkdownPipe, CommonModule, LoaderComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.css',
 })
