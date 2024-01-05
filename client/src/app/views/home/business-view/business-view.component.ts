@@ -63,7 +63,7 @@ export class BusinessViewComponent implements OnInit {
                     }
 
                     // Load all applications that the business has received
-                    if (loadedApplicantIds.includes(applicantId)) return;
+                    // if (loadedApplicantIds.includes(applicantId)) return;
                     loadedApplicantIds.push(applicantId);
 
                     // Load a maximum of 10 applicants
