@@ -1,7 +1,16 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Observable, concatMap, from, map, switchMap, toArray } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  concatMap,
+  expand,
+  from,
+  map,
+  switchMap,
+  toArray,
+} from 'rxjs';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import {
   JobInfo,
@@ -44,6 +53,29 @@ export class UserViewComponent implements OnInit {
       next: (jobResponse) => this.jobs.set(jobResponse),
       error: (err) => console.error(err),
     });
+
+    // Get all jobs user applied to
+    let nextPageToken: string | undefined = '';
+    this.jobService
+      .getJobList(nextPageToken)
+      .pipe(
+        expand((response) =>
+          typeof response.nextPageToken === 'undefined'
+            ? EMPTY
+            : this.jobService.getJobList(nextPageToken),
+        ),
+      )
+      .subscribe({
+        next: (response) => {
+          response.jobs.forEach((job) => {
+            if (job.applicants?.includes(this.userStore.user?.uid ?? '')) {
+              if (this.jobAppliedIds().includes(job.id)) return;
+              this.jobAppliedIds().push(job.id);
+            }
+          });
+          nextPageToken = response.nextPageToken;
+        },
+      });
   }
 
   onSubmit() {
