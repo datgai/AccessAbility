@@ -11,6 +11,7 @@ import { MyJobsComponent } from './pages/my-jobs/my-jobs.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { PostDetailsComponent } from './pages/post-details/post-details.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'my-jobs', component: MyJobsComponent },
   { path: 'create-job', component: CreateJobComponent },
   { path: 'forum', component: ForumComponent },
+  { path: 'forum/:id', component: PostDetailsComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'forum', component: ForumComponent },
   { path: '**', component: NotFoundComponent },

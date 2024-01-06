@@ -4,7 +4,9 @@ export interface Comment {
 }
 
 export interface Post {
+	postId: string;
 	authorId: string;
+	date: string;
 	title: string;
 	content: string; // saved as markdown, frontend should render the md
 	thumbnailUrl: string;

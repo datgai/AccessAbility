@@ -11,10 +11,13 @@
 
         </div>
         <div class="overflow-x-hidden">
-
+    
             <div class="container flex justify-between mx-auto">
                 <div class="w-full ">
-                    <app-post></app-post>
+                    @for(post of postList; track post.postId ) {
+                        <app-post [post]="post"></app-post>
+                    }
+                    
                 </div>
             </div>
         </div>
