@@ -8,15 +8,15 @@
     [summaryInfo]="[
       {
         title: 'Jobs Applied',
-        stats: jobAppliedIds().length
+        stats: jobAppliedIds().length.toString()
       },
       {
         title: 'Job Offers',
-        stats: userStore.user?.profile?.offers?.length ?? 0
+        stats: userStore.user?.profile?.offers?.length?.toString() ?? '0'
       },
       {
         title: 'Benefits',
-        stats: 4
+        stats: '4'
       }
     ]"
   />

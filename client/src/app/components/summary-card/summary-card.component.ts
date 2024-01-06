@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 interface SummaryInfo {
   title: string;
-  stats: number;
+  stats: string;
 }
 
 @Component({
