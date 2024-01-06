@@ -24,7 +24,7 @@ export const routes: Routes = [
   { path: 'my-jobs', component: MyJobsComponent },
   { path: 'create-job', component: CreateJobComponent },
   { path: 'forum', component: ForumComponent },
-  { path: 'profile', component: ProfileComponent },
+  { path: 'user/:id', component: ProfileComponent },
   { path: 'forum', component: ForumComponent },
   { path: '**', component: NotFoundComponent },
 ];
