@@ -11,11 +11,7 @@ import { UserStoreService } from '../../services/user-store.service'
 })
 export class ForumComponent {
   constructor(
-    private userStore: UserStoreService
+    public userStore: UserStoreService
   ){}
 
-  public isAuthenticated: boolean = localStorage.getItem(this.userStore.userKey)
-    ? true
-    : false;
-
-}
+  }
