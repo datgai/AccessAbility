@@ -2,10 +2,21 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
-import { concatMap, from, map, mergeMap, of, switchMap, toArray } from 'rxjs';
+import {
+  EMPTY,
+  concatMap,
+  expand,
+  from,
+  map,
+  mergeMap,
+  of,
+  switchMap,
+  toArray,
+} from 'rxjs';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../components/summary-card/summary-card.component';
+import { JobService } from '../../services/job.service';
 import { SkillsService } from '../../services/skills.service';
 import {
   UserResponse,
@@ -30,6 +41,7 @@ import { UserService } from '../../services/user.service';
 })
 export class ProfileComponent implements OnInit {
   public user = signal<UserResponse | undefined>(undefined);
+  public jobAppliedIds = signal<string[]>([]);
   public openModal = signal<boolean>(false);
 
   constructor(
@@ -37,6 +49,7 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private skillsService: SkillsService,
+    private jobService: JobService,
     public userStore: UserStoreService,
   ) {}
 
@@ -66,10 +79,31 @@ export class ProfileComponent implements OnInit {
           this.user.set(user);
           this.userStore.user = user;
         },
-        error: (err) => {
-          console.error(err);
-          this.router.navigate(['404']);
+        complete: () => {
+          // Get all jobs user applied to
+          let nextPageToken: string | undefined = '';
+          this.jobService
+            .getJobList(nextPageToken)
+            .pipe(
+              expand((response) =>
+                typeof response.nextPageToken === 'undefined'
+                  ? EMPTY
+                  : this.jobService.getJobList(nextPageToken),
+              ),
+            )
+            .subscribe({
+              next: (response) => {
+                response.jobs.forEach((job) => {
+                  if (job.applicants?.includes(this.user()!.uid ?? '')) {
+                    if (this.jobAppliedIds().includes(job.id)) return;
+                    this.jobAppliedIds().push(job.id);
+                  }
+                });
+                nextPageToken = response.nextPageToken;
+              },
+            });
         },
+        error: () => this.router.navigate(['404']),
       });
 
     return;
