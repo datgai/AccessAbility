@@ -61,14 +61,18 @@
   <div
     class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
   >
-    @for (job of jobs(); track job.jobDetails.id) {
-      <app-mini-info-card
-        infoLink="/jobs/{{ job.jobDetails.id }}"
-        infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
-        infoTitle="{{ job.jobDetails.position }}"
-        infoName="{{ job.businessDetails.firstName }}"
-        infoType="{{ job.jobDetails.type }}"
-      />
+    @if (jobs().length === 0) {
+      <app-loader class="col-span-full" />
+    } @else {
+      @for (job of jobs(); track job.jobDetails.id) {
+        <app-mini-info-card
+          infoLink="/jobs/{{ job.jobDetails.id }}"
+          infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
+          infoTitle="{{ job.jobDetails.position }}"
+          infoName="{{ job.businessDetails.firstName }}"
+          infoType="{{ job.jobDetails.type }}"
+        />
+      }
     }
   </div>
 

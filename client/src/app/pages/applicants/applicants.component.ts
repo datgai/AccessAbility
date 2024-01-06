@@ -1,29 +1,22 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, signal } from '@angular/core';
 import { EMPTY, expand, from } from 'rxjs';
-import { LoaderComponent } from '../../../components/loader/loader.component';
-import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
-import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
-import { JobDetails, JobService } from '../../../services/job.service';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
+import { JobDetails, JobService } from '../../services/job.service';
 import {
   UserResponse,
   UserStoreService,
-} from '../../../services/user-store.service';
-import { UserService } from '../../../services/user.service';
+} from '../../services/user-store.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
-  selector: 'app-business-view',
+  selector: 'app-applicants',
   standalone: true,
-  imports: [
-    SummaryCardComponent,
-    RouterLink,
-    MiniInfoCardComponent,
-    LoaderComponent,
-  ],
-  templateUrl: './business-view.component.html',
-  styleUrl: './business-view.component.css',
+  imports: [MiniInfoCardComponent, LoaderComponent],
+  templateUrl: './applicants.component.html',
+  styleUrl: './applicants.component.css',
 })
-export class BusinessViewComponent implements OnInit {
+export class ApplicantsComponent {
   public jobApplicationIds = signal<string[]>([]);
   public applications = signal<
     {
@@ -41,7 +34,6 @@ export class BusinessViewComponent implements OnInit {
 
   ngOnInit(): void {
     let nextPageToken: string | undefined = '';
-    const loadedApplicantIds: string[] = [];
     this.jobService
       .getJobList(nextPageToken)
       .pipe(
@@ -67,13 +59,6 @@ export class BusinessViewComponent implements OnInit {
                     if (user.profile.offers.includes(job.id)) {
                       this.numOffers.set(this.numOffers() + 1);
                     }
-
-                    // Load all applications that the business has received
-                    // if (loadedApplicantIds.includes(applicantId)) return;
-                    loadedApplicantIds.push(applicantId);
-
-                    // Load a maximum of 10 applicants
-                    if (loadedApplicantIds.length >= 10) return;
 
                     this.applications().push({
                       jobDetails: job,

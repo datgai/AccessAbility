@@ -1,13 +1,13 @@
 @if (
   !userStore.isAuthenticated() ||
-  userStore.user?.profile?.role === UserRole.ADMIN
+  userStore.user?.profile?.role === userStore.UserRole.ADMIN
 ) {
   <app-landing-view></app-landing-view>
 } @else {
   <h1 class="text-5xl font-bold mb-2">Home</h1>
-  @if (userStore.user?.profile?.role === UserRole.USER) {
+  @if (userStore.user?.profile?.role === userStore.UserRole.USER) {
     <app-user-view></app-user-view>
-  } @else if (userStore.user?.profile?.role === UserRole.BUSINESS) {
+  } @else if (userStore.user?.profile?.role === userStore.UserRole.BUSINESS) {
     <app-business-view></app-business-view>
   }
 }

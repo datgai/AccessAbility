@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { Auth, getIdToken } from '@angular/fire/auth';
-import { UserRole } from '../../../../../shared/src/types/user';
 import { TestService } from '../../services/test.service';
 import { UserStoreService } from '../../services/user-store.service';
 import { BusinessViewComponent } from '../../views/home/business-view/business-view.component';
@@ -17,7 +16,6 @@ import { UserViewComponent } from '../../views/home/user-view/user-view.componen
 })
 export class HomeComponent {
   public responseMessage: string | undefined = undefined;
-  public UserRole = UserRole;
 
   constructor(
     private auth: Auth = inject(Auth),

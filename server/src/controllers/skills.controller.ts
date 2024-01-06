@@ -16,3 +16,29 @@ export const getSkills = async (request: Request, response: Response) => {
     .status(StatusCodes.OK)
     .json(skills.docs.map((skill) => ({ id: skill.id, ...skill.data() })));
 };
+
+export const getSkillById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await skillsRef
+    .doc(id)
+    .get()
+    .then(async (skill) => {
+      if (!skill.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Skill you are looking for cannot be found.'
+        });
+      }
+
+      return response.status(StatusCodes.OK).json({
+        id: skill.id,
+        ...skill.data()
+      });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to find the skill.',
+        error: err
+      });
+    });
+};

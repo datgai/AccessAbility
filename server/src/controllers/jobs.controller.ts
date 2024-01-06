@@ -233,24 +233,22 @@ export const editJobById = async (request: Request, response: Response) => {
 };
 
 const hasInvalidParams = async (request: Request, editing: boolean) => {
-  type Body = Omit<Job, 'businessId' | 'createdAt' | 'applicants'>;
+  type Body = Omit<Job, 'businessId' | 'createdAt'>;
   type Parameter = keyof Body;
 
   const requiredParams: Parameter[] = [
     'description',
     'locationType',
     'position',
-    'type'
+    'type',
+    'applicants'
   ];
 
   const body = request.body as Body;
   const missingParams = getMissingParameters(request, requiredParams);
 
   if (editing) {
-    if (
-      missingParams.length <= 0 ||
-      missingParams.length >= requiredParams.length
-    ) {
+    if (missingParams.length === requiredParams.length) {
       return {
         status: StatusCodes.BAD_REQUEST,
         message: 'Missing parameters.',
