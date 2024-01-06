@@ -91,32 +91,36 @@
             }
           </div>
         }
-        <div class="bg-neutral-300 rounded-md px-2 py-2">
-          <h2 class="text-3xl font-bold mb-2">Experiences</h2>
-          <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            <app-mini-info-card
-              infoLink="/user/{{ user()!.uid }}"
-              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-              infoTitle="Backend Developer"
-              infoName="{{ user()!.profile.firstName }}"
-              infoType="remote"
-            />
-            <app-mini-info-card
-              infoLink="/user/{{ user()!.uid }}"
-              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-              infoTitle="Software Engineer"
-              infoName="{{ user()!.profile.firstName }}"
-              infoType="remote"
-            />
-            <app-mini-info-card
-              infoLink="/user/{{ user()!.uid }}"
-              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-              infoTitle="Frontend Developer"
-              infoName="{{ user()!.profile.firstName }}"
-              infoType="remote"
-            />
+        @if (user()!.profile.role === userStore.UserRole.USER) {
+          <div class="bg-neutral-300 rounded-md px-2 py-2">
+            <h2 class="text-3xl font-bold mb-2">Experiences</h2>
+            <div
+              class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
+            >
+              <app-mini-info-card
+                infoLink="/user/{{ user()!.uid }}"
+                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+                infoTitle="Backend Developer"
+                infoName="{{ user()!.profile.firstName }}"
+                infoType="remote"
+              />
+              <app-mini-info-card
+                infoLink="/user/{{ user()!.uid }}"
+                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+                infoTitle="Software Engineer"
+                infoName="{{ user()!.profile.firstName }}"
+                infoType="remote"
+              />
+              <app-mini-info-card
+                infoLink="/user/{{ user()!.uid }}"
+                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+                infoTitle="Frontend Developer"
+                infoName="{{ user()!.profile.firstName }}"
+                infoType="remote"
+              />
+            </div>
           </div>
-        </div>
+        }
       } @else {
         <app-loader class="shadow-none" />
       }
