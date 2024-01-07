@@ -13,14 +13,4 @@ import {RouterModule} from '@angular/router';
 export class PostComponent {
   @Input() post!: Post;
 
-/*
-  public id: number = 1
-  public author: string = 'John'
-  public date: string = 'Jan 1, 2024'
-  public title: string = 'How to ace your interviews.'
-  public content: string = 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque. '
-  public tag: string = 'Career'
-  public comments: number = 12
-  public likes: number = 50
-*/
 }
