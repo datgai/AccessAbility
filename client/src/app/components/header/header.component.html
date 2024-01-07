@@ -78,10 +78,10 @@
     class="fixed bottom-0 left-0 z-50 w-full h-16 bg-blue-100 border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600 block sm:hidden"
   >
     <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
-      <button
+      <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group dark:border-gray-600"
-        routerLink="/profile-job-seeker"
+        routerLink="/"
       >
         <img
           src="/assets/Home.png"
@@ -91,10 +91,11 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Home</span
         >
-      </button>
-      <button
+    </a>
+      <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group dark:border-gray-600"
+        routerLink="/jobs"
       >
         <img
           src="/assets/Resources.png"
@@ -104,10 +105,11 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Jobs</span
         >
-      </button>
-      <button
+  </a>
+      <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group dark:border-gray-600"
+        routerLink="/forum"
       >
         <img
           src="/assets/Forum.png"
@@ -117,10 +119,11 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Forum</span
         >
-      </button>
-      <button
+</a>
+      <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group dark:border-gray-600"
+        routerLink="/profile"
       >
         <img
           src="/assets/Profile.png"
@@ -130,7 +133,7 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Profile</span
         >
-      </button>
+</a>
     </div>
   </div>
 </header>

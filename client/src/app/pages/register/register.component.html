@@ -8,7 +8,7 @@
 
 
     <div class="mb-5">
-      <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">I am a</span>
+      <span class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">I am a</span>
       <div class="flex justify-around">
         <label>
           <input type="radio" name="role" value="jobseeker" (change)="onRoleChange($event)" checked> Job Seeker
@@ -22,21 +22,21 @@
     @if(isJobSeeker) {
 
     <div class="mb-5">
-      <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First Name</label>
+      <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">First Name</label>
       <input id="firstName"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         type="text" formControlName="firstName" />
     </div>
 
     <div class="mb-5">
-      <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Name</label>
+      <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Last Name</label>
       <input id="lastName"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         type="text" formControlName="lastName" />
     </div>
     
     <div class="mb-5">
-      <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Gender</span>
+      <span class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Gender</span>
       <div class="flex justify-between">
         <label>
           <input type="radio" name="gender" value="female"> Female
@@ -51,99 +51,99 @@
     </div>
 
     <div class="mb-5">
-      <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date of Birth</label>
+      <label class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Date of Birth</label>
       <input type="date"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         formControlName="dob" />
     </div>
 
     <div class="mb-5">
-      <label for="profilePic" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Profile
+      <label for="profilePic" class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Profile
         Picture</label>
       <input id="profilePic" type="file"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         formControlName="profilePic" accept="image/*" />
     </div>
 
     <div class="mb-5">
-      <label for="mobileNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mobile
+      <label for="mobileNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Mobile
         Number</label>
       <input id="mobileNumber"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         type="tel" pattern="[0-9]*" formControlName="mobileNumber" />
     </div>
 
     <div class="mb-5">
-      <label for="impairments" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Impairments</label>
+      <label for="impairments" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Impairments</label>
       <textarea id="impairments"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         formControlName="impairments" rows="4"></textarea>
     </div>
 
     } @else {
       
       <div class="mb-5">
-        <label for="companyName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company Name</label>
+        <label for="companyName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Company Name</label>
         <input id="companyName"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type="text" formControlName="companyName" />
       </div>
 
       <div class="mb-5">
-        <label for="registrationNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Company Registration Number</label>
+        <label for="registrationNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Company Registration Number</label>
         <input id="registrationNumber"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type="text" formControlName="registrationNumber" />
       </div>
 
       <div class="mb-5">
-        <label for="companyPhoneNo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Contact
+        <label for="companyPhoneNo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"> Contact
           Number</label>
         <input id="companyPhoneNo"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type="tel" pattern="[0-9]*" formControlName="companyPhoneNo" />
       </div>
     
       <div class="mb-5">
-        <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">City</label>
+        <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">City</label>
         <input id="city"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type="text" formControlName="city" />
       </div>
 
       <div class="mb-5">
-        <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">State</label>
+        <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">State</label>
         <input id="state"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type="text" formControlName="state" />
       </div>
 
       <div class="mb-5">
-        <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
+        <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Address</label>
         <textarea id="address"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
           formControlName="address" rows="2"></textarea>
       </div>
     }
 
     <div class="mb-5">
-      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Email</label>
       <input id="email"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         type="email" formControlName="email" />
     </div>
 
     <div class="mb-5">
-      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Password</label>
       <input id="password" type="password"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         formControlName="password" />
     </div>
 
     <div class="mb-5">
-      <label for="confirmationPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
+      <label for="confirmationPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Confirm Password</label>
       <input id="confirmationPassword" type="password"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
         formControlName="confirmationPassword" />
     </div>
 

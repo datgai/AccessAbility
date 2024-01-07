@@ -1,1 +1,27 @@
-<p>forum works!</p>
+<section>
+    <div class="px-5 pt-5 pb-24 lg:py-12 mx-auto">
+
+        <div class="flex justify-between">
+            <h1 class="text-5xl font-bold text-black">Forum</h1>
+
+            @if(userStore.isAuthenticated()) {
+                <a routerLink="/create-post">
+                    <button class="text-white bg-blue-600 py-2 px-8 focus:outline-none hover:bg-blue-700 rounded text-lg">Add
+                    New Post</button>
+                </a>
+            }
+
+        </div>
+        <div class="overflow-x-hidden">
+    
+            <div class="container flex justify-between mx-auto">
+                <div class="w-full ">
+                    @for(post of postList; track post.postId ) {
+                        <app-post [post]="post"></app-post>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
