@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ApplicantsComponent } from './pages/applicants/applicants.component';
 import { CreateJobComponent } from './pages/create-job/create-job.component';
+import { EditProfileComponent } from './pages/edit-profile/edit-profile.component';
 import { ForumComponent } from './pages/forum/forum.component';
 import { HomeComponent } from './pages/home/home.component';
 import { JobDetailsComponent } from './pages/job-details/job-details.component';
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'create-job', component: CreateJobComponent },
   { path: 'forum', component: ForumComponent },
   { path: 'user/:id', component: ProfileComponent },
+  { path: 'edit-profile', component: EditProfileComponent },
   { path: 'forum', component: ForumComponent },
   { path: '**', component: NotFoundComponent },
 ];
