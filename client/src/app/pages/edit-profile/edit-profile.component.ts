@@ -162,9 +162,10 @@ export class EditProfileComponent implements OnInit {
     formData.append('role', this.user()!.profile.role);
 
     this.authenticationService.editOrCreateProfile(token, formData).subscribe({
-      error: (error: HttpErrorResponse) =>
-        this.toastr.error(error.error.message),
-      complete: () => this.toastr.success('Profile edited successfully'),
+      next: (response) => this.toastr.success(response.message),
+      error: (error: HttpErrorResponse) => {
+        this.toastr.error(error.error.message);
+      },
     });
   }
 }
