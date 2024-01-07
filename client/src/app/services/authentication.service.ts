@@ -10,7 +10,7 @@ import {
   signOut,
 } from '@angular/fire/auth';
 import { catchError, from, throwError } from 'rxjs';
-import { UserProfile, UserRole } from '../../../../shared/src/types/user';
+import { UserProfile } from '../../../../shared/src/types/user';
 import { environment } from '../../environments/environment';
 import { UserStoreService } from './user-store.service';
 
@@ -57,15 +57,13 @@ export class AuthenticationService {
     );
   }
 
-  createProfile(token: string) {
+  editOrCreateProfile(token: string, body: FormData) {
     return this.http.post<{
       message: string;
       user?: User & { profile: UserProfile };
-    }>(
-      `${environment.baseUrl}/user/profile`,
-      { role: UserRole.USER },
-      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
-    );
+    }>(`${environment.baseUrl}/user/profile`, body, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
   }
 
   private translateFirebaseErrorMessage({ code, message }: FirebaseError) {
