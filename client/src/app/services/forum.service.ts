@@ -15,6 +15,7 @@ export class ForumService {
 	  thumbnailUrl: '/assets/header-logo.png',
 	  comments: [{
         authorId: "user2",
+        date:'Jan 11, 2024',
         content: "This is a great post! :+1:"}],
 	  isDonation: false
   },
@@ -24,10 +25,17 @@ export class ForumService {
 	  date: 'Jan 2, 2023',
 	  title: 'My Success Story',
 	  content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque.',
-	  thumbnailUrl: '/assets/header-logo.png',
+	  thumbnailUrl: '/assets/sdg4.png',
 	  comments: [{
         authorId: "user1",
-        content: "This is a great post! :+1:"}],
+        date:'Jan 3, 2024',
+        content: "This is a great post!"},
+        {
+          authorId: "user100",
+          date:'Jan 3, 2024',
+          content: "Wow thanks for sharing!"}
+      
+      ],
 	  isDonation: false
   },
   {
@@ -36,9 +44,10 @@ export class ForumService {
 	  date: 'Dec 1, 2023',
 	  title: 'How Accessibility\'s scholarship changed my life',
 	  content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque.',
-	  thumbnailUrl: '/assets/header-logo.png',
+	  thumbnailUrl: '/assets/hero-bg.png',
 	  comments: [{
         authorId: "user0",
+        date:'December 10, 2024',
         content: "This is a great post! :+1:"}],
 	  isDonation: true
   }

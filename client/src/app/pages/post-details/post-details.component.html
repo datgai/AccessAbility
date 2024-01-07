@@ -35,3 +35,7 @@
         </button>
     </form>
     
+    @for(comment of post?.comments; track comment.authorId) {
+        <app-comment [comment]="comment"></app-comment>
+    }
+    
