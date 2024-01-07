@@ -1,6 +1,7 @@
+<h1 class="text-5xl font-bold mb-5">Edit Profile</h1>
+
 @if (user()) {
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <h1 class="text-5xl font-bold mb-5">Edit Profile</h1>
     <div class="space-y-12">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-base font-semibold leading-7 text-gray-900">Profile</h2>
