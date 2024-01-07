@@ -164,7 +164,7 @@ export const createProfile = async (request: Request, response: Response) => {
     });
 
     return response.status(StatusCodes.CREATED).json({
-      message: 'Profile added successfully.',
+      message: 'Profile updated successfully.',
       user: { ...user, profile: profileData }
     });
   });
