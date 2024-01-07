@@ -42,7 +42,7 @@
                     @if (preview().previewUrl) {
                       <img
                         [src]="preview().previewUrl"
-                        class="w-44 h-auto mx-auto rounded-full aspect-square"
+                        class="w-44 h-auto mx-auto rounded-full aspect-square object-cover"
                         alt="{{ user()!.profile.firstName }}'s profile picture"
                       />
                     } @else {
