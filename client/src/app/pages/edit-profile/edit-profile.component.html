@@ -253,7 +253,7 @@
               for="first-name"
               class="block text-sm font-medium leading-6 text-gray-900"
             >
-              First name
+              First name <span class="text-red-800">*</span>
             </label>
             <div class="mt-2">
               <input
@@ -262,7 +262,15 @@
                 autocomplete="given-name"
                 class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
                 formControlName="firstName"
+                required
               />
+              @if (form.controls["firstName"].errors) {
+                <small class="text-red-800">
+                  @if (form.controls["firstName"].errors["required"]) {
+                    First name is required.
+                  }
+                </small>
+              }
             </div>
           </div>
 
@@ -289,7 +297,7 @@
               for="email"
               class="block text-sm font-medium leading-6 text-gray-900"
             >
-              Email address
+              Email address <span class="text-red-800">*</span>
             </label>
             <div class="mt-2">
               <input
@@ -298,7 +306,18 @@
                 autocomplete="email"
                 class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
                 formControlName="email"
+                required
               />
+              @if (form.controls["email"].errors) {
+                <small class="text-red-800">
+                  @if (form.controls["email"].errors["required"]) {
+                    Email is required (and currently cannot be edited).
+                  }
+                  @if (form.controls["email"].errors["email"]) {
+                    Not a valid email address.
+                  }
+                </small>
+              }
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { DpDatePickerModule } from 'ng2-date-picker';
 import { TagInputModule } from 'ngx-chips';
@@ -87,8 +88,14 @@ export class EditProfileComponent implements OnInit {
         );
         this.preview().previewUrl = this.user()!.profile.profilePictureUrl;
         this.form = this.formBuilder.group({
-          email: new FormControl<string>(this.user()!.email!),
-          firstName: new FormControl<string>(this.user()!.profile.firstName),
+          email: new FormControl<string>(this.user()!.email!, [
+            Validators.required,
+            Validators.email,
+          ]),
+          firstName: new FormControl<string>(
+            this.user()!.profile.firstName,
+            Validators.required,
+          ),
           lastName: new FormControl<string>(this.user()!.profile.lastName),
           gender: new FormControl<UserGender>(this.user()!.profile.gender),
           dateOfBirth: new FormControl<string>(
@@ -136,6 +143,8 @@ export class EditProfileComponent implements OnInit {
   }
 
   async onSubmit() {
+    if (!this.form.valid) return this.toastr.error('There are invalid fields.');
+
     const token = await this.auth.currentUser?.getIdToken();
     if (!token) return;
 
@@ -167,5 +176,7 @@ export class EditProfileComponent implements OnInit {
         this.toastr.error(error.error.message);
       },
     });
+
+    return;
   }
 }
