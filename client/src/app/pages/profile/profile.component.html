@@ -10,127 +10,113 @@
   </div>
 
   <div class="grid gap-5">
-    @if (userStore.isAuthenticated()) {
-      @if (user()) {
-        <div class="bg-neutral-300 rounded-md px-2 py-2 grid gap-5">
-          <div class="flex flex-col justify-center items-center gap-2">
-            <img
-              [src]="user()!.profile.profilePictureUrl"
-              alt="{{ user()!.profile.firstName }}'s profile picture"
-              class="aspect-square rounded-full w-52 h-auto object-cover"
-            />
-            <h2 class="text-3xl font-bold">{{ user()!.profile.firstName }}</h2>
-          </div>
-          @if (user()!.profile.bio) {
-            <div>
-              <h2 class="text-2xl text-blue-100 font-semibold">Bio</h2>
-              <span
-                class="unreset [&>p]:my-0"
-                [innerHTML]="user()!.profile.bio | markdown | async"
-              >
-              </span>
-            </div>
-          }
-          @if (user()!.profile.impairments) {
-            <div>
-              <h2 class="text-2xl text-blue-100 font-semibold">Impairements</h2>
-              <p>{{ user()!.profile.impairments.join(", ") }}</p>
-            </div>
-          }
+    @if (user()) {
+      <div class="bg-neutral-300 rounded-md px-2 py-2 grid gap-5">
+        <div class="flex flex-col justify-center items-center gap-2">
+          <img
+            [src]="user()!.profile.profilePictureUrl"
+            alt="{{ user()!.profile.firstName }}'s profile picture"
+            class="aspect-square rounded-full w-52 h-auto object-cover"
+          />
+          <h2 class="text-3xl font-bold">{{ user()!.profile.firstName }}</h2>
+        </div>
+        @if (user()!.profile.bio) {
           <div>
-            <app-summary-card
-              [summaryInfo]="[
-                {
-                  title: 'Jobs Applied',
-                  stats: jobAppliedIds().length.toString()
-                },
-                {
-                  title: 'Job Offers',
-                  stats: user()!.profile.offers.length.toString()
-                },
-                {
-                  title: 'Benefits',
-                  stats: '4'
-                },
-                {
-                  title: 'Posts',
-                  stats: '0'
-                },
-                {
-                  title: 'Donated',
-                  stats: 'RM 50'
-                },
-                {
-                  title: 'Received',
-                  stats: 'RM 1000'
-                }
-              ]"
+            <h2 class="text-2xl text-blue-100 font-semibold">Bio</h2>
+            <span
+              class="unreset [&>p]:my-0"
+              [innerHTML]="user()!.profile.bio | markdown | async"
+            >
+            </span>
+          </div>
+        }
+        @if (user()!.profile.impairments) {
+          <div>
+            <h2 class="text-2xl text-blue-100 font-semibold">Impairements</h2>
+            <p>{{ user()!.profile.impairments.join(", ") }}</p>
+          </div>
+        }
+        <div>
+          <app-summary-card
+            [summaryInfo]="[
+              {
+                title: 'Jobs Applied',
+                stats: jobAppliedIds().length.toString()
+              },
+              {
+                title: 'Job Offers',
+                stats: user()!.profile.offers.length.toString()
+              },
+              {
+                title: 'Benefits',
+                stats: '4'
+              },
+              {
+                title: 'Posts',
+                stats: '0'
+              },
+              {
+                title: 'Donated',
+                stats: 'RM 50'
+              },
+              {
+                title: 'Received',
+                stats: 'RM 1000'
+              }
+            ]"
+          />
+        </div>
+      </div>
+      @if (user()!.profile.skills.length > 0) {
+        <div class="bg-neutral-300 rounded-md px-2 py-2 grid">
+          <div>
+            <h2 class="text-3xl font-bold">Skills</h2>
+            <ul>
+              @for (skill of user()!.profile.skills.slice(0, 3); track $index) {
+                <li>{{ skill }}</li>
+              }
+            </ul>
+          </div>
+          @if (user()!.profile.skills.length > 3) {
+            <button
+              class="text-lg font-bold text-blue-100 hover:text-blue-200 focus:text-blue-200 place-self-end"
+              (click)="openModal.set(true)"
+            >
+              More... 🡒
+            </button>
+          }
+        </div>
+      }
+      @if (user()!.profile.role === userStore.UserRole.USER) {
+        <div class="bg-neutral-300 rounded-md px-2 py-2">
+          <h2 class="text-3xl font-bold mb-2">Experiences</h2>
+          <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Backend Developer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
+            />
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Software Engineer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
+            />
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Frontend Developer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
             />
           </div>
         </div>
-        @if (user()!.profile.skills.length > 0) {
-          <div class="bg-neutral-300 rounded-md px-2 py-2 grid">
-            <div>
-              <h2 class="text-3xl font-bold">Skills</h2>
-              <ul>
-                @for (
-                  skill of user()!.profile.skills.slice(0, 3);
-                  track $index
-                ) {
-                  <li>{{ skill }}</li>
-                }
-              </ul>
-            </div>
-            @if (user()!.profile.skills.length > 3) {
-              <button
-                class="text-lg font-bold text-blue-100 hover:text-blue-200 focus:text-blue-200 place-self-end"
-                (click)="openModal.set(true)"
-              >
-                More... 🡒
-              </button>
-            }
-          </div>
-        }
-        @if (user()!.profile.role === userStore.UserRole.USER) {
-          <div class="bg-neutral-300 rounded-md px-2 py-2">
-            <h2 class="text-3xl font-bold mb-2">Experiences</h2>
-            <div
-              class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-            >
-              <app-mini-info-card
-                infoLink="/user/{{ user()!.uid }}"
-                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-                infoTitle="Backend Developer"
-                infoName="{{ user()!.profile.firstName }}"
-                infoType="remote"
-              />
-              <app-mini-info-card
-                infoLink="/user/{{ user()!.uid }}"
-                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-                infoTitle="Software Engineer"
-                infoName="{{ user()!.profile.firstName }}"
-                infoType="remote"
-              />
-              <app-mini-info-card
-                infoLink="/user/{{ user()!.uid }}"
-                infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
-                infoTitle="Frontend Developer"
-                infoName="{{ user()!.profile.firstName }}"
-                infoType="remote"
-              />
-            </div>
-          </div>
-        }
-      } @else {
-        <app-loader class="shadow-none" />
       }
     } @else {
-      <div class="bg-neutral-300 rounded-md px-2 py-2">
-        <img src="/assets/logged-out.png" />
-        <h3>You're not logged in</h3>
-        <p>Log in or create an account first to view your profile.</p>
-        <button>Log In</button>
-      </div>
+      <app-loader class="shadow-none" />
     }
   </div>
 </section>
