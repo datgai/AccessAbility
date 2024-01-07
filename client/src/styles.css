@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.dp-picker-input {
+  width: 100% !important;
+}
+
 .unreset {
   /*
     * Nested CSS is not yet supported by:
