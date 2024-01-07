@@ -11,6 +11,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DpDatePickerModule } from 'ng2-date-picker';
 import { TagInputModule } from 'ngx-chips';
 import { ToastrService } from 'ngx-toastr';
@@ -56,10 +57,15 @@ export class EditProfileComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private auth: Auth = inject(Auth),
     private toastr: ToastrService,
+    private router: Router,
     public userStore: UserStoreService,
   ) {}
 
   ngOnInit() {
+    if (!this.userStore.isAuthenticated()) {
+      return this.router.navigate(['404']);
+    }
+
     this.skillsService.getSkills().subscribe({
       next: (skills) => {
         this.allowedSkills = skills.map((skill) => skill.name);
@@ -117,6 +123,8 @@ export class EditProfileComponent implements OnInit {
         });
       },
     });
+
+    return;
   }
 
   selectFile(event: Event): void {
