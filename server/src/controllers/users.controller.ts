@@ -61,7 +61,7 @@ export const getUserById = async (request: Request, response: Response) => {
 export const createProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  upload.single('avatar')(request, response, (err) => {
+  upload.single('avatar')(request, response, async (err) => {
     type ProfileParam = Record<
       | keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>
       | 'email'
@@ -70,28 +70,13 @@ export const createProfile = async (request: Request, response: Response) => {
     >;
     type Parameter = keyof ProfileParam;
 
-    const requiredParams: Parameter[] = [
-      'firstName',
-      'lastName',
-      'gender',
-      'dateOfBirth',
-      'phoneNumber',
-      'impairments',
-      'skills',
-      'city',
-      'state',
-      'address',
-      'bio',
-      'role',
-      'premium'
-    ];
+    const requiredParams: Parameter[] = ['firstName', 'role'];
 
     const params = getMissingParameters<Parameter>(request, requiredParams);
     if (params.length > 0) {
       return response.status(StatusCodes.BAD_REQUEST).json({
         message: 'Missing parameters.',
-        missing:
-          typeof request.file === 'undefined' ? [...params, 'avatar'] : params
+        missing: params
       });
     }
 
@@ -109,12 +94,14 @@ export const createProfile = async (request: Request, response: Response) => {
       });
     }
 
-    const dateOfBirth = new Date(body.dateOfBirth);
-    if (isNaN(dateOfBirth.getTime())) {
-      return response.status(StatusCodes.BAD_REQUEST).json({
-        message:
-          'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
-      });
+    if (body.dateOfBirth) {
+      const dateOfBirth = new Date(body.dateOfBirth);
+      if (isNaN(dateOfBirth.getTime())) {
+        return response.status(StatusCodes.BAD_REQUEST).json({
+          message:
+            'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
+        });
+      }
     }
 
     const error = getError(err);
@@ -122,45 +109,63 @@ export const createProfile = async (request: Request, response: Response) => {
       return response.status(error.status).json({ message: error.message });
     }
 
-    const baseUrl = `${request.protocol}://${request.get('host')}`;
-    const avatar = request.file!;
-    const buffer = avatar.buffer;
-    const originalName = avatar.originalname;
+    let profilePictureUrl = user.profile?.profilePictureUrl ?? '';
+    if (request.file) {
+      const baseUrl = `${request.protocol}://${request.get('host')}`;
+      const avatar = request.file;
+      const buffer = avatar.buffer;
+      const originalName = avatar.originalname;
 
-    saveImage(
-      baseUrl,
-      'avatars',
-      buffer,
-      originalName,
-      (error, profilePictureUrl) => {
-        if (error) {
-          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: `Something went wrong processing the file: ${error.message}`
-          });
-        }
-
-        const profileData: UserProfile = {
-          ...body,
-          gender: body.gender as UserGender,
-          dateOfBirth: new Date(body.dateOfBirth),
-          impairments: body.impairments as unknown as string[],
-          skills: body.skills as unknown as string[],
-          offers: [],
-          profilePictureUrl,
-          role: body.role as UserRole,
-          premium: body.premium === 'true'
-        };
-
-        profilesRef.doc(user.uid).set({
-          ...profileData,
-          dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
-        });
-
-        return response.status(StatusCodes.CREATED).json({
-          message: 'Profile added successfully.',
-          user: { ...user, profile: profileData }
+      try {
+        profilePictureUrl = await saveImage(
+          baseUrl,
+          'avatars',
+          buffer,
+          originalName
+        );
+      } catch (error: any) {
+        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: `Something went wrong processing the file: ${error.message}`
         });
       }
-    );
+    }
+
+    const profileData: UserProfile = {
+      firstName: body.firstName,
+      lastName: body.lastName ?? user.profile?.lastName ?? '',
+      gender: (body.gender as UserGender) ?? user.profile?.gender ?? '',
+      dateOfBirth: new Date(body.dateOfBirth),
+      phoneNumber: body.phoneNumber ?? user.profile?.phoneNumber ?? '',
+      impairments:
+        (body.impairments as unknown as string[]) ??
+        user.profile?.impairments ??
+        [],
+      skills:
+        (body.skills as unknown as string[]).map((skill) =>
+          skill.toLowerCase()
+        ) ??
+        user.profile?.skills ??
+        [],
+      offers: user.profile?.offers ?? [],
+      city: body.city ?? user.profile?.city ?? '',
+      state: body.state ?? user.profile?.state ?? '',
+      bio: body.bio ?? user.profile?.bio ?? '',
+      address: body.address ?? user.profile?.address ?? '',
+      profilePictureUrl,
+      role: user.profile?.role ?? (body.role as UserRole),
+      premium: body.premium
+        ? body.premium === 'true'
+        : user.profile?.premium ?? false
+    };
+
+    profilesRef.doc(user.uid).set({
+      ...profileData,
+      dateOfBirth: firestore.Timestamp.fromDate(profileData.dateOfBirth)
+    });
+
+    return response.status(StatusCodes.CREATED).json({
+      message: 'Profile added successfully.',
+      user: { ...user, profile: profileData }
+    });
   });
 };
