@@ -14,7 +14,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { PostDetailsComponent } from './pages/post-details/post-details.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
@@ -25,8 +25,7 @@ export const routes: Routes = [
   { path: 'my-jobs', component: MyJobsComponent },
   { path: 'create-job', component: CreateJobComponent },
   { path: 'forum', component: ForumComponent },
-  { path: 'forum/:id', component: PostDetailsComponent },
+  { path: 'post-details/:id', component: PostDetailsComponent },
   { path: 'profile', component: ProfileComponent },
-  { path: 'forum', component: ForumComponent },
   { path: '**', component: NotFoundComponent },
 ];
