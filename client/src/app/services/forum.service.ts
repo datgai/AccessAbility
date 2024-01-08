@@ -11,7 +11,7 @@ export class ForumService {
     authorId: 'user1',
 	  date: 'Jan 10, 2024',
 	  title: 'How to ace your interviews',
-	  content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque.',
+	  content: 'Landing that dream job often hinges on how well you perform during the interview. Here are some expert tips to help you navigate the interview process with confidence and leave a lasting impression.',
 	  thumbnailUrl: '/assets/header-logo.png',
 	  comments: [{
         authorId: "user2",
