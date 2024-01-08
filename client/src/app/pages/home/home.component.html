@@ -1,3 +1,4 @@
+<div class="mb-16">
 @if (
   !userStore.isAuthenticated() ||
   userStore.user?.profile?.role === userStore.UserRole.ADMIN
@@ -11,3 +12,4 @@
     <app-business-view></app-business-view>
   }
 }
+</div>
