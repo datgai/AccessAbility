@@ -13,4 +13,12 @@ import {RouterModule} from '@angular/router';
 export class PostComponent {
   @Input() post!: Post;
 
+  truncatedContent(): string {
+    const maxLength = 100;
+    return this.post.content.length > maxLength
+      ? this.post.content.substring(0, maxLength) + '...'
+      : this.post.content;
+  }
+
+
 }
