@@ -8,30 +8,30 @@ export class ForumService {
 
   postList: Post[] = [{
     postId:'post1',
-    authorId: 'user1',
+    authorId: 'Alison',
 	  date: 'Jan 10, 2024',
 	  title: 'How to ace your interviews',
-	  content: 'Landing that dream job often hinges on how well you perform during the interview. Here are some expert tips to help you navigate the interview process with confidence and leave a lasting impression.',
-	  thumbnailUrl: '/assets/header-logo.png',
+	  content: 'Landing that dream job often hinges on how well you perform during the interview. Here are some expert tips to help you navigate the interview process with confidence and leave a lasting impression. ',
+	  thumbnailUrl: 'https://www.jobsite.co.uk/advice/wp-content/uploads/the-most-common-interview-questions.jpg',
 	  comments: [{
-        authorId: "user2",
+        authorId: "Jane",
         date:'Jan 11, 2024',
-        content: "This is a great post! :+1:"}],
+        content: "This is a great post!:"}],
 	  isDonation: false
   },
   {
     postId:'post2',
-    authorId: 'user2',
+    authorId: 'Kevin',
 	  date: 'Jan 2, 2023',
-	  title: 'My Success Story',
-	  content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque.',
-	  thumbnailUrl: '/assets/sdg4.png',
+	  title: 'My Career Journey',
+	  content: 'Overcoming societal misconceptions and barriers, I transformed my disability into a source of strength. Armed with a passion for technology, I delved into the world of accessible design, creating innovative solutions that empowered not only myself but also countless others facing similar challenges.',
+	  thumbnailUrl: 'https://www.nationaldisabilityinstitute.org/wp-content/uploads/2022/07/small-business-research-report-featured-image.png',
 	  comments: [{
-        authorId: "user1",
+        authorId: "Johnson",
         date:'Jan 3, 2024',
-        content: "This is a great post!"},
+        content: "This is so inspiring."},
         {
-          authorId: "user100",
+          authorId: "Lee",
           date:'Jan 3, 2024',
           content: "Wow thanks for sharing!"}
       
@@ -40,15 +40,15 @@ export class ForumService {
   },
   {
     postId:'post3',
-    authorId: 'user7',
+    authorId: 'Priscilla',
 	  date: 'Dec 1, 2023',
 	  title: 'How Accessibility\'s scholarship changed my life',
-	  content: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque.',
-	  thumbnailUrl: '/assets/hero-bg.png',
+	  content: 'Getting the scholarship was a transformative moment in my life. As a student with a passion for technology but limited financial means, the scholarship not only eased the burden of tuition but also opened doors to a world of opportunities',
+	  thumbnailUrl: 'https://www.brookings.edu/wp-content/uploads/2023/04/shutterstock_658847998.jpg?w=1500',
 	  comments: [{
-        authorId: "user0",
+        authorId: "Sam",
         date:'December 10, 2024',
-        content: "This is a great post! :+1:"}],
+        content: "Congrats"}],
 	  isDonation: true
   }
   ]
