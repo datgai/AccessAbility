@@ -77,7 +77,7 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (user) => {
           this.user.set(user);
-          this.userStore.user = user;
+          if (this.userStore.user?.uid === user.uid) this.userStore.user = user;
         },
         complete: () => {
           // Get all jobs user applied to
