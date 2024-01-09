@@ -13,4 +13,10 @@ export class SkillsService {
       `${environment.baseUrl}/skill/${skillId}`,
     );
   }
+
+  getSkills(filter?: string) {
+    return this.http.get<{ id: string; name: string }[]>(
+      `${environment.baseUrl}/skills${filter ? `?filter=${filter}` : ''}`,
+    );
+  }
 }

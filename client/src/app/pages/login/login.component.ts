@@ -73,15 +73,17 @@ export class LoginComponent implements OnInit {
             error: (error: HttpErrorResponse) => {
               if (error.status === 404) {
                 // User does not have a profile so create it
-                this.authenticationService.createProfile(userToken).subscribe({
-                  next: (res) => {
-                    localStorage.setItem(
-                      this.userStore.userKey,
-                      JSON.stringify({ ...user, profile: res.user?.profile }),
-                    );
-                  },
-                  complete: () => this.router.navigate(['']), // Redirect to home page
-                });
+                this.authenticationService
+                  .editOrCreateProfile(userToken, new FormData())
+                  .subscribe({
+                    next: (res) => {
+                      localStorage.setItem(
+                        this.userStore.userKey,
+                        JSON.stringify({ ...user, profile: res.user?.profile }),
+                      );
+                    },
+                    complete: () => this.router.navigate(['']), // Redirect to home page
+                  });
               }
             },
             complete: () => this.router.navigate(['']), // Redirect to home page

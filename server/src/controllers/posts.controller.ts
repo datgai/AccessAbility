@@ -46,52 +46,54 @@ export const createPost = async (request: Request, response: Response) => {
       });
     }
 
-    const baseUrl = `${request.protocol}://${request.get('host')}`;
-    const thumbnail = request.file!;
-    const buffer = thumbnail.buffer;
-    const originalName = thumbnail.originalname;
+    let thumbnailUrl: string = '';
+    if (request.file) {
+      const baseUrl = `${request.protocol}://${request.get('host')}`;
+      const thumbnail = request.file!;
+      const buffer = thumbnail.buffer;
+      const originalName = thumbnail.originalname;
 
-    saveImage(
-      baseUrl,
-      'thumbnails',
-      buffer,
-      originalName,
-      async (error, url) => {
-        if (error) {
-          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: `Something went wrong processing the file: ${error.message}`
-          });
-        }
-
-        body.isDonation =
-          user.profile.role === UserRole.ADMIN ? body.isDonation : false;
-
-        const postDetails: Post = {
-          authorId: user.uid,
-          title: body.title,
-          content: body.content,
-          comments: [],
-          thumbnailUrl: url,
-          isDonation: body.isDonation ?? false
-        };
-
-        return await postsRef
-          .add(postDetails)
-          .then(async (post) => {
-            const postData = await post.get();
-            return response.status(StatusCodes.CREATED).json({
-              id: postData.id,
-              ...postData.data()
-            });
-          })
-          .catch((error) => {
-            return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-              message: 'Something went wrong saving the post.',
-              error
-            });
-          });
+      try {
+        thumbnailUrl = await saveImage(
+          baseUrl,
+          'thumbnails',
+          buffer,
+          originalName
+        );
+      } catch (error: any) {
+        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: `Something went wrong processing the file: ${error.message}`
+        });
       }
-    );
+    }
+
+    body.isDonation =
+      user.profile.role === UserRole.ADMIN ? body.isDonation : false;
+
+    const postDetails: Post = {
+      authorId: user.uid,
+      title: body.title,
+      content: body.content,
+      comments: [],
+      thumbnailUrl: thumbnailUrl,
+      isDonation: body.isDonation ?? false
+    };
+
+    return await postsRef
+      .add(postDetails)
+      .then(async (post) => {
+        const postData = await post.get();
+        return response.status(StatusCodes.CREATED).json({
+          id: postData.id,
+          ...postData.data()
+        });
+      })
+      .catch((error) => {
+        return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          message: 'Something went wrong saving the post.',
+          error
+        });
+      });
   });
 };
 

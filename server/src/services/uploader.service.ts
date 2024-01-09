@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { writeFile } from 'fs/promises';
 import { StatusCodes } from 'http-status-codes';
 import multer from 'multer';
 import path from 'path';
@@ -68,12 +69,11 @@ export const getFilePath = (
   return filePath;
 };
 
-export const saveImage = (
+export const saveImage = async (
   baseUrl: string,
   folder: string,
   imageBuffer: Buffer,
-  originalName: string,
-  callback: (error: NodeJS.ErrnoException | null, imageUrl: string) => void
+  originalName: string
 ) => {
   const targetPath = getFilePath(
     path.join(__dirname, '..', '..', UPLOADS_FOLDER, originalName),
@@ -81,9 +81,8 @@ export const saveImage = (
   );
   const fileName = path.basename(targetPath);
 
-  fs.writeFile(targetPath, imageBuffer, (err) => {
-    if (err) return callback(err, '');
-    return callback(null, `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`);
+  return await writeFile(targetPath, imageBuffer).then(() => {
+    return `${baseUrl}/${UPLOADS_FOLDER}/${folder}/${fileName}`;
   });
 };
 

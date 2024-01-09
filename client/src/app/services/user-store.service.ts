@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { User } from '@angular/fire/auth';
-import { UserProfile, UserRole } from '../../../../shared/src/types/user';
+import {
+  UserGender,
+  UserProfile,
+  UserRole,
+} from '../../../../shared/src/types/user';
 
 export type UserResponse = User & { profile: UserProfile };
 
@@ -10,6 +14,7 @@ export type UserResponse = User & { profile: UserProfile };
 export class UserStoreService {
   public userKey: string = 'user';
   public UserRole = UserRole;
+  public UserGender = UserGender;
 
   isAuthenticated() {
     return !localStorage.getItem(this.userKey) ? false : true;

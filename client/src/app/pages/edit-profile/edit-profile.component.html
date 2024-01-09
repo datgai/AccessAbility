@@ -1,0 +1,411 @@
+<h1 class="text-5xl font-bold mb-5">Edit Profile</h1>
+
+@if (user()) {
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="space-y-12">
+      <div class="border-b border-gray-900/10 pb-12">
+        <h2 class="text-base font-semibold leading-7 text-gray-900">Profile</h2>
+        <p class="mt-1 text-sm leading-6 text-gray-600">
+          This information will be displayed publicly so be careful what you
+          share.
+        </p>
+
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="col-span-3 sm:col-span-full">
+            <label
+              for="avatar"
+              class="block text-sm font-medium leading-6 text-gray-900 mb-2"
+            >
+              Profile Picture
+            </label>
+            <div
+              class="max-w-sm bg-white rounded-lg overflow-hidden items-center ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-within:ring-4 focus-within:ring-inset focus-within:ring-blue-100 sm:text-sm sm:leading-6"
+            >
+              <div class="px-4 py-4">
+                <div
+                  id="avatar-preview"
+                  class="max-w-sm p-6 mb-4 bg-gray-100 rounded-lg items-center mx-auto text-center cursor-pointer relative"
+                  [ngClass]="{
+                    'border-dashed': preview().previewUrl === '',
+                    'border-2': preview().previewUrl === '',
+                    'border-gray-400': preview().previewUrl === ''
+                  }"
+                >
+                  <input
+                    id="avatar"
+                    type="file"
+                    class="absolute inset-0 w-full opacity-0 cursor-pointer"
+                    accept="image/*"
+                    (change)="selectFile($event)"
+                    formControlName="avatar"
+                  />
+                  <label for="avatar" class="cursor-pointer">
+                    @if (preview().previewUrl) {
+                      <img
+                        [src]="preview().previewUrl"
+                        class="w-44 h-auto mx-auto rounded-full aspect-square object-cover"
+                        alt="{{ user()!.profile.firstName }}'s profile picture"
+                      />
+                    } @else {
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-8 h-8 text-gray-700 mx-auto mb-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                        />
+                      </svg>
+                      <h5
+                        class="mb-2 text-xl font-bold tracking-tight text-gray-700"
+                      >
+                        Upload picture
+                      </h5>
+                      <p class="font-normal text-sm text-gray-400 md:px-6">
+                        Choose photo size should be less than
+                        <b class="text-gray-600">5mb</b>
+                      </p>
+                      <p class="font-normal text-sm text-gray-400 md:px-6">
+                        and should be in
+                        <b class="text-gray-600">JPEG, JPG, or PNG</b> format.
+                      </p>
+                      <span
+                        id="filename"
+                        class="text-gray-500 bg-gray-200 z-50"
+                      ></span>
+                    }
+                  </label>
+                </div>
+                <div class="flex items-center justify-center">
+                  <div class="w-full">
+                    <label
+                      for="avatar"
+                      class="w-full text-white bg-blue-100 hover:bg-blue-200 focus:ring-4 focus:outline-none focus:ring-[#050708]/50 font-medium rounded-lg text-sm px-5 py-2.5 flex items-center justify-center mr-2 cursor-pointer"
+                    >
+                      <span class="text-center ml-2 font-bold">
+                        Choose Picture
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-3 sm:col-span-full">
+            <label
+              for="skills"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Skills
+            </label>
+            <div class="mt-2">
+              <tag-input
+                class="bg-neutral-300 px-2 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-within:ring-4 focus-within:ring-inset focus-within:ring-blue-100 sm:text-sm sm:leading-6"
+                inputId="skills"
+                theme="minimal"
+                placeholder="+ Skill"
+                [addOnPaste]="true"
+                [onlyFromAutocomplete]="true"
+                [modelAsStrings]="true"
+                formControlName="skills"
+              >
+                <tag-input-dropdown
+                  [autocompleteItems]="allowedSkills"
+                  [showDropdownIfEmpty]="true"
+                >
+                </tag-input-dropdown>
+              </tag-input>
+            </div>
+          </div>
+
+          <div class="col-span-3 sm:col-span-full">
+            <label
+              for="impairments"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Impairments
+            </label>
+            <div class="mt-2">
+              <tag-input
+                class="bg-neutral-300 px-2 block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-within:ring-4 focus-within:ring-inset focus-within:ring-blue-100 sm:text-sm sm:leading-6"
+                inputId="impairments"
+                name="impairments"
+                theme="minimal"
+                placeholder="+ Impairment"
+                [addOnPaste]="true"
+                [modelAsStrings]="true"
+                formControlName="impairments"
+              />
+            </div>
+          </div>
+
+          <div class="col-span-3 sm:col-span-full">
+            <label
+              for="bio"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Bio
+            </label>
+            <div class="mt-2">
+              <textarea
+                id="bio"
+                rows="3"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="bio"
+              ></textarea>
+            </div>
+            <p class="mt-3 text-sm leading-6 text-gray-600">
+              Write a few sentences about yourself.
+            </p>
+          </div>
+
+          <div class="col-span-3">
+            <label
+              for="dob"
+              class="block text-sm font-medium leading-6 text-gray-900 mb-2"
+            >
+              Date of Birth
+            </label>
+            <input
+              type="text"
+              id="dob"
+              name="dob"
+              theme="dp-material"
+              class="bg-neutral-300 px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus-within:ring-4 focus-within:ring-inset focus-within:ring-blue-100 sm:text-sm sm:leading-6"
+              formControlName="dateOfBirth"
+              [dpDayPicker]="{ format: 'YYYY-MM-DD' }"
+            />
+          </div>
+
+          <div class="col-span-3">
+            <legend
+              for="dob"
+              class="block text-sm font-medium leading-6 text-gray-900 mb-2 cursor-default"
+            >
+              Gender
+            </legend>
+            <fieldset
+              class="flex items-center h-3/6 gap-5 justify-between sm:justify-normal"
+            >
+              <input
+                hidden
+                class="peer/male"
+                type="radio"
+                id="male"
+                [value]="userStore.UserGender.MALE"
+                formControlName="gender"
+              />
+              <label
+                for="male"
+                class="cursor-pointer py-2 px-5 rounded-full text-center bg-neutral-300 text-blue-100 hover:bg-blue-100 hover:text-neutral-300 peer-checked/male:bg-blue-100 peer-checked/male:text-neutral-300"
+              >
+                Male
+              </label>
+              <input
+                hidden
+                class="peer/female"
+                type="radio"
+                id="female"
+                [value]="userStore.UserGender.FEMALE"
+                formControlName="gender"
+              />
+              <label
+                for="female"
+                class="cursor-pointer py-2 px-5 rounded-full text-center bg-neutral-300 text-blue-100 hover:bg-blue-100 hover:text-neutral-300 peer-checked/female:bg-blue-100 peer-checked/female:text-neutral-300"
+              >
+                Female
+              </label>
+              <input
+                hidden
+                class="peer/other"
+                type="radio"
+                id="other"
+                [value]="userStore.UserGender.OTHER"
+                formControlName="gender"
+              />
+              <label
+                for="other"
+                class="cursor-pointer py-2 px-5 rounded-full text-center bg-neutral-300 text-blue-100 hover:bg-blue-100 hover:text-neutral-300 peer-checked/other:bg-blue-100 peer-checked/other:text-neutral-300"
+              >
+                Other
+              </label>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-b border-gray-900/10 pb-12">
+        <h2 class="text-base font-semibold leading-7 text-gray-900">
+          Personal Information
+        </h2>
+        <p class="mt-1 text-sm leading-6 text-gray-600">
+          Use a permanent address where you can receive mail.
+        </p>
+
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <label
+              for="first-name"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              First name <span class="text-red-800">*</span>
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="first-name"
+                autocomplete="given-name"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="firstName"
+                required
+              />
+              @if (form.controls["firstName"].errors) {
+                <small class="text-red-800">
+                  @if (form.controls["firstName"].errors["required"]) {
+                    First name is required.
+                  }
+                </small>
+              }
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="last-name"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Last name
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="last-name"
+                autocomplete="family-name"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="lastName"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="email"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Email address <span class="text-red-800">*</span>
+            </label>
+            <div class="mt-2">
+              <input
+                id="email"
+                type="email"
+                autocomplete="email"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="email"
+                required
+              />
+              @if (form.controls["email"].errors) {
+                <small class="text-red-800">
+                  @if (form.controls["email"].errors["required"]) {
+                    Email is required (and currently cannot be edited).
+                  }
+                  @if (form.controls["email"].errors["email"]) {
+                    Not a valid email address.
+                  }
+                </small>
+              }
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="phone"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Phone Number
+            </label>
+            <div class="mt-2">
+              <input
+                id="phone"
+                type="text"
+                autocomplete="phone"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="phoneNumber"
+              />
+            </div>
+          </div>
+
+          <div class="col-span-full">
+            <label
+              for="street-address"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Street address
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="street-address"
+                autocomplete="street-address"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="address"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-3 sm:col-start-1">
+            <label
+              for="city"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              City
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="city"
+                autocomplete="address-level2"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="city"
+              />
+            </div>
+          </div>
+
+          <div class="sm:col-span-3">
+            <label
+              for="region"
+              class="block text-sm font-medium leading-6 text-gray-900"
+            >
+              State / Province
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="region"
+                autocomplete="address-level1"
+                class="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-100 sm:text-sm sm:leading-6"
+                formControlName="state"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 flex items-center justify-end gap-x-6">
+      <button
+        type="submit"
+        class="rounded-md bg-blue-100 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-100"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+} @else {
+  <app-loader />
+}

@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-clr: theme("colors.blue.100");
+}
+
+.dp-picker-input {
+  width: 100% !important;
+}
+
 .unreset {
   /*
     * Nested CSS is not yet supported by:

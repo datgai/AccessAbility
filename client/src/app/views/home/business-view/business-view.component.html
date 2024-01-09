@@ -8,21 +8,21 @@
     [summaryInfo]="[
       {
         title: 'Applications',
-        stats: jobApplicationIds().length
+        stats: jobApplicationIds().length.toString()
       },
       {
         title: 'Job Offers',
-        stats: numOffers()
+        stats: numOffers().toString()
       },
       {
         title: 'Workers',
-        stats: 0
+        stats: '0'
       }
     ]"
     class="mb-2"
   />
   <a
-    routerLink="/profile"
+    routerLink="/user/{{ userStore.user?.uid }}"
     class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
   >
     More... 🡒

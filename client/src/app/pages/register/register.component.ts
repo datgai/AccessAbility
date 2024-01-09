@@ -150,9 +150,11 @@ export class RegisterComponent {
         next: async (user) => {
           const userToken = await user.getIdToken();
 
-          this.authenticationService.createProfile(userToken).subscribe({
-            complete: async () => await sendEmailVerification(user),
-          });
+          this.authenticationService
+            .editOrCreateProfile(userToken, new FormData())
+            .subscribe({
+              complete: async () => await sendEmailVerification(user),
+            });
         },
         error: (error: Error) => console.log(error.message),
         complete: () => this.router.navigate(['login']),

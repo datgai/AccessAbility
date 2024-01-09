@@ -1,10 +1,232 @@
-<div class="mb-16">
-@if (isAuthenticated) {
-<p>Logged in</p>
-} @else {
-    <img src="/assets/logged-out.png"/>
-    <h3>You're not logged in</h3>
-    <p>Log in or create an account first to view your profile.</p>
-    <button>Log In</button>
+<style type="text/css">
+  input:checked + label {
+    background-color: var(--primary-clr) !important;
+    color: white;
+  }
+</style>
+<section>
+  <div class="flex justify-between items-center">
+    <h1 class="text-5xl font-bold mb-2">Profile</h1>
+    <a
+      class="rounded-md text-neutral-300 py-2 px-5 bg-blue-100 hover:bg-blue-200 focus:bg-blue-200"
+      routerLink="/edit-profile"
+    >
+      Edit Profile
+    </a>
+  </div>
+
+  <div class="grid gap-5">
+    @if (user()) {
+      <div class="bg-neutral-300 rounded-md px-2 py-2 grid gap-5">
+        <div class="flex flex-col justify-center items-center gap-2">
+          <img
+            [src]="user()!.profile.profilePictureUrl"
+            alt="{{ user()!.profile.firstName }}'s profile picture"
+            class="aspect-square rounded-full w-52 h-auto object-cover"
+          />
+          <h2 class="text-3xl font-bold">{{ user()!.profile.firstName }}</h2>
+        </div>
+
+        @if (userStore.user?.profile?.role === userStore.UserRole.BUSINESS) {
+          @if (containsBusiness()) {
+            <h2 class="text-3xl font-bold">Positions Applied</h2>
+
+            <form (ngSubmit)="submitOfferForm()">
+              @for (job of jobsApplied(); track job.id) {
+                @if (job.businessId === userStore.user?.uid) {
+                  <input
+                    hidden
+                    name="job"
+                    type="radio"
+                    [id]="job.id"
+                    [value]="job.id"
+                    [(ngModel)]="jobOfferId"
+                  />
+                  <label
+                    class="flex flex-row gap-2 rounded-md items-center cursor-pointer"
+                    [for]="job.id"
+                  >
+                    <img
+                      src="{{ userStore.user?.profile?.profilePictureUrl }}"
+                      alt="logo of {{ userStore.user?.profile?.firstName }}"
+                      class="aspect-square w-20 h-full rounded-md object-cover"
+                    />
+                    <div class="md:pr-5">
+                      <h2 class="text-lg font-bold">{{ job.position }}</h2>
+                      <p>{{ userStore.user?.profile?.firstName }}</p>
+                      <p>{{ job.type }}</p>
+                    </div>
+                  </label>
+                }
+              }
+              <div>
+                <button
+                  type="submit"
+                  class="text-lg font-bold text-neutral-300 bg-blue-100 rounded-full w-full px-5 py-2 mt-2"
+                >
+                  Send Offer
+                </button>
+                <button
+                  type="button"
+                  (click)="removeApplicants('Rejected applicant.')"
+                  class="text-lg font-bold text-blue-100 bg-neutral-200 rounded-full w-full px-5 py-2 mt-2"
+                >
+                  Reject Applicant
+                </button>
+              </div>
+            </form>
+          }
+        }
+
+        @if (user()!.profile.bio) {
+          <div>
+            <h2 class="text-2xl text-blue-100 font-semibold">Bio</h2>
+            <span
+              class="unreset [&>p]:my-0"
+              [innerHTML]="user()!.profile.bio | markdown | async"
+            >
+            </span>
+          </div>
+        }
+        @if (user()!.profile.impairments) {
+          <div>
+            <h2 class="text-2xl text-blue-100 font-semibold">Impairements</h2>
+            <p>{{ user()!.profile.impairments.join(", ") }}</p>
+          </div>
+        }
+        <div>
+          <app-summary-card
+            [summaryInfo]="[
+              {
+                title: 'Jobs Applied',
+                stats: jobsApplied().length.toString()
+              },
+              {
+                title: 'Job Offers',
+                stats: user()!.profile.offers.length.toString()
+              },
+              {
+                title: 'Benefits',
+                stats: '4'
+              },
+              {
+                title: 'Posts',
+                stats: '0'
+              },
+              {
+                title: 'Donated',
+                stats: 'RM 50'
+              },
+              {
+                title: 'Received',
+                stats: 'RM 1000'
+              }
+            ]"
+          />
+        </div>
+      </div>
+      @if (user()!.profile.skills.length > 0) {
+        <div class="bg-neutral-300 rounded-md px-2 py-2 grid">
+          <div>
+            <h2 class="text-3xl font-bold">Skills</h2>
+            <ul>
+              @for (skill of user()!.profile.skills.slice(0, 3); track $index) {
+                <li>{{ skill }}</li>
+              }
+            </ul>
+          </div>
+          @if (user()!.profile.skills.length > 3) {
+            <button
+              class="text-lg font-bold text-blue-100 hover:text-blue-200 focus:text-blue-200 place-self-end"
+              (click)="openModal.set(true)"
+            >
+              More... 🡒
+            </button>
+          }
+        </div>
+      }
+      @if (user()!.profile.role === userStore.UserRole.USER) {
+        <div class="bg-neutral-300 rounded-md px-2 py-2">
+          <h2 class="text-3xl font-bold mb-2">Experiences</h2>
+          <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Backend Developer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
+            />
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Software Engineer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
+            />
+            <app-mini-info-card
+              infoLink="/user/{{ user()!.uid }}"
+              infoImageUrl="{{ user()!.profile.profilePictureUrl }}"
+              infoTitle="Frontend Developer"
+              infoName="{{ user()!.profile.firstName }}"
+              infoType="remote"
+            />
+          </div>
+        </div>
+      }
+    } @else {
+      <app-loader class="shadow-none" />
+    }
+  </div>
+</section>
+
+@if (openModal()) {
+  <div
+    class="relative z-10"
+    aria-labelledby="modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+    ></div>
+
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div
+        class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+      >
+        <div
+          class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+        >
+          <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                <h3
+                  class="text-base font-semibold leading-6 text-gray-900"
+                  id="modal-title"
+                >
+                  Skills
+                </h3>
+                <div class="mt-2">
+                  <ul>
+                    @for (skill of user()!.profile.skills; track $index) {
+                      <li>{{ skill }}</li>
+                    }
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <button
+              type="button"
+              class="mt-3 inline-flex w-full justify-center rounded-md bg-blue-100 px-3 py-2 text-sm font-semibold text-neutral-300 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-blue-200 sm:mt-0 sm:w-auto"
+              (click)="openModal.set(false)"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 }
-</div>
