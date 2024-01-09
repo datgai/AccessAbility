@@ -108,4 +108,10 @@ export class ProfileComponent implements OnInit {
 
     return;
   }
+
+  public containsBusiness() {
+    return this.jobsApplied().some(
+      (job) => job.businessId === this.userStore.user?.uid,
+    );
+  }
 }
