@@ -16,7 +16,7 @@ import {
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../components/summary-card/summary-card.component';
-import { JobService } from '../../services/job.service';
+import { JobDetails, JobService } from '../../services/job.service';
 import { SkillsService } from '../../services/skills.service';
 import {
   UserResponse,
@@ -41,7 +41,7 @@ import { UserService } from '../../services/user.service';
 })
 export class ProfileComponent implements OnInit {
   public user = signal<UserResponse | undefined>(undefined);
-  public jobAppliedIds = signal<string[]>([]);
+  public jobsApplied = signal<JobDetails[]>([]);
   public openModal = signal<boolean>(false);
 
   constructor(
@@ -95,8 +95,8 @@ export class ProfileComponent implements OnInit {
               next: (response) => {
                 response.jobs.forEach((job) => {
                   if (job.applicants?.includes(this.user()!.uid ?? '')) {
-                    if (this.jobAppliedIds().includes(job.id)) return;
-                    this.jobAppliedIds().push(job.id);
+                    if (this.jobsApplied().includes(job)) return;
+                    this.jobsApplied().push(job);
                   }
                 });
                 nextPageToken = response.nextPageToken;
