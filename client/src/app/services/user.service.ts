@@ -15,4 +15,11 @@ export class UserService {
   getUser(userId: string) {
     return this.http.get<UserDetails>(`${environment.baseUrl}/user/${userId}`);
   }
+
+  addOffer(userId: string, offerId: string) {
+    return this.http.patch<{ message: string }>(
+      `${environment.baseUrl}/user/${userId}`,
+      { offerId },
+    );
+  }
 }

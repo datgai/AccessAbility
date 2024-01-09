@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
+import { ToastrService } from 'ngx-toastr';
 import {
   EMPTY,
   concatMap,
@@ -35,6 +37,8 @@ import { UserService } from '../../services/user.service';
     MarkdownPipe,
     CommonModule,
     RouterLink,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
@@ -43,6 +47,7 @@ export class ProfileComponent implements OnInit {
   public user = signal<UserResponse | undefined>(undefined);
   public jobsApplied = signal<JobDetails[]>([]);
   public openModal = signal<boolean>(false);
+  public jobOfferId = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +55,7 @@ export class ProfileComponent implements OnInit {
     private userService: UserService,
     private skillsService: SkillsService,
     private jobService: JobService,
+    private toastr: ToastrService,
     public userStore: UserStoreService,
   ) {}
 
@@ -109,9 +115,45 @@ export class ProfileComponent implements OnInit {
     return;
   }
 
-  public containsBusiness() {
+  containsBusiness() {
     return this.jobsApplied().some(
       (job) => job.businessId === this.userStore.user?.uid,
     );
+  }
+
+  submitOfferForm() {
+    if (!this.jobOfferId) {
+      return this.toastr.warning('No position selected.');
+    }
+
+    this.userService.addOffer(this.user()!.uid, this.jobOfferId).subscribe({
+      next: (response) => this.toastr.success(response.message),
+      complete: () => this.removeApplicants(),
+    });
+    return;
+  }
+
+  removeApplicants(message?: string) {
+    from(
+      this.jobsApplied().filter(
+        (job) => job.businessId === this.userStore.user?.uid,
+      ),
+    )
+      .pipe(
+        mergeMap((job) => {
+          return this.jobService.editJob(job.id, {
+            applicants: job.applicants.filter(
+              (applicant) => applicant !== this.user()?.uid,
+            ),
+          });
+        }),
+      )
+      .subscribe({
+        complete: () => {
+          this.jobsApplied.set([]);
+          this.ngOnInit();
+          if (message) this.toastr.success(message);
+        },
+      });
   }
 }

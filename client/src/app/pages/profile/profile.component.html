@@ -1,6 +1,7 @@
 <style type="text/css">
   input:checked + label {
     background-color: var(--primary-clr) !important;
+    color: white;
   }
 </style>
 <section>
@@ -30,7 +31,7 @@
           @if (containsBusiness()) {
             <h2 class="text-3xl font-bold">Positions Applied</h2>
 
-            <form>
+            <form (ngSubmit)="submitOfferForm()">
               @for (job of jobsApplied(); track job.id) {
                 @if (job.businessId === userStore.user?.uid) {
                   <input
@@ -39,6 +40,7 @@
                     type="radio"
                     [id]="job.id"
                     [value]="job.id"
+                    [(ngModel)]="jobOfferId"
                   />
                   <label
                     class="flex flex-row gap-2 rounded-md items-center cursor-pointer"
@@ -59,11 +61,14 @@
               }
               <div>
                 <button
+                  type="submit"
                   class="text-lg font-bold text-neutral-300 bg-blue-100 rounded-full w-full px-5 py-2 mt-2"
                 >
                   Send Offer
                 </button>
                 <button
+                  type="button"
+                  (click)="removeApplicants('Rejected applicant.')"
                   class="text-lg font-bold text-blue-100 bg-neutral-200 rounded-full w-full px-5 py-2 mt-2"
                 >
                   Reject Applicant

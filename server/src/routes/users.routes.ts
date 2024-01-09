@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  addOffer,
   createProfile,
   getProfile,
   getUserById,
@@ -13,5 +14,6 @@ router.get('/user/profile', isAuthenticated, getProfile);
 router.post('/user/profile', isAuthenticated, createProfile);
 router.get('/users/:token?', getUsers);
 router.get('/user/:id', getUserById);
+router.patch('/user/:id', addOffer);
 
 export default router;

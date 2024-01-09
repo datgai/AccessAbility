@@ -169,3 +169,37 @@ export const createProfile = async (request: Request, response: Response) => {
     });
   });
 };
+
+export const addOffer = async (request: Request, response: Response) => {
+  const userId = (request.params.id as string) ?? '';
+  const offerId = request.body.offerId as string;
+
+  if (!userId) {
+    return response.status(StatusCodes.BAD_REQUEST).json({
+      message: 'Missing offer ID'
+    });
+  }
+
+  if (!offerId) {
+    return response.status(StatusCodes.BAD_REQUEST).json({
+      message: 'Missing offer ID'
+    });
+  }
+
+  const profile = await profilesRef.doc(userId).get();
+  if (!profile.exists) {
+    return response.status(StatusCodes.NOT_FOUND).json({
+      message: 'Profile from id does not exist.'
+    });
+  }
+
+  const profileData = profile.data() as UserProfile;
+  profile.ref.set({
+    ...profileData,
+    offers: Array.from(new Set([...profileData.offers, offerId]))
+  });
+
+  return response.status(StatusCodes.OK).json({
+    message: 'Successfully gave user an offer.'
+  });
+};
