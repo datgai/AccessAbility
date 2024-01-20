@@ -6,10 +6,11 @@ import {
   UserProfile,
   UserRole
 } from '../../../shared/src/types/user';
-import { getProfileById, profilesRef } from '../database';
+import { profilesRef } from '../database';
 import { auth } from '../firebase';
 import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
+import { getProfileById } from '../utils/user.util';
 
 export const getProfile = async (request: Request, response: Response) => {
   const user = request.user;

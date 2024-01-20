@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UserRole } from '../../../shared/src/types/user';
-import { getProfileById } from '../database';
 import { auth } from '../firebase';
+import { getProfileById } from '../utils/user.util';
 
 export const isAuthenticated = async (
   request: Request,
