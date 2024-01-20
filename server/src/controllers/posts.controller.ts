@@ -6,13 +6,53 @@ import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
 import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
+import { getUserAndProfile } from '../utils/user.util';
 
 export const getPosts = async (request: Request, response: Response) => {
-  const posts = await postsRef.get();
+  const token = request.params.token ?? ' ';
 
-  return response
-    .status(StatusCodes.OK)
-    .json(posts.docs.map((post) => ({ id: post.id, ...post.data() })));
+  const posts = await postsRef
+    .orderBy(firestore.FieldPath.documentId())
+    .startAfter(token)
+    .limit(10)
+    .get();
+  const docs = posts.docs as GenericDocument<Post>[];
+
+  return response.status(StatusCodes.OK).json({
+    posts: await Promise.all(
+      docs.map(async (post) => {
+        const { authorId, comments, ...postData } = post.data();
+
+        // Fetch data of post author
+        return await getUserAndProfile(post.data().authorId).then(
+          async (author) => {
+            // Fetch data of each comment's author
+            const populatedComments = Promise.all(
+              comments.map(async (comment) => {
+                return await getUserAndProfile(comment.authorId).then(
+                  (commentAuthor) => {
+                    const { authorId, ...strippedComment } = comment;
+                    return {
+                      author: commentAuthor,
+                      ...strippedComment
+                    };
+                  }
+                );
+              })
+            );
+
+            return {
+              id: post.id,
+              author,
+              ...postData,
+              comments: populatedComments
+            };
+          }
+        );
+      })
+    ),
+    nextPageToken: docs.length === 10 ? docs.at(-1)?.id : undefined
+  });
 };
 
 export const createPost = async (request: Request, response: Response) => {
