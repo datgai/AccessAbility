@@ -22,8 +22,8 @@ export const getProfileById = async (userId: string) => {
 };
 
 export const getUserAndProfile = async (userId: string) => {
-  return await auth.getUser(userId).then(async (business) => {
-    const profile = await getProfileById(business.uid);
-    return { ...business, profile };
+  return await auth.getUser(userId).then(async (user) => {
+    const profile = await getProfileById(user.uid);
+    return { ...user, profile };
   });
 };
