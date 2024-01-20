@@ -239,3 +239,5 @@ export const getPostById = async (request: Request, response: Response) => {
       });
     });
 };
+
+// TODO: Add endpoint to add comments to posts
