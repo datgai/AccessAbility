@@ -8,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './create-post.component.css'
 })
 export class CreatePostComponent {
-
+ 
 }
