@@ -189,3 +189,53 @@ export const deletePostById = async (request: Request, response: Response) => {
       });
     });
 };
+
+export const getPostById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await postsRef
+    .doc(id)
+    .get()
+    .then(async (post) => {
+      if (!post.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Post you are looking for cannot be found.'
+        });
+      }
+
+      const postDoc = post as GenericDocument<Post>;
+      const { authorId, createdAt, comments, ...postData } = postDoc.data();
+
+      // Fetch data of post author
+      return await getUserAndProfile(authorId).then(async (author) => {
+        // Fetch data of each comment's author
+        const populatedComments = Promise.all(
+          comments.map(async (comment) => {
+            return await getUserAndProfile(comment.authorId).then(
+              (commentAuthor) => {
+                const { authorId, ...strippedComment } = comment;
+                return {
+                  author: commentAuthor,
+                  ...strippedComment
+                };
+              }
+            );
+          })
+        );
+
+        return response.status(StatusCodes.OK).json({
+          id: post.id,
+          author,
+          ...postData,
+          comments: populatedComments,
+          createdAt: (createdAt as unknown as firestore.Timestamp).toDate()
+        });
+      });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to find the job.',
+        error: err
+      });
+    });
+};
