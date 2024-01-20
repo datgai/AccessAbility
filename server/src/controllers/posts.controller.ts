@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
-import { Post } from '../../../shared/src/types/post';
+import { Comment, Post } from '../../../shared/src/types/post';
 import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
 import { getError, saveImage, upload } from '../services/uploader.service';
@@ -240,4 +240,56 @@ export const getPostById = async (request: Request, response: Response) => {
     });
 };
 
-// TODO: Add endpoint to add comments to posts
+export const addComment = async (request: Request, response: Response) => {
+  const content = request.body.content as string | undefined;
+  if (!content) {
+    return response.status(StatusCodes.BAD_REQUEST).json({
+      message: 'No content provided for comment.'
+    });
+  }
+
+  const user = request.user;
+  const id = request.params.id ?? '';
+
+  const comment: Comment = {
+    authorId: user.uid,
+    content,
+    createdAt: new Date()
+  };
+
+  return await postsRef
+    .doc(id)
+    .get()
+    .then(async (post) => {
+      if (!post.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Post you are trying to comment on cannot be found.'
+        });
+      }
+
+      const postDoc = post as GenericDocument<Post>;
+
+      return await postsRef
+        .doc(id)
+        .set({
+          ...postDoc.data(),
+          comments: [
+            ...postDoc.data().comments,
+            {
+              ...comment,
+              createdAt: firestore.Timestamp.fromDate(comment.createdAt)
+            }
+          ]
+        })
+        .then(() => {
+          return response.status(StatusCodes.OK).json({
+            message: 'Successfully added comment.'
+          });
+        })
+        .catch(() => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong adding comment.'
+          });
+        });
+    });
+};
