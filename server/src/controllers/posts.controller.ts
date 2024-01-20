@@ -21,7 +21,7 @@ export const getPosts = async (request: Request, response: Response) => {
   return response.status(StatusCodes.OK).json({
     posts: await Promise.all(
       docs.map(async (post) => {
-        const { authorId, comments, ...postData } = post.data();
+        const { authorId, createdAt, comments, ...postData } = post.data();
 
         // Fetch data of post author
         return await getUserAndProfile(post.data().authorId).then(
@@ -45,7 +45,8 @@ export const getPosts = async (request: Request, response: Response) => {
               id: post.id,
               author,
               ...postData,
-              comments: populatedComments
+              comments: populatedComments,
+              createdAt: (createdAt as unknown as firestore.Timestamp).toDate()
             };
           }
         );
