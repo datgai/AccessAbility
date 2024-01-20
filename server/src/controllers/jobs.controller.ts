@@ -76,7 +76,7 @@ export const getJobList = async (request: Request, response: Response) => {
 
     return response.status(StatusCodes.OK).json({
       jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
-      nextPageToken: jobs.docs.at(-1)?.id
+      nextPageToken: jobs.size === 10 ? jobs.docs.at(-1)?.id : undefined
     });
   }
 
@@ -120,14 +120,15 @@ export const getJobList = async (request: Request, response: Response) => {
 
       return response.status(StatusCodes.OK).json({
         jobs: jobs,
-        nextPageToken: (jobs.at(-1) as any)?.id || undefined
+        nextPageToken:
+          jobs.length === 10 ? (jobs.at(-1) as any)?.id || undefined : undefined
       });
     }
   }
 
   return response.status(StatusCodes.OK).json({
     jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
-    nextPageToken: jobs.docs.at(-1)?.id
+    nextPageToken: jobs.size === 10 ? jobs.docs.at(-1)?.id : length
   });
 };
 

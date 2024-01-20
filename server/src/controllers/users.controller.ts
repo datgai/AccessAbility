@@ -36,7 +36,7 @@ export const getUsers = async (request: Request, response: Response) => {
 
     return response.status(StatusCodes.OK).json({
       users,
-      nextPageToken: list.pageToken
+      nextPageToken: list.pageToken || undefined
     });
   });
 };
