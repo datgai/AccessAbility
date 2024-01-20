@@ -15,7 +15,12 @@ export const isAuthenticated = async (
     .verifyIdToken(idToken)
     .then(async (decodedToken) => {
       const user = await auth.getUser(decodedToken.uid);
-      request.user = { ...user, profile: await getProfileById(user.uid) };
+      request.user = {
+        uid: user.uid,
+        email: user.email!,
+        emailVerified: user.emailVerified,
+        profile: await getProfileById(user.uid)
+      };
       next();
     })
     .catch(() => {

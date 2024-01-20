@@ -1,5 +1,4 @@
 import { firestore } from 'firebase-admin';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import { UserProfile } from '../../shared/src/types/user';
 
 declare global {
@@ -22,7 +21,12 @@ declare global {
   }
   namespace Express {
     interface Request {
-      user: Omit<UserRecord, 'toJSON'> & { profile: UserProfile };
+      user: {
+        uid: string;
+        email: string;
+        emailVerified: boolean;
+        profile: UserProfile;
+      };
     }
   }
 
