@@ -1,3 +1,4 @@
+import { firestore } from 'firebase-admin';
 import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 import { UserProfile } from '../../shared/src/types/user';
 
@@ -24,6 +25,11 @@ declare global {
       user: Omit<UserRecord, 'toJSON'> & { profile: UserProfile };
     }
   }
+
+  type GenericDocument<T> = firestore.QueryDocumentSnapshot<
+    T,
+    firestore.DocumentData
+  >;
 }
 
 export {};
