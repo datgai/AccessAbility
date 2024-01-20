@@ -22,10 +22,5 @@ export class PostDetailsComponent implements OnInit{
   constructor(private route:ActivatedRoute){}
 
   ngOnInit(): void {
-    this.route.params.subscribe(param => {
-      this.postId = param['id'];
-      this.post = this.forumService.getPostById(this.postId)
-    })
-  
   }
 }

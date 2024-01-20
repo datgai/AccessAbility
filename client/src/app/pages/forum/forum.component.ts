@@ -20,7 +20,7 @@ export class ForumComponent{
   forumService: ForumService = inject(ForumService);
 
   constructor(public userStore: UserStoreService) {
-    this.postList = this.forumService.getAllPosts();
+   
   }
 
 }
