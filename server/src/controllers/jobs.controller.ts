@@ -42,11 +42,13 @@ export const createJob = async (request: Request, response: Response) => {
   return await jobsRef
     .add(jobDetails)
     .then(async (job) => {
-      const jobData = await job.get();
+      const jobData = (await job.get()) as GenericDocument<Job>;
+      const { businessId, ...data } = jobData.data();
 
       return response.status(StatusCodes.CREATED).json({
         id: jobData.id,
-        ...jobData.data()
+        business: user,
+        ...data
       });
     })
     .catch((err) => {
