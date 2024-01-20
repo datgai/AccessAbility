@@ -1,10 +1,24 @@
+import { firestore } from 'firebase-admin';
 import { UserProfile } from '../../../shared/src/types/user';
 import { profilesRef } from '../database';
 import { auth } from '../firebase';
 
 export const getProfileById = async (userId: string) => {
-  const profile = await profilesRef.doc(userId).get();
-  return (profile.exists ? profile.data() ?? {} : {}) as UserProfile;
+  const profile = (await profilesRef
+    .doc(userId)
+    .get()) as GenericDocument<UserProfile>;
+
+  const { dateOfBirth, ...profileData } = profile.data();
+  if (!dateOfBirth) return {} as UserProfile;
+
+  return (
+    profile.exists
+      ? {
+          ...profileData,
+          dateOfBirth: (dateOfBirth as unknown as firestore.Timestamp).toDate()
+        } ?? {}
+      : {}
+  ) as UserProfile;
 };
 
 export const getUserAndProfile = async (userId: string) => {
