@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import { FirebaseError, firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Job, JobLocationType, JobType } from '../../../shared/src/types/job';
 import { jobsRef, profilesRef, skillsRef } from '../database';
+import { formatJobsList, getJobWithBusiness } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
@@ -72,7 +73,7 @@ export const getJobList = async (request: Request, response: Response) => {
       .get();
 
     return response.status(StatusCodes.OK).json({
-      jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
       nextPageToken: jobs.docs.at(-1)?.id
     });
   }
@@ -109,19 +110,21 @@ export const getJobList = async (request: Request, response: Response) => {
         })
       );
 
-      const jobs = bizJobs
-        .map((job) => job.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-        .reduce((acc, job) => acc.concat(job), []);
+      jobs = await formatJobsList(
+        bizJobs
+          .map((job) => job.docs)
+          .reduce((acc, cur) => acc.concat(cur), []) as GenericDocument<Job>[]
+      );
 
       return response.status(StatusCodes.OK).json({
         jobs: jobs,
-        nextPageToken: jobs.at(-1)?.id
+        nextPageToken: (jobs.at(-1) as any)?.id || undefined
       });
     }
   }
 
   return response.status(StatusCodes.OK).json({
-    jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+    jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
     nextPageToken: jobs.docs.at(-1)?.id
   });
 };
@@ -139,10 +142,15 @@ export const getJobById = async (request: Request, response: Response) => {
         });
       }
 
-      return response.status(StatusCodes.OK).json({
-        id: job.id,
-        ...job.data()
-      });
+      return await getJobWithBusiness(job as GenericDocument<Job>)
+        .then((jobData) => response.status(StatusCodes.OK).json(jobData))
+        .catch((error: FirebaseError) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:
+              'Something went wrong while trying to find the business of this job listing.',
+            error
+          });
+        });
     })
     .catch((err) => {
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
