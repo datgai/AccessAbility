@@ -27,14 +27,17 @@ export const getPosts = async (request: Request, response: Response) => {
         return await getUserAndProfile(post.data().authorId).then(
           async (author) => {
             // Fetch data of each comment's author
-            const populatedComments = Promise.all(
+            const populatedComments = await Promise.all(
               comments.map(async (comment) => {
                 return await getUserAndProfile(comment.authorId).then(
                   (commentAuthor) => {
                     const { authorId, ...strippedComment } = comment;
                     return {
                       author: commentAuthor,
-                      ...strippedComment
+                      ...strippedComment,
+                      createdAt: (
+                        createdAt as unknown as firestore.Timestamp
+                      ).toDate()
                     };
                   }
                 );
@@ -209,14 +212,17 @@ export const getPostById = async (request: Request, response: Response) => {
       // Fetch data of post author
       return await getUserAndProfile(authorId).then(async (author) => {
         // Fetch data of each comment's author
-        const populatedComments = Promise.all(
+        const populatedComments = await Promise.all(
           comments.map(async (comment) => {
             return await getUserAndProfile(comment.authorId).then(
               (commentAuthor) => {
-                const { authorId, ...strippedComment } = comment;
+                const { authorId, createdAt, ...strippedComment } = comment;
                 return {
                   author: commentAuthor,
-                  ...strippedComment
+                  ...strippedComment,
+                  createdAt: (
+                    createdAt as unknown as firestore.Timestamp
+                  ).toDate()
                 };
               }
             );
