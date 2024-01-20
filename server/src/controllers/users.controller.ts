@@ -59,7 +59,10 @@ export const getUserById = async (request: Request, response: Response) => {
     });
 };
 
-export const createProfile = async (request: Request, response: Response) => {
+export const editOrCreateProfile = async (
+  request: Request,
+  response: Response
+) => {
   const user = request.user;
 
   upload.single('avatar')(request, response, async (err) => {

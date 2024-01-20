@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   addOffer,
-  createProfile,
+  editOrCreateProfile,
   getProfile,
   getUserById,
   getUsers
@@ -11,7 +11,7 @@ import { isAuthenticated } from '../middleware/auth.middleware';
 const router = Router();
 
 router.get('/user/profile', isAuthenticated, getProfile);
-router.post('/user/profile', isAuthenticated, createProfile);
+router.post('/user/profile', isAuthenticated, editOrCreateProfile);
 router.get('/users/:token?', getUsers);
 router.get('/user/:id', getUserById);
 router.patch('/user/:id', addOffer);
