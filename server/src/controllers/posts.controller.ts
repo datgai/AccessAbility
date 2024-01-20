@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Post } from '../../../shared/src/types/post';
 import { UserRole } from '../../../shared/src/types/user';
@@ -76,16 +77,24 @@ export const createPost = async (request: Request, response: Response) => {
       content: body.content,
       comments: [],
       thumbnailUrl: thumbnailUrl,
-      isDonation: body.isDonation ?? false
+      isDonation: body.isDonation ?? false,
+      createdAt: new Date()
     };
 
     return await postsRef
-      .add(postDetails)
+      .add({
+        ...postDetails,
+        createdAt: firestore.Timestamp.fromDate(postDetails.createdAt)
+      })
       .then(async (post) => {
-        const postData = await post.get();
+        const postData = (await post.get()) as GenericDocument<Post>;
+        const { authorId, createdAt, ...data } = postData.data();
+
         return response.status(StatusCodes.CREATED).json({
           id: postData.id,
-          ...postData.data()
+          author: user,
+          createdAt: (createdAt as unknown as firestore.Timestamp).toDate(),
+          ...data
         });
       })
       .catch((error) => {
