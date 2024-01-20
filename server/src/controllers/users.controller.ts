@@ -74,9 +74,11 @@ export const editOrCreateProfile = async (
     >;
     type Parameter = keyof ProfileParam;
 
-    const requiredParams: Parameter[] = ['firstName', 'role'];
+    const params = getMissingParameters<Parameter>(request, [
+      'firstName',
+      'role'
+    ]);
 
-    const params = getMissingParameters<Parameter>(request, requiredParams);
     if (params.length > 0) {
       return response.status(StatusCodes.BAD_REQUEST).json({
         message: 'Missing parameters.',
