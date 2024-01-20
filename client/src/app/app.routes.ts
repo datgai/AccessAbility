@@ -13,6 +13,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { PostDetailsComponent } from './pages/post-details/post-details.component';
+import { CreatePostComponent } from './pages/create-post/create-post.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -30,5 +31,6 @@ export const routes: Routes = [
   { path: 'edit-profile', component: EditProfileComponent },
   { path: 'forum', component: ForumComponent },
   { path: 'post-details/:id', component: PostDetailsComponent },
+  { path: 'create-post', component: CreatePostComponent },
   { path: '**', component: NotFoundComponent },
 ];
