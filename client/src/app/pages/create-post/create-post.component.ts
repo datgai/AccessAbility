@@ -27,9 +27,22 @@ export class CreatePostComponent {
   ) {}
 
   onSubmit() {
+
+    const { postTitle, postContent, thumbnailUrl, isDonation } = this.createPostForm.value;
+
+    const postBody = {
+      title: postTitle,
+      content: postContent,
+      image: thumbnailUrl,
+      isDonation: isDonation, 
+    };
     
+    this.forumService.createPost(postBody).subscribe({
+      next:(post) => {
+        console.log('Post created successfully:', post);
+      },
+      error: (err) => console.error('Error creating post:', err)
+    });
   }
-
-
 
 }
