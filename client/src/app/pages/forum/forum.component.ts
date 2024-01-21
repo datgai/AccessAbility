@@ -27,27 +27,11 @@ export class ForumComponent implements OnInit{
 
   loadPosts() {
     this.forumService.getPostList().subscribe({
-      next: (posts) => this.postList = posts,
+      next: (response) => {
+        this.postList = response.posts
+      },
       error: (err) => console.error(err),
     });
   }
-  
-
-  /*
-  loadPosts() {
-    this.forumService.getPostList().subscribe({
-      next: (posts) => this.postList = posts,
-      error: (err) => console.error(err),
-    })
-      
-    /*
-      (posts) => {
-        this.postList = posts;
-      },
-      (error) => {
-        console.error('Error loading posts:', error);
-      }
-    );
-  }*/
 
 }

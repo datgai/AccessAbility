@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Post } from '../../../../shared/src/types/post'
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, from } from 'rxjs';
+import { throwError, from } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Component, inject } from '@angular/core';
-import { Auth, getIdToken } from '@angular/fire/auth';
-import { UserStoreService } from './user-store.service';
+import { inject } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { switchMap, catchError } from 'rxjs/operators';
-import { UserService } from './user.service';
-
 
 export type PostDetails = Post & { id: string };
+
+export interface PostResponse {
+  posts: PostDetails[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +23,13 @@ export class ForumService {
     private auth: Auth = inject(Auth)
     ) {}
 
+    
     createPost(body: {
       title: string;
       content: string;
       image: string;
       isDonation: boolean;
-    }): Observable<PostDetails> {
+    }) {
       const currentUser = this.auth.currentUser;
   
       if (!currentUser) {
@@ -49,16 +51,16 @@ export class ForumService {
       );
     }
 
-    getPostList(): Observable<PostDetails[]> {
-      return this.http.get<PostDetails[]>(`${environment.baseUrl}/posts`);
+    getPostList() {
+      return this.http.get<PostResponse>(`${environment.baseUrl}/posts`);
     }
   
     getPost(postId: string) {
       return this.http.get<PostDetails>(`${environment.baseUrl}/posts/${postId}`);
     }
 
-    deletePost(postId: string): Observable<void> {
-      return this.http.delete<void>(`${environment.baseUrl}/post/${postId}`);
+    deletePost(postId: string) {
+      return this.http.delete<PostDetails>(`${environment.baseUrl}/post/${postId}`);
     }
   
 }
