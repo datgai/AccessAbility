@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ForumService } from '../../services/forum.service';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-post',
@@ -23,11 +24,11 @@ export class CreatePostComponent {
 
   constructor(
     private httpClient: HttpClient,
-    private forumService: ForumService
+    private forumService: ForumService, 
+    private router: Router
   ) {}
 
   onSubmit() {
-
     const { postTitle, postContent, thumbnailUrl, isDonation } = this.createPostForm.value;
 
     const postBody = {
@@ -40,6 +41,7 @@ export class CreatePostComponent {
     this.forumService.createPost(postBody).subscribe({
       next:(post) => {
         console.log('Post created successfully:', post);
+        this.router.navigate(['/forum']); 
       },
       error: (err) => console.error('Error creating post:', err)
     });

@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { ForumService } from '../../services/forum.service';
 import { RouterModule } from '@angular/router';
 
-
 @Component({
   selector: 'app-forum',
   standalone: true,
@@ -26,12 +25,12 @@ export class ForumComponent implements OnInit{
   }
 
   loadPosts() {
-    this.forumService.getPostList().subscribe({
-      next: (response) => {
-        this.postList = response.posts
-      },
-      error: (err) => console.error(err),
-    });
-  }
+  this.forumService.getPostList().subscribe({
+    next: (response) => {
+      this.postList = response.posts
+    },
+    error: (err) => console.error(err),
+  });
+}
 
 }
