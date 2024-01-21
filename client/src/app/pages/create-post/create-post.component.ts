@@ -16,7 +16,7 @@ export class CreatePostComponent {
     {
       postTitle: new FormControl('', [Validators.required]),
       postContent: new FormControl('', [Validators.required]),
-      thumbnailUrl: new FormControl('', [Validators.required]),
+      thumbnailUrl: new FormControl(''),
       isDonation: new FormControl(false, [Validators.required])
   }
   );
