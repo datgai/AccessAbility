@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { PostComponent } from '../../components/post/post.component';
 import { UserStoreService } from '../../services/user-store.service'
 import { Post } from '../../../../../shared/src/types/post'
@@ -15,12 +15,39 @@ import { RouterModule } from '@angular/router';
   styleUrl: './forum.component.css'
 })
 
-export class ForumComponent{
+export class ForumComponent implements OnInit{
   postList: Post[] = [];
   forumService: ForumService = inject(ForumService);
 
-  constructor(public userStore: UserStoreService) {
-   
+  constructor(public userStore: UserStoreService) {}
+
+  ngOnInit(): void {
+    this.loadPosts()
   }
+
+  loadPosts() {
+    this.forumService.getPostList().subscribe({
+      next: (posts) => this.postList = posts,
+      error: (err) => console.error(err),
+    });
+  }
+  
+
+  /*
+  loadPosts() {
+    this.forumService.getPostList().subscribe({
+      next: (posts) => this.postList = posts,
+      error: (err) => console.error(err),
+    })
+      
+    /*
+      (posts) => {
+        this.postList = posts;
+      },
+      (error) => {
+        console.error('Error loading posts:', error);
+      }
+    );
+  }*/
 
 }

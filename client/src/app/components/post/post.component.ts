@@ -19,6 +19,4 @@ export class PostComponent {
       ? this.post.content.substring(0, maxLength) + '...'
       : this.post.content;
   }
-
-
 }
