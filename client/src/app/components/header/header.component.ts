@@ -12,6 +12,9 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+
+  displayName: string = this.userStore.user?.profile.firstName.toUpperCase() || ''
+
   constructor(
     public userStore: UserStoreService,
     private authenticationService: AuthenticationService,
