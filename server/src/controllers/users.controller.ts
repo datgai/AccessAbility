@@ -279,3 +279,40 @@ export const getUserApplications = async (
 
   return response.status(StatusCodes.OK).json(applications);
 };
+
+export const getOffersByBusiness = async (
+  request: Request,
+  response: Response
+) => {
+  return await auth.listUsers().then(async (results) => {
+    const business = request.user;
+    const offers: any[] = [];
+
+    for (const user of results.users) {
+      const profile = await getProfileById(user.uid);
+
+      offers.push(
+        ...(
+          await Promise.all(
+            profile.offers.map(async (jobId) => {
+              const job = (await jobsRef
+                .doc(jobId)
+                .get()) as GenericDocument<Job>;
+
+              const populatedJob = (await getJobWithUsers(job)) as any;
+              if (Object.keys(populatedJob).includes('message')) return null;
+              console.log(populatedJob.business.uid, 'job');
+              console.log(business.uid, 'user');
+              if (populatedJob.business.uid !== business.uid) return null;
+
+              console.log('here');
+              return populatedJob as any;
+            })
+          )
+        ).filter((job) => job !== null)
+      );
+    }
+
+    return response.status(StatusCodes.OK).json(offers);
+  });
+};
