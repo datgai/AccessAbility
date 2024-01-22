@@ -95,25 +95,29 @@ export class EditProfileComponent implements OnInit {
             this.user()!.profile.firstName,
             Validators.required,
           ),
-          lastName: new FormControl<string>(this.user()!.profile.lastName),
-          gender: new FormControl<UserGender>(this.user()!.profile.gender),
+          lastName: new FormControl<string>(
+            this.user()!.profile.lastName ?? '',
+          ),
+          gender: new FormControl<UserGender>(
+            this.user()!.profile.gender ?? '',
+          ),
           dateOfBirth: new FormControl<string>(
             new Date(this.user()!.profile.dateOfBirth)
               .toISOString()
-              .split('T')[0],
+              .split('T')[0] ?? '',
           ),
           phoneNumber: new FormControl<string>(
-            this.user()!.profile.phoneNumber,
+            this.user()!.profile.phoneNumber ?? '',
           ),
           impairments: new FormControl<string[]>(
-            this.user()!.profile.impairments,
+            this.user()!.profile.impairments ?? '',
           ),
           skills: new FormControl<string[]>(this.user()!.profile.skills),
           offers: new FormControl<string[]>(this.user()!.profile.offers),
-          city: new FormControl<string>(this.user()!.profile.city),
-          state: new FormControl<string>(this.user()!.profile.state),
-          address: new FormControl<string>(this.user()!.profile.address),
-          bio: new FormControl<string>(this.user()!.profile.bio),
+          city: new FormControl<string>(this.user()!.profile.city ?? ''),
+          state: new FormControl<string>(this.user()!.profile.state ?? ''),
+          address: new FormControl<string>(this.user()!.profile.address ?? ''),
+          bio: new FormControl<string>(this.user()!.profile.bio ?? ''),
           avatar: new FormControl<File | null>(null),
         });
       },
