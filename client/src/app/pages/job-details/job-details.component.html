@@ -41,7 +41,10 @@
     </div>
 
     @if (userStore.user?.profile?.role === userStore.UserRole.USER) {
-      @if (userStore.user?.profile?.offers?.includes(job()!.id)) {
+      @if (
+        userStore.user?.profile?.offers?.includes(job()!.id) ||
+        userOfferedBusinesses().includes(job()?.business?.uid ?? "")
+      ) {
         <button
           class="bg-blue-100 hover:bg-blue-200 rounded-full font-bold text-lg w-full md:w-auto md:px-5 py-2 md:py-1 text-neutral-300 cursor-not-allowed"
           disabled
