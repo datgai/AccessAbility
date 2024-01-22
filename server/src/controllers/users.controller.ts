@@ -210,7 +210,6 @@ export const addOffer = async (request: Request, response: Response) => {
 };
 
 export const getUserOffers = async (request: Request, response: Response) => {
-  const business = request.user;
   const userId = request.params.id ?? '';
 
   const profile = await getProfileById(userId);
@@ -222,9 +221,8 @@ export const getUserOffers = async (request: Request, response: Response) => {
 
   const offers: Job[] = [];
 
-  profile.offers.map(async (jobId) => {
+  profile.offers.forEach(async (jobId) => {
     const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
-    if (job.data().businessId !== business.uid) return;
 
     const populatedJob = await getJobWithUsers(job);
     if (Object.keys(populatedJob).includes('message')) return;
