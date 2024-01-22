@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../../../shared/src/types/post'
 import {RouterModule} from '@angular/router';
-import { Timestamp } from '@angular/fire/firestore';
 import { PostDetails } from '../../services/forum.service';
 
 @Component({
