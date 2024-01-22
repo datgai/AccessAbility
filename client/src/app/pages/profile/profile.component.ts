@@ -91,7 +91,6 @@ export class ProfileComponent implements OnInit {
               .subscribe({
                 next: (applications) => {
                   this.businessData().jobsApplied.set(applications);
-                  console.log(applications);
                 },
               });
           });
