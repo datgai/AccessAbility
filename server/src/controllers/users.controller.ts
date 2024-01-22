@@ -239,7 +239,7 @@ export const getUserOffers = async (request: Request, response: Response) => {
       }
 
       const populatedJob = await getJobWithUsers(job);
-      if (Object.keys(populatedJob).includes('message')) return;
+      if (Object.keys(populatedJob).includes('message')) return null;
 
       return populatedJob;
     })
