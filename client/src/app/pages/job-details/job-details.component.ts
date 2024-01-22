@@ -51,7 +51,6 @@ export class JobDetailsComponent implements OnInit {
         .pipe(map((offers) => offers.map((offer) => offer.business.uid)))
         .subscribe({
           next: (businessIds) => this.userOfferedBusinesses.set(businessIds),
-          complete: () => console.log(this.userOfferedBusinesses()),
         });
     });
 
