@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Post } from '../../../../../shared/src/types/post'
 import {RouterModule} from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
+import { PostDetails } from '../../services/forum.service';
 
 @Component({
   selector: 'app-post',
@@ -11,12 +12,18 @@ import { Timestamp } from '@angular/fire/firestore';
   templateUrl: './post.component.html',
   styleUrl: './post.component.css'
 })
-export class PostComponent {
+export class PostComponent implements OnInit {
   @Input() post!: Post;
 
-  formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    const formattedDate = date.toISOString().split('T')[0];
+  postId: string = ''
+
+  ngOnInit(): void {
+      this.postId = ((this.post as PostDetails).id)
+  }
+
+  formatDate(date: Date): string {
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toISOString().split('T')[0];
     return formattedDate
   }
 
