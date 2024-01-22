@@ -3,7 +3,7 @@ import { FirebaseError, firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Job, JobLocationType, JobType } from '../../../shared/src/types/job';
 import { jobsRef, profilesRef, skillsRef } from '../database';
-import { formatJobsList, getJobWithBusiness } from '../utils/job.util';
+import { formatJobsList, getJobWithUsers } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
@@ -145,7 +145,7 @@ export const getJobById = async (request: Request, response: Response) => {
         });
       }
 
-      return await getJobWithBusiness(job as GenericDocument<Job>)
+      return await getJobWithUsers(job as GenericDocument<Job>)
         .then((jobData) => response.status(StatusCodes.OK).json(jobData))
         .catch((error: FirebaseError) => {
           return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

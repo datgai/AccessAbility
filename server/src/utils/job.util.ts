@@ -2,14 +2,22 @@ import { FirebaseError } from 'firebase-admin';
 import { Job } from '../../../shared/src/types/job';
 import { getUserAndProfile } from './user.util';
 
-export const getJobWithBusiness = async (job: GenericDocument<Job>) => {
+export const getJobWithUsers = async (job: GenericDocument<Job>) => {
   return await getUserAndProfile(job.data().businessId)
-    .then((business) => {
-      const { businessId, ...jobData } = job.data();
+    .then(async (business) => {
+      const { businessId, applicants, ...jobData } = job.data();
+
+      const populatedApplicants = await Promise.all(
+        applicants.map(
+          async (applicantId) => await getUserAndProfile(applicantId)
+        )
+      );
+
       return {
         id: job.id,
         business,
-        ...jobData
+        ...jobData,
+        applicants: populatedApplicants
       };
     })
     .catch((error: FirebaseError) => {
@@ -30,7 +38,7 @@ export const formatJobsList = async (jobs: GenericDocument<Job>[]) => {
   return (
     await Promise.all(
       jobs.map(async (job) => {
-        return await getJobWithBusiness(job as GenericDocument<Job>)
+        return await getJobWithUsers(job as GenericDocument<Job>)
           .then((jobData) => jobData)
           .catch(() => null);
       })
