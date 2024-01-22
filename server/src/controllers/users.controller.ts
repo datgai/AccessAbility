@@ -232,7 +232,7 @@ export const getUserOffers = async (request: Request, response: Response) => {
       const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
 
       if (
-        user.profile.role !== UserRole.BUSINESS &&
+        user.profile.role === UserRole.BUSINESS &&
         job.data().businessId !== user.uid
       ) {
         return null;
