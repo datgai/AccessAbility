@@ -67,9 +67,7 @@ export const editOrCreateProfile = async (
 
   upload.single('avatar')(request, response, async (err) => {
     type ProfileParam = Record<
-      | keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>
-      | 'email'
-      | 'password',
+      keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>,
       string
     >;
     type Parameter = keyof ProfileParam;
@@ -87,7 +85,7 @@ export const editOrCreateProfile = async (
       });
     }
 
-    const { email, password, ...body } = request.body as ProfileParam;
+    const body = request.body as ProfileParam;
 
     if (!Object.values(UserRole).includes(body.role as UserRole)) {
       return response.status(StatusCodes.BAD_REQUEST).json({
