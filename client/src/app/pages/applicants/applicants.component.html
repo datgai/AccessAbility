@@ -9,17 +9,21 @@
     @if (totalApplicants() === 0) {
       <p>No Applicants</p>
     } @else {
-      @for (job of jobs(); track job.id) {
-        @for (applicant of job.applicants; track applicant.uid) {
-          <app-mini-info-card
-            infoLink="/user/{{ applicant.uid }}"
-            infoImageUrl="{{ applicant.profile.profilePictureUrl }}"
-            infoTitle="{{ applicant.profile.firstName }}"
-            infoName="{{ job.position }}"
-            infoType="{{ job.type }}"
-          />
+      <div
+        class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
+      >
+        @for (job of jobs(); track job.id) {
+          @for (applicant of job.applicants; track applicant.uid) {
+            <app-mini-info-card
+              infoLink="/user/{{ applicant.uid }}"
+              infoImageUrl="{{ applicant.profile.profilePictureUrl }}"
+              infoTitle="{{ applicant.profile.firstName }}"
+              infoName="{{ job.position }}"
+              infoType="{{ job.type }}"
+            />
+          }
         }
-      }
+      </div>
     }
   }
 </section>
