@@ -33,7 +33,7 @@
 
             <form (ngSubmit)="submitOfferForm()">
               @for (job of jobsApplied(); track job.id) {
-                @if (job.businessId === userStore.user?.uid) {
+                @if (job.business.uid === userStore.user?.uid) {
                   <input
                     hidden
                     name="job"

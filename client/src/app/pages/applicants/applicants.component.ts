@@ -1,13 +1,9 @@
-import { Component, signal } from '@angular/core';
-import { EMPTY, expand, from } from 'rxjs';
+import { Component, Input, computed, signal } from '@angular/core';
+import { EMPTY, expand } from 'rxjs';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { JobDetails, JobService } from '../../services/job.service';
-import {
-  UserResponse,
-  UserStoreService,
-} from '../../services/user-store.service';
-import { UserService } from '../../services/user.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-applicants',
@@ -17,18 +13,22 @@ import { UserService } from '../../services/user.service';
   styleUrl: './applicants.component.css',
 })
 export class ApplicantsComponent {
-  public jobApplicationIds = signal<string[]>([]);
-  public applications = signal<
-    {
-      jobDetails: JobDetails;
-      applicantDetails: UserResponse;
-    }[]
-  >([]);
-  public numOffers = signal<number>(0);
+  public jobs = signal<JobDetails[]>([]);
+  public numApplicants = signal<number>(0);
+  public numOffersGiven = signal<number>(0);
+
+  public totalApplicants = computed<number>(() => {
+    return this.jobs().reduce((acc, cur) => {
+      acc += cur.applicants.length;
+      return acc;
+    }, 0);
+  });
+
+  @Input({ required: false })
+  public showHeading = true;
 
   constructor(
     private jobService: JobService,
-    private userService: UserService,
     public userStore: UserStoreService,
   ) {}
 
@@ -46,28 +46,21 @@ export class ApplicantsComponent {
       .subscribe({
         next: (response) => {
           response.jobs.forEach((job) => {
-            if (job.businessId !== this.userStore.user?.uid) return;
-            // Load number of applications
-            this.jobApplicationIds().push(...job.applicants);
+            if (job.business.uid !== this.userStore.user?.uid) return;
 
-            // Load applicants
-            from(job.applicants).subscribe({
-              next: (applicantId) => {
-                this.userService.getUser(applicantId).subscribe({
-                  next: (user) => {
-                    // Get number of offers the busines has given
-                    if (user.profile.offers.includes(job.id)) {
-                      this.numOffers.set(this.numOffers() + 1);
-                    }
+            // Get number of applications the business has
+            this.numApplicants.set(
+              this.numApplicants() + job.applicants.length,
+            );
 
-                    this.applications().push({
-                      jobDetails: job,
-                      applicantDetails: user,
-                    });
-                  },
-                });
-              },
+            // Get number of offers the business has given
+            job.applicants.forEach((applicant) => {
+              if (applicant.profile.offers.includes(job.id)) {
+                this.numOffersGiven.set(this.numOffersGiven() + 1);
+              }
             });
+
+            this.jobs().push(job);
           });
 
           nextPageToken = response.nextPageToken;

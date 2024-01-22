@@ -1,15 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { EMPTY, expand, from } from 'rxjs';
+import { EMPTY, expand } from 'rxjs';
 import { LoaderComponent } from '../../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
+import { ApplicantsComponent } from '../../../pages/applicants/applicants.component';
 import { JobDetails, JobService } from '../../../services/job.service';
-import {
-  UserResponse,
-  UserStoreService,
-} from '../../../services/user-store.service';
-import { UserService } from '../../../services/user.service';
+import { UserStoreService } from '../../../services/user-store.service';
 
 @Component({
   selector: 'app-business-view',
@@ -19,29 +16,23 @@ import { UserService } from '../../../services/user.service';
     RouterLink,
     MiniInfoCardComponent,
     LoaderComponent,
+    ApplicantsComponent,
   ],
   templateUrl: './business-view.component.html',
   styleUrl: './business-view.component.css',
 })
 export class BusinessViewComponent implements OnInit {
-  public jobApplicationIds = signal<string[]>([]);
-  public applications = signal<
-    {
-      jobDetails: JobDetails;
-      applicantDetails: UserResponse;
-    }[]
-  >([]);
-  public numOffers = signal<number>(0);
+  public jobs = signal<JobDetails[]>([]);
+  public numApplicants = signal<number>(0);
+  public numOffersGiven = signal<number>(0);
 
   constructor(
     private jobService: JobService,
-    private userService: UserService,
     public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
     let nextPageToken: string | undefined = '';
-    const loadedApplicantIds: string[] = [];
     this.jobService
       .getJobList(nextPageToken)
       .pipe(
@@ -54,35 +45,22 @@ export class BusinessViewComponent implements OnInit {
       .subscribe({
         next: (response) => {
           response.jobs.forEach((job) => {
-            if (job.businessId !== this.userStore.user?.uid) return;
-            // Load number of applications
-            this.jobApplicationIds().push(...job.applicants);
+            if (job.business.uid !== this.userStore.user?.uid) return;
 
-            // Load applicants
-            from(job.applicants).subscribe({
-              next: (applicantId) => {
-                this.userService.getUser(applicantId).subscribe({
-                  next: (user) => {
-                    // Get number of offers the busines has given
-                    if (user.profile.offers.includes(job.id)) {
-                      this.numOffers.set(this.numOffers() + 1);
-                    }
+            // Get number of applications the business has
+            this.numApplicants.set(
+              this.numApplicants() + job.applicants.length,
+            );
 
-                    // Load all applications that the business has received
-                    // if (loadedApplicantIds.includes(applicantId)) return;
-                    loadedApplicantIds.push(applicantId);
-
-                    // Load a maximum of 10 applicants
-                    if (loadedApplicantIds.length >= 10) return;
-
-                    this.applications().push({
-                      jobDetails: job,
-                      applicantDetails: user,
-                    });
-                  },
-                });
-              },
+            // Get number of offers the business has given
+            console.log(job.applicants);
+            job.applicants.forEach((applicant) => {
+              if (applicant.profile.offers.includes(job.id)) {
+                this.numOffersGiven.set(this.numOffersGiven() + 1);
+              }
             });
+
+            this.jobs().push(job);
           });
 
           nextPageToken = response.nextPageToken;

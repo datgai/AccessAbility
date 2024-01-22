@@ -100,7 +100,11 @@ export class ProfileComponent implements OnInit {
             .subscribe({
               next: (response) => {
                 response.jobs.forEach((job) => {
-                  if (job.applicants?.includes(this.user()!.uid ?? '')) {
+                  if (
+                    job.applicants?.some(
+                      (applicant) => applicant.uid === this.user()!.uid,
+                    )
+                  ) {
                     if (this.jobsApplied().includes(job)) return;
                     this.jobsApplied().push(job);
                   }
@@ -117,7 +121,7 @@ export class ProfileComponent implements OnInit {
 
   containsBusiness() {
     return this.jobsApplied().some(
-      (job) => job.businessId === this.userStore.user?.uid,
+      (job) => job.business.uid === this.userStore.user?.uid,
     );
   }
 
@@ -136,15 +140,15 @@ export class ProfileComponent implements OnInit {
   removeApplicants(message?: string) {
     from(
       this.jobsApplied().filter(
-        (job) => job.businessId === this.userStore.user?.uid,
+        (job) => job.business.uid === this.userStore.user?.uid,
       ),
     )
       .pipe(
         mergeMap((job) => {
           return this.jobService.editJob(job.id, {
-            applicants: job.applicants.filter(
-              (applicant) => applicant !== this.user()?.uid,
-            ),
+            applicants: job.applicants
+              .filter((applicant) => applicant.uid !== this.user()?.uid)
+              .map((applicant) => applicant.uid),
           });
         }),
       )

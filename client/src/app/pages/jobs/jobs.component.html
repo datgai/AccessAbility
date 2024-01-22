@@ -33,13 +33,13 @@
     <div
       class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
     >
-      @for (job of jobs(); track job.jobDetails.id) {
+      @for (job of jobs(); track job.id) {
         <app-mini-info-card
-          infoLink="/jobs/{{ job.jobDetails.id }}"
-          infoImageUrl="{{ job.businessDetails.profilePictureUrl }}"
-          infoTitle="{{ job.jobDetails.position }}"
-          infoName="{{ job.businessDetails.firstName }}"
-          infoType="{{ job.jobDetails.type }}"
+          infoLink="/jobs/{{ job.id }}"
+          infoImageUrl="{{ job.business.profile.profilePictureUrl }}"
+          infoTitle="{{ job.position }}"
+          infoName="{{ job.business.profile.firstName }}"
+          infoType="{{ job.type }}"
           class="bg-neutral-300 bg-opacity-50 rounded-md"
         />
       }

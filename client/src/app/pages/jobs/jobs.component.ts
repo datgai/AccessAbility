@@ -1,9 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { tap } from 'rxjs';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
-import { JobInfo, JobService } from '../../services/job.service';
+import { JobDetails, JobService } from '../../services/job.service';
 import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
@@ -19,7 +18,7 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './jobs.component.css',
 })
 export class JobsComponent implements OnInit {
-  public jobs = signal<JobInfo[]>([]);
+  public jobs = signal<JobDetails[]>([]);
   public nextPageToken = signal<string | undefined>('');
   public searchTerm = new FormControl<string>('');
 
@@ -29,47 +28,31 @@ export class JobsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.jobService
-      .formatJobList(
-        this.jobService
-          .getJobList(this.nextPageToken())
-          .pipe(
-            tap((response) => this.nextPageToken.set(response.nextPageToken)),
-          ),
-      )
-      .subscribe({
-        next: (jobResponse) => this.jobs.set(jobResponse),
-        error: (err) => console.error(err),
-      });
+    this.jobService.getJobList(this.nextPageToken()).subscribe({
+      next: (response) => {
+        this.jobs.set(response.jobs);
+        this.nextPageToken.set(response.nextPageToken);
+      },
+    });
   }
 
   onSubmit() {
     this.jobService
-      .formatJobList(
-        this.jobService
-          .getJobList(this.nextPageToken(), this.searchTerm.value ?? '')
-          .pipe(
-            tap((response) => this.nextPageToken.set(response.nextPageToken)),
-          ),
-      )
+      .getJobList(this.nextPageToken(), this.searchTerm.value ?? '')
       .subscribe({
-        next: (jobResponse) => this.jobs.set(jobResponse),
-        error: (err) => console.error(err),
+        next: (response) => {
+          this.jobs.set(response.jobs);
+          this.nextPageToken.set(response.nextPageToken);
+        },
       });
   }
 
   loadMore() {
-    this.jobService
-      .formatJobList(
-        this.jobService
-          .getJobList(this.nextPageToken())
-          .pipe(
-            tap((response) => this.nextPageToken.set(response.nextPageToken)),
-          ),
-      )
-      .subscribe({
-        next: (jobResponse) => this.jobs().push(...jobResponse),
-        error: (err) => console.error(err),
-      });
+    this.jobService.getJobList(this.nextPageToken()).subscribe({
+      next: (response) => {
+        this.jobs().push(...response.jobs);
+        this.nextPageToken.set(response.nextPageToken);
+      },
+    });
   }
 }
