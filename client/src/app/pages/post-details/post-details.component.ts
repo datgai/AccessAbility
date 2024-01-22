@@ -5,7 +5,6 @@ import { Post } from '../../../../../shared/src/types/post';
 import { ForumService } from '../../services/forum.service';
 import { CommentComponent } from '../../components/comment/comment.component';
 
-
 @Component({
   selector: 'app-post-details',
   standalone: true,
@@ -35,4 +34,10 @@ export class PostDetailsComponent implements OnInit{
       }
     );
   }
+
+  formatDate(date: Date | undefined): string {
+    return (date ? new Date(date) : new Date()).toLocaleDateString();
+  }
+  
+  
 }

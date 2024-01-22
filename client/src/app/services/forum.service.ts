@@ -62,5 +62,4 @@ export class ForumService {
     deletePost(postId: string) {
       return this.http.delete<PostDetails>(`${environment.baseUrl}/post/${postId}`);
     }
-  
 }

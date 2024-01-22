@@ -8,14 +8,14 @@
             {{post?.title}}
         </h2>
         <div class=" mt-3">
-            <p class="font-semibold text-gray-200 text-sm"> {{ post?.authorId }} </p>
-            <p class="font-semibold text-gray-400 text-xs"> Date </p>
+            <p class="font-semibold text-gray-200 text-sm"> Written by {{ post?.authorId }} </p>
+            <p class="font-semibold text-gray-400 text-xs"> Posted on {{ formatDate(post?.createdAt) }} </p>
         </div>
     </div>
 </div>
 
 <div class="px-4 lg:px-0 mt-12 text-gray-700 max-w-screen-md mx-auto text-lg leading-relaxed">
-    <p class="pb-6">{{ post?.content }}</p>
+    <p class="max-w-full break-words pb-6">{{ post?.content }}</p>
 </div>
 
 <div class="max-w-3xl mx-auto pt-5">
