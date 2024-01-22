@@ -12,6 +12,7 @@ import { auth } from '../firebase';
 import { getError, saveImage, upload } from '../services/uploader.service';
 import { getJobWithUsers } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
+import { formatSkills } from '../utils/skills.util';
 import { getProfileById, hasProfile } from '../utils/user.util';
 
 export const getProfile = async (request: Request, response: Response) => {
@@ -219,16 +220,46 @@ export const getUserOffers = async (request: Request, response: Response) => {
     });
   }
 
-  const offers: Job[] = [];
+  const offers = await Promise.all(
+    profile.offers.map(async (jobId) => {
+      const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
 
-  profile.offers.forEach(async (jobId) => {
-    const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
+      const populatedJob = await getJobWithUsers(job);
+      if (Object.keys(populatedJob).includes('message')) return;
 
-    const populatedJob = await getJobWithUsers(job);
-    if (Object.keys(populatedJob).includes('message')) return;
-
-    offers.push(populatedJob as unknown as Job);
-  });
+      return populatedJob;
+    })
+  );
 
   return response.status(StatusCodes.OK).json(offers);
+};
+
+export const getUserApplications = async (
+  request: Request,
+  response: Response
+) => {
+  const business = request.user;
+  const userId = request.params.id ?? '';
+
+  const jobs = await jobsRef.get();
+  const jobDocs = jobs.docs as GenericDocument<Job>[];
+
+  const applications = await Promise.all(
+    jobDocs
+      .filter(
+        (job) =>
+          job.data().businessId === business.uid &&
+          job.data().applicants.includes(userId)
+      )
+      .map(async (job) => {
+        const { skills, ...jobData } = job.data();
+        return {
+          id: job.id,
+          ...jobData,
+          skills: await formatSkills(skills)
+        };
+      })
+  );
+
+  return response.status(StatusCodes.OK).json(applications);
 };
