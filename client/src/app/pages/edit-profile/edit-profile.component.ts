@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Timestamp } from '@angular/fire/firestore';
 import {
   FormBuilder,
   FormControl,
@@ -86,12 +85,6 @@ export class EditProfileComponent implements OnInit {
         this.userStore.user = user;
       },
       complete: () => {
-        const timestamp = new Timestamp(
-          // @ts-ignore
-          this.user()!.profile.dateOfBirth._seconds,
-          // @ts-ignore
-          this.user()!.profile.dateOfBirth._nanoseconds,
-        );
         this.preview().previewUrl = this.user()!.profile.profilePictureUrl;
         this.form = this.formBuilder.group({
           email: new FormControl<string>(this.user()!.email!, [
@@ -105,7 +98,9 @@ export class EditProfileComponent implements OnInit {
           lastName: new FormControl<string>(this.user()!.profile.lastName),
           gender: new FormControl<UserGender>(this.user()!.profile.gender),
           dateOfBirth: new FormControl<string>(
-            timestamp.toDate().toISOString().split('T')[0],
+            new Date(this.user()!.profile.dateOfBirth)
+              .toISOString()
+              .split('T')[0],
           ),
           phoneNumber: new FormControl<string>(
             this.user()!.profile.phoneNumber,
