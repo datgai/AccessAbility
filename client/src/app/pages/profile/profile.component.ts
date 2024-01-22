@@ -1,25 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
 import { ToastrService } from 'ngx-toastr';
-import {
-  EMPTY,
-  concatMap,
-  expand,
-  from,
-  map,
-  mergeMap,
-  of,
-  switchMap,
-  toArray,
-} from 'rxjs';
+import { from, mergeMap } from 'rxjs';
+import { Job } from '../../../../../shared/src/types/job';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../components/summary-card/summary-card.component';
 import { JobDetails, JobService } from '../../services/job.service';
-import { SkillsService } from '../../services/skills.service';
 import {
   UserResponse,
   UserStoreService,
@@ -45,84 +37,70 @@ import { UserService } from '../../services/user.service';
 })
 export class ProfileComponent implements OnInit {
   public user = signal<UserResponse | undefined>(undefined);
-  public jobsApplied = signal<JobDetails[]>([]);
   public openModal = signal<boolean>(false);
   public jobOfferId = '';
+
+  public businessData = signal({
+    jobOffers: signal<JobDetails[]>([]),
+    jobsApplied: signal<(Job & { id: string })[]>([]),
+  });
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private skillsService: SkillsService,
     private jobService: JobService,
     private toastr: ToastrService,
     public userStore: UserStoreService,
+    private auth: Auth,
   ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return this.router.navigate(['404']);
 
-    this.userService
-      .getUser(id)
-      .pipe(
-        mergeMap((user) => {
-          const skillIds = Array.from(new Set(user.profile.skills));
+    this.userService.getUser(id).subscribe({
+      next: (user) => {
+        this.user.set(user);
+        if (this.userStore.user?.uid === user.uid) this.userStore.user = user;
+      },
+      complete: async () => {
+        if (this.userStore.user?.profile.role === UserRole.BUSINESS) {
+          this.auth.onAuthStateChanged(async (user) => {
+            if (user === null) return;
+            const userToken = await user.getIdToken();
 
-          return from(skillIds).pipe(
-            concatMap((skillId) => this.skillsService.getSkill(skillId)),
-            map((skill) => skill.name),
-            toArray(),
-            switchMap((skills) => {
-              user.profile.skills = skills;
-              return of(user);
-            }),
-          );
-        }),
-      )
-      .subscribe({
-        next: (user) => {
-          this.user.set(user);
-          if (this.userStore.user?.uid === user.uid) this.userStore.user = user;
-        },
-        complete: () => {
-          // Get all jobs user applied to
-          let nextPageToken: string | undefined = '';
-          this.jobService
-            .getJobList(nextPageToken)
-            .pipe(
-              expand((response) =>
-                typeof response.nextPageToken === 'undefined'
-                  ? EMPTY
-                  : this.jobService.getJobList(nextPageToken),
-              ),
-            )
-            .subscribe({
-              next: (response) => {
-                response.jobs.forEach((job) => {
-                  if (
-                    job.applicants?.some(
-                      (applicant) => applicant.uid === this.user()!.uid,
-                    )
-                  ) {
-                    if (this.jobsApplied().includes(job)) return;
-                    this.jobsApplied().push(job);
-                  }
-                });
-                nextPageToken = response.nextPageToken;
-              },
-            });
-        },
-        error: () => this.router.navigate(['404']),
-      });
+            // Get offers received by the user from the business viewing their profile
+            this.userService
+              .getUserOffers(userToken, this.user()!.uid)
+              .subscribe({
+                next: (offers) => {
+                  console.log(offers);
+                  this.businessData().jobOffers.set(
+                    offers.filter(
+                      (offer) =>
+                        offer.business.uid === this.userStore.user?.uid,
+                    ),
+                  );
+                },
+              });
+
+            // Get applications the user has for the business viewing their profile
+            this.userService
+              .getUserApplications(userToken, this.user()!.uid)
+              .subscribe({
+                next: (applications) => {
+                  this.businessData().jobsApplied.set(applications);
+                  console.log(applications);
+                },
+              });
+          });
+        }
+      },
+      error: () => this.router.navigate(['404']),
+    });
 
     return;
-  }
-
-  containsBusiness() {
-    return this.jobsApplied().some(
-      (job) => job.business.uid === this.userStore.user?.uid,
-    );
   }
 
   submitOfferForm() {
@@ -132,31 +110,31 @@ export class ProfileComponent implements OnInit {
 
     this.userService.addOffer(this.user()!.uid, this.jobOfferId).subscribe({
       next: (response) => this.toastr.success(response.message),
-      complete: () => this.removeApplicants(),
+      complete: () => this.ngOnInit(),
     });
     return;
   }
 
-  removeApplicants(message?: string) {
+  removeApplicants(message: string) {
     from(
-      this.jobsApplied().filter(
-        (job) => job.business.uid === this.userStore.user?.uid,
-      ),
+      this.businessData()
+        .jobsApplied()
+        .filter((job) => job.businessId === this.userStore.user?.uid),
     )
       .pipe(
         mergeMap((job) => {
           return this.jobService.editJob(job.id, {
-            applicants: job.applicants
-              .filter((applicant) => applicant.uid !== this.user()?.uid)
-              .map((applicant) => applicant.uid),
+            applicants: job.applicants.filter(
+              (applicantId) => applicantId !== this.user()?.uid,
+            ),
           });
         }),
       )
       .subscribe({
         complete: () => {
-          this.jobsApplied.set([]);
+          this.businessData().jobsApplied.set([]);
           this.ngOnInit();
-          if (message) this.toastr.success(message);
+          this.toastr.success(message);
         },
       });
   }
