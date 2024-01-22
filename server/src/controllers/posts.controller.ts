@@ -76,7 +76,9 @@ export const createPost = async (request: Request, response: Response) => {
       content: body.content,
       comments: [],
       thumbnailUrl: thumbnailUrl,
-      isDonation: body.isDonation ?? false
+      isDonation: body.isDonation ?? false,
+      postId: '',
+      date: ''
     };
 
     return await postsRef
