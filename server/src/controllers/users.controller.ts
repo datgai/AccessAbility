@@ -76,7 +76,8 @@ export const editOrCreateProfile = async (
 
     const params = getMissingParameters<Parameter>(request, [
       'firstName',
-      'role'
+      'role',
+      'dateOfBirth'
     ]);
 
     if (params.length > 0) {
@@ -100,14 +101,12 @@ export const editOrCreateProfile = async (
       });
     }
 
-    if (body.dateOfBirth) {
-      const dateOfBirth = new Date(body.dateOfBirth);
-      if (isNaN(dateOfBirth.getTime())) {
-        return response.status(StatusCodes.BAD_REQUEST).json({
-          message:
-            'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
-        });
-      }
+    const dateOfBirth = new Date(body.dateOfBirth);
+    if (isNaN(dateOfBirth.getTime())) {
+      return response.status(StatusCodes.BAD_REQUEST).json({
+        message:
+          'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
+      });
     }
 
     const error = getError(err);
@@ -140,7 +139,7 @@ export const editOrCreateProfile = async (
       firstName: body.firstName,
       lastName: body.lastName ?? user.profile?.lastName ?? '',
       gender: (body.gender as UserGender) ?? user.profile?.gender ?? '',
-      dateOfBirth: new Date(body.dateOfBirth),
+      dateOfBirth: dateOfBirth ?? user.profile?.dateOfBirth,
       phoneNumber: body.phoneNumber ?? user.profile?.phoneNumber ?? '',
       impairments:
         (body.impairments as unknown as string[]) ??
