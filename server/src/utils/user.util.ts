@@ -1,8 +1,8 @@
 import { firestore } from 'firebase-admin';
-import { Skill } from '../../../shared/src/types/job';
 import { UserProfile } from '../../../shared/src/types/user';
-import { profilesRef, skillsRef } from '../database';
+import { profilesRef } from '../database';
 import { auth } from '../firebase';
+import { formatSkills } from './skills.util';
 
 export const getProfileById = async (userId: string): Promise<UserProfile> => {
   // Fetch profile
@@ -16,19 +16,9 @@ export const getProfileById = async (userId: string): Promise<UserProfile> => {
   // Extract data that needs to be converted or populated
   const { dateOfBirth, skills, ...profileData } = profile.data();
 
-  // Get the skill name of each skill
-  const populatedSkills = await Promise.all(
-    skills.map(async (skillId) => {
-      const skill = (await skillsRef
-        .doc(skillId)
-        .get()) as GenericDocument<Skill>;
-      return skill.data().name;
-    })
-  );
-
   const populatedProfile: UserProfile = {
     ...profileData,
-    skills: populatedSkills,
+    skills: await formatSkills(skills),
     dateOfBirth: (dateOfBirth as unknown as firestore.Timestamp).toDate()
   };
 
