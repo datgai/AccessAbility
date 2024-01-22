@@ -110,12 +110,12 @@ export class ProfileComponent implements OnInit {
 
     this.userService.addOffer(this.user()!.uid, this.jobOfferId).subscribe({
       next: (response) => this.toastr.success(response.message),
-      complete: () => this.ngOnInit(),
+      complete: () => this.removeApplicants(),
     });
     return;
   }
 
-  removeApplicants(message: string) {
+  removeApplicants(message?: string) {
     from(
       this.businessData()
         .jobsApplied()
@@ -134,7 +134,7 @@ export class ProfileComponent implements OnInit {
         complete: () => {
           this.businessData().jobsApplied.set([]);
           this.ngOnInit();
-          this.toastr.success(message);
+          if (message) this.toastr.success(message);
         },
       });
   }
