@@ -6,7 +6,9 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { EMPTY, expand } from 'rxjs';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { JobDetails, JobService } from '../../services/job.service';
@@ -42,10 +44,15 @@ export class ApplicantsComponent {
 
   constructor(
     private jobService: JobService,
+    private router: Router,
     public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
+    if (this.userStore.user?.profile.role !== UserRole.BUSINESS) {
+      this.router.navigate(['404']);
+    }
+
     let nextPageToken: string | undefined = '';
     this.jobService
       .getJobList(nextPageToken)
