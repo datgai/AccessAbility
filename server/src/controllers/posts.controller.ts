@@ -6,7 +6,7 @@ import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
 import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
-import { getUserAndProfile } from '../utils/user.util';
+import { formatPost } from '../utils/post.util';
 
 export const getPosts = async (request: Request, response: Response) => {
   const token = request.params.token ?? ' ';
@@ -19,42 +19,7 @@ export const getPosts = async (request: Request, response: Response) => {
   const docs = posts.docs as GenericDocument<Post>[];
 
   return response.status(StatusCodes.OK).json({
-    posts: await Promise.all(
-      docs.map(async (post) => {
-        const { authorId, createdAt, comments, ...postData } = post.data();
-
-        // Fetch data of post author
-        return await getUserAndProfile(post.data().authorId).then(
-          async (author) => {
-            // Fetch data of each comment's author
-            const populatedComments = await Promise.all(
-              comments.map(async (comment) => {
-                return await getUserAndProfile(comment.authorId).then(
-                  (commentAuthor) => {
-                    const { authorId, createdAt, ...strippedComment } = comment;
-                    return {
-                      author: commentAuthor,
-                      ...strippedComment,
-                      createdAt: (
-                        createdAt as unknown as firestore.Timestamp
-                      ).toDate()
-                    };
-                  }
-                );
-              })
-            );
-
-            return {
-              id: post.id,
-              author,
-              ...postData,
-              comments: populatedComments,
-              createdAt: (createdAt as unknown as firestore.Timestamp).toDate()
-            };
-          }
-        );
-      })
-    ),
+    posts: await Promise.all(docs.map(async (post) => await formatPost(post))),
     nextPageToken: docs.length === 10 ? docs.at(-1)?.id : undefined
   });
 };
@@ -207,36 +172,7 @@ export const getPostById = async (request: Request, response: Response) => {
       }
 
       const postDoc = post as GenericDocument<Post>;
-      const { authorId, createdAt, comments, ...postData } = postDoc.data();
-
-      // Fetch data of post author
-      return await getUserAndProfile(authorId).then(async (author) => {
-        // Fetch data of each comment's author
-        const populatedComments = await Promise.all(
-          comments.map(async (comment) => {
-            return await getUserAndProfile(comment.authorId).then(
-              (commentAuthor) => {
-                const { authorId, createdAt, ...strippedComment } = comment;
-                return {
-                  author: commentAuthor,
-                  ...strippedComment,
-                  createdAt: (
-                    createdAt as unknown as firestore.Timestamp
-                  ).toDate()
-                };
-              }
-            );
-          })
-        );
-
-        return response.status(StatusCodes.OK).json({
-          id: post.id,
-          author,
-          ...postData,
-          comments: populatedComments,
-          createdAt: (createdAt as unknown as firestore.Timestamp).toDate()
-        });
-      });
+      return await formatPost(postDoc);
     })
     .catch((err) => {
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
