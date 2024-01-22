@@ -22,5 +22,17 @@ export class PostDetailsComponent implements OnInit{
   constructor(private route:ActivatedRoute){}
 
   ngOnInit(): void {
+    const params = this.route.snapshot.params;
+    this.postId = params['id'];
+    
+    this.forumService.getPost(this.postId).subscribe(
+      (post) => {
+        this.post = post;
+        console.log('Post loaded successfully:', this.post);
+      },
+      (error) => {
+        console.error('Error loading post:', error);
+      }
+    );
   }
 }

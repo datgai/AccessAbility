@@ -56,7 +56,7 @@ export class ForumService {
     }
   
     getPost(postId: string) {
-      return this.http.get<PostDetails>(`${environment.baseUrl}/posts/${postId}`);
+      return this.http.get<PostDetails>(`${environment.baseUrl}/post/${postId}`);
     }
 
     deletePost(postId: string) {

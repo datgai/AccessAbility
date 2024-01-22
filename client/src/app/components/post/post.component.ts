@@ -19,6 +19,8 @@ export class PostComponent implements OnInit {
 
   ngOnInit(): void {
       this.postId = ((this.post as PostDetails).id)
+
+      console.log((this.post as PostDetails))
   }
 
   formatDate(date: Date): string {
