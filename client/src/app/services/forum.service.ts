@@ -41,7 +41,6 @@ export class ForumService {
           if (!token) {
             return throwError(() => 'Authentication token is missing.');
           }
-
           const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
           return this.http.post<PostDetails>(`${environment.baseUrl}/post`, body, { headers });
         }),
@@ -51,15 +50,15 @@ export class ForumService {
       );
     }
 
-    getPostList() {
+    getPosts() {
       return this.http.get<PostResponse>(`${environment.baseUrl}/posts`);
     }
   
-    getPost(postId: string) {
+    getPostById(postId: string) {
       return this.http.get<PostDetails>(`${environment.baseUrl}/post/${postId}`);
     }
 
-    deletePost(postId: string) {
+    deletePostById(postId: string) {
       return this.http.delete<PostDetails>(`${environment.baseUrl}/post/${postId}`);
     }
 }

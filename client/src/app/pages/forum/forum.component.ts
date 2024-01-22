@@ -25,7 +25,7 @@ export class ForumComponent implements OnInit{
   }
 
   loadPosts() {
-  this.forumService.getPostList().subscribe({
+  this.forumService.getPosts().subscribe({
     next: (response) => {
       this.postList = response.posts
     },

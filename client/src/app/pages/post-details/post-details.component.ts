@@ -24,7 +24,7 @@ export class PostDetailsComponent implements OnInit{
     const params = this.route.snapshot.params;
     this.postId = params['id'];
     
-    this.forumService.getPost(this.postId).subscribe(
+    this.forumService.getPostById(this.postId).subscribe(
       (post) => {
         this.post = post;
         console.log('Post loaded successfully:', this.post);

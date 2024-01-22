@@ -16,11 +16,10 @@ export class PostComponent implements OnInit {
   @Input() post!: Post;
 
   postId: string = ''
+  postAuthor: string = ''
 
   ngOnInit(): void {
-      this.postId = ((this.post as PostDetails).id)
-
-      console.log((this.post as PostDetails))
+    this.postId = ((this.post as PostDetails).id)
   }
 
   formatDate(date: Date): string {

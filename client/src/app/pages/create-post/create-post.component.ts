@@ -23,7 +23,6 @@ export class CreatePostComponent {
   );
 
   constructor(
-    private httpClient: HttpClient,
     private forumService: ForumService, 
     private router: Router
   ) {}
