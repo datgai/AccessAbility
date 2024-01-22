@@ -235,7 +235,7 @@ export const getUserOffers = async (request: Request, response: Response) => {
         user.profile.role !== UserRole.BUSINESS &&
         job.data().businessId !== user.uid
       ) {
-        return;
+        return null;
       }
 
       const populatedJob = await getJobWithUsers(job);
@@ -245,7 +245,9 @@ export const getUserOffers = async (request: Request, response: Response) => {
     })
   );
 
-  return response.status(StatusCodes.OK).json();
+  return response
+    .status(StatusCodes.OK)
+    .json(offers.filter((offer) => offer !== null));
 };
 
 export const getUserApplications = async (
