@@ -1,21 +1,23 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
+import { Job } from '../../../shared/src/types/job';
 import {
   UserGender,
   UserProfile,
   UserRole
 } from '../../../shared/src/types/user';
-import { profilesRef } from '../database';
+import { jobsRef, profilesRef } from '../database';
 import { auth } from '../firebase';
 import { getError, saveImage, upload } from '../services/uploader.service';
+import { getJobWithUsers } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
-import { getProfileById } from '../utils/user.util';
+import { getProfileById, hasProfile } from '../utils/user.util';
 
 export const getProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  if (Object.keys(user.profile).length === 0) {
+  if (!hasProfile(user.profile)) {
     return response.status(StatusCodes.NOT_FOUND).json({
       message: 'User has no profile.'
     });
@@ -205,4 +207,30 @@ export const addOffer = async (request: Request, response: Response) => {
   return response.status(StatusCodes.OK).json({
     message: 'Successfully gave user an offer.'
   });
+};
+
+export const getUserOffers = async (request: Request, response: Response) => {
+  const business = request.user;
+  const userId = request.params.id ?? '';
+
+  const profile = await getProfileById(userId);
+  if (!hasProfile(profile)) {
+    return response.status(StatusCodes.NOT_FOUND).json({
+      message: 'User has no profile.'
+    });
+  }
+
+  const offers: Job[] = [];
+
+  profile.offers.map(async (jobId) => {
+    const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
+    if (job.data().businessId !== business.uid) return;
+
+    const populatedJob = await getJobWithUsers(job);
+    if (Object.keys(populatedJob).includes('message')) return;
+
+    offers.push(populatedJob as unknown as Job);
+  });
+
+  return response.status(StatusCodes.OK).json(offers);
 };
