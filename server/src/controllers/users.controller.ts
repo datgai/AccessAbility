@@ -211,7 +211,14 @@ export const addOffer = async (request: Request, response: Response) => {
 };
 
 export const getUserOffers = async (request: Request, response: Response) => {
+  const user = request.user;
   const userId = request.params.id ?? '';
+
+  if (user.profile.role !== UserRole.BUSINESS && user.uid !== userId) {
+    return response.status(StatusCodes.FORBIDDEN).json({
+      message: 'You do not have permission to access this endpoint.'
+    });
+  }
 
   const profile = await getProfileById(userId);
   if (!hasProfile(profile)) {
@@ -224,6 +231,13 @@ export const getUserOffers = async (request: Request, response: Response) => {
     profile.offers.map(async (jobId) => {
       const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
 
+      if (
+        user.profile.role !== UserRole.BUSINESS &&
+        job.data().businessId !== user.uid
+      ) {
+        return;
+      }
+
       const populatedJob = await getJobWithUsers(job);
       if (Object.keys(populatedJob).includes('message')) return;
 
@@ -231,7 +245,7 @@ export const getUserOffers = async (request: Request, response: Response) => {
     })
   );
 
-  return response.status(StatusCodes.OK).json(offers);
+  return response.status(StatusCodes.OK).json();
 };
 
 export const getUserApplications = async (
