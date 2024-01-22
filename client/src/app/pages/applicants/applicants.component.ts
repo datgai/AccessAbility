@@ -1,4 +1,11 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  signal,
+} from '@angular/core';
 import { EMPTY, expand } from 'rxjs';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
@@ -14,8 +21,8 @@ import { UserStoreService } from '../../services/user-store.service';
 })
 export class ApplicantsComponent {
   public jobs = signal<JobDetails[]>([]);
-  public numApplicants = signal<number>(0);
-  public numOffersGiven = signal<number>(0);
+  private numApplicants = signal<number>(0);
+  private numOffersGiven = signal<number>(0);
 
   public totalApplicants = computed<number>(() => {
     return this.jobs().reduce((acc, cur) => {
@@ -26,6 +33,12 @@ export class ApplicantsComponent {
 
   @Input({ required: false })
   public showHeading = true;
+
+  @Output()
+  public onLoad = new EventEmitter<{
+    numApplicants: number;
+    numOffersGiven: number;
+  }>();
 
   constructor(
     private jobService: JobService,
@@ -65,6 +78,11 @@ export class ApplicantsComponent {
 
           nextPageToken = response.nextPageToken;
         },
+        complete: () =>
+          this.onLoad.emit({
+            numApplicants: this.numApplicants(),
+            numOffersGiven: this.numOffersGiven(),
+          }),
       });
   }
 }
