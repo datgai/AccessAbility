@@ -7,12 +7,24 @@
 <section>
   <div class="flex justify-between items-center">
     <h1 class="text-5xl font-bold mb-2">Profile</h1>
-    <a
+    @if (user()?.uid == this.userStore.user?.uid ) {
+      <a
       class="rounded-md text-neutral-300 py-2 px-5 bg-blue-100 hover:bg-blue-200 focus:bg-blue-200"
       routerLink="/edit-profile"
     >
       Edit Profile
     </a>
+    }
+    @else {
+      <a
+      class="rounded-md text-neutral-300 py-2 px-5 bg-blue-100 hover:bg-blue-200 focus:bg-blue-200"
+      onclick="createChat(user())"
+      routerLink="/chat"
+    >
+      Message
+    </a>
+    }
+    
   </div>
 
   <div class="grid gap-5">
