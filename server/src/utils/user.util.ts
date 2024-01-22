@@ -47,3 +47,7 @@ export const getUserAndProfile = async (userId: string) => {
     };
   });
 };
+
+export const hasProfile = (profile: UserProfile) => {
+  return Object.keys(profile).length !== 0;
+};
