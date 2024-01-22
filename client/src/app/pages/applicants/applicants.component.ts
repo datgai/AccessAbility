@@ -40,7 +40,6 @@ export class ApplicantsComponent {
   @Output()
   public onLoad = new EventEmitter<{
     numApplicants: number;
-    numOffersGiven: number;
   }>();
 
   constructor(
@@ -74,13 +73,6 @@ export class ApplicantsComponent {
               this.numApplicants() + job.applicants.length,
             );
 
-            // Get number of offers the business has given
-            job.applicants.forEach((applicant) => {
-              if (applicant.profile.offers.includes(job.id)) {
-                this.numOffersGiven.set(this.numOffersGiven() + 1);
-              }
-            });
-
             this.jobs().push(job);
           });
 
@@ -89,7 +81,6 @@ export class ApplicantsComponent {
         complete: () =>
           this.onLoad.emit({
             numApplicants: this.numApplicants(),
-            numOffersGiven: this.numOffersGiven(),
           }),
       });
   }

@@ -38,4 +38,10 @@ export class UserService {
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
     );
   }
+
+  getOffersByBusiness(token: string) {
+    return this.http.get<JobDetails[]>(`${environment.baseUrl}/user/offers`, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
+  }
 }
