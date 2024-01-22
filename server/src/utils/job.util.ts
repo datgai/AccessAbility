@@ -1,11 +1,12 @@
 import { FirebaseError } from 'firebase-admin';
-import { Job } from '../../../shared/src/types/job';
+import { Job, Skill } from '../../../shared/src/types/job';
+import { skillsRef } from '../database';
 import { getUserAndProfile } from './user.util';
 
 export const getJobWithUsers = async (job: GenericDocument<Job>) => {
   return await getUserAndProfile(job.data().businessId)
     .then(async (business) => {
-      const { businessId, applicants, ...jobData } = job.data();
+      const { businessId, skills, applicants, ...jobData } = job.data();
 
       const populatedApplicants = await Promise.all(
         applicants.map(
@@ -13,10 +14,20 @@ export const getJobWithUsers = async (job: GenericDocument<Job>) => {
         )
       );
 
+      const populatedSkills = await Promise.all(
+        skills.map(async (skillId) => {
+          const skill = (await skillsRef
+            .doc(skillId)
+            .get()) as GenericDocument<Skill>;
+          return skill.data().name;
+        })
+      );
+
       return {
         id: job.id,
         business,
         ...jobData,
+        skills: populatedSkills,
         applicants: populatedApplicants
       };
     })
