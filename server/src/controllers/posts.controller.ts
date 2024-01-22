@@ -31,7 +31,7 @@ export const getPosts = async (request: Request, response: Response) => {
               comments.map(async (comment) => {
                 return await getUserAndProfile(comment.authorId).then(
                   (commentAuthor) => {
-                    const { authorId, ...strippedComment } = comment;
+                    const { authorId, createdAt, ...strippedComment } = comment;
                     return {
                       author: commentAuthor,
                       ...strippedComment,
