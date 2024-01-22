@@ -30,7 +30,7 @@ export class PostComponent implements OnInit {
   }
 
   truncatedContent(): string {
-    const maxLength = 100;
+    const maxLength = 80;
     return this.post.content.length > maxLength
       ? this.post.content.substring(0, maxLength) + '...'
       : this.post.content;
