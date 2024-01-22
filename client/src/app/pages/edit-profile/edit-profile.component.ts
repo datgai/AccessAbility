@@ -104,7 +104,7 @@ export class EditProfileComponent implements OnInit {
           dateOfBirth: new FormControl<string>(
             new Date(this.user()!.profile.dateOfBirth)
               .toISOString()
-              .split('T')[0] ?? '',
+              .split('T')[0],
           ),
           phoneNumber: new FormControl<string>(
             this.user()!.profile.phoneNumber ?? '',
