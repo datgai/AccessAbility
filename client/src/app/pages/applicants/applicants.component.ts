@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -17,7 +18,7 @@ import { UserStoreService } from '../../services/user-store.service';
 @Component({
   selector: 'app-applicants',
   standalone: true,
-  imports: [MiniInfoCardComponent, LoaderComponent],
+  imports: [MiniInfoCardComponent, LoaderComponent, CommonModule],
   templateUrl: './applicants.component.html',
   styleUrl: './applicants.component.css',
 })
@@ -34,7 +35,7 @@ export class ApplicantsComponent {
   });
 
   @Input({ required: false })
-  public showHeading = true;
+  public fromPage = true;
 
   @Output()
   public onLoad = new EventEmitter<{
