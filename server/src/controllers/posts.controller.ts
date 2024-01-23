@@ -172,7 +172,7 @@ export const getPostById = async (request: Request, response: Response) => {
       }
 
       const postDoc = post as GenericDocument<Post>;
-      return await formatPost(postDoc);
+      return response.status(StatusCodes.OK).json(await formatPost(postDoc));
     })
     .catch((err) => {
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
