@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Auth, getIdToken } from '@angular/fire/auth';
 import { TestService } from '../../services/test.service';
 import { UserStoreService } from '../../services/user-store.service';
@@ -18,7 +18,7 @@ export class HomeComponent {
   public responseMessage: string | undefined = undefined;
 
   constructor(
-    private auth: Auth = inject(Auth),
+    private auth: Auth,
     private testService: TestService,
     public userStore: UserStoreService,
   ) {}

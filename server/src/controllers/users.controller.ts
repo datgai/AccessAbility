@@ -1,20 +1,24 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
+import { Job } from '../../../shared/src/types/job';
 import {
   UserGender,
   UserProfile,
   UserRole
 } from '../../../shared/src/types/user';
-import { getProfileById, profilesRef } from '../database';
+import { jobsRef, profilesRef } from '../database';
 import { auth } from '../firebase';
 import { getError, saveImage, upload } from '../services/uploader.service';
+import { getJobWithUsers } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
+import { formatSkills } from '../utils/skills.util';
+import { getProfileById, hasProfile } from '../utils/user.util';
 
 export const getProfile = async (request: Request, response: Response) => {
   const user = request.user;
 
-  if (Object.keys(user.profile).length === 0) {
+  if (!hasProfile(user.profile)) {
     return response.status(StatusCodes.NOT_FOUND).json({
       message: 'User has no profile.'
     });
@@ -35,7 +39,7 @@ export const getUsers = async (request: Request, response: Response) => {
 
     return response.status(StatusCodes.OK).json({
       users,
-      nextPageToken: list.pageToken
+      nextPageToken: list.pageToken || undefined
     });
   });
 };
@@ -58,21 +62,25 @@ export const getUserById = async (request: Request, response: Response) => {
     });
 };
 
-export const createProfile = async (request: Request, response: Response) => {
+export const editOrCreateProfile = async (
+  request: Request,
+  response: Response
+) => {
   const user = request.user;
 
   upload.single('avatar')(request, response, async (err) => {
     type ProfileParam = Record<
-      | keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>
-      | 'email'
-      | 'password',
+      keyof Omit<UserProfile, 'profilePictureUrl' | 'offers'>,
       string
     >;
     type Parameter = keyof ProfileParam;
 
-    const requiredParams: Parameter[] = ['firstName', 'role'];
+    const params = getMissingParameters<Parameter>(request, [
+      'firstName',
+      'role',
+      'dateOfBirth'
+    ]);
 
-    const params = getMissingParameters<Parameter>(request, requiredParams);
     if (params.length > 0) {
       return response.status(StatusCodes.BAD_REQUEST).json({
         message: 'Missing parameters.',
@@ -80,7 +88,7 @@ export const createProfile = async (request: Request, response: Response) => {
       });
     }
 
-    const { email, password, ...body } = request.body as ProfileParam;
+    const body = request.body as ProfileParam;
 
     if (!Object.values(UserRole).includes(body.role as UserRole)) {
       return response.status(StatusCodes.BAD_REQUEST).json({
@@ -94,14 +102,12 @@ export const createProfile = async (request: Request, response: Response) => {
       });
     }
 
-    if (body.dateOfBirth) {
-      const dateOfBirth = new Date(body.dateOfBirth);
-      if (isNaN(dateOfBirth.getTime())) {
-        return response.status(StatusCodes.BAD_REQUEST).json({
-          message:
-            'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
-        });
-      }
+    const dateOfBirth = new Date(body.dateOfBirth);
+    if (isNaN(dateOfBirth.getTime())) {
+      return response.status(StatusCodes.BAD_REQUEST).json({
+        message:
+          'Unknown date of birth provided. Date must follow the format YYYY-MM-DD.'
+      });
     }
 
     const error = getError(err);
@@ -134,7 +140,7 @@ export const createProfile = async (request: Request, response: Response) => {
       firstName: body.firstName,
       lastName: body.lastName ?? user.profile?.lastName ?? '',
       gender: (body.gender as UserGender) ?? user.profile?.gender ?? '',
-      dateOfBirth: new Date(body.dateOfBirth),
+      dateOfBirth: dateOfBirth ?? user.profile?.dateOfBirth,
       phoneNumber: body.phoneNumber ?? user.profile?.phoneNumber ?? '',
       impairments:
         (body.impairments as unknown as string[]) ??
@@ -201,5 +207,112 @@ export const addOffer = async (request: Request, response: Response) => {
 
   return response.status(StatusCodes.OK).json({
     message: 'Successfully gave user an offer.'
+  });
+};
+
+export const getUserOffers = async (request: Request, response: Response) => {
+  const user = request.user;
+  const userId = request.params.id ?? '';
+
+  if (user.profile.role !== UserRole.BUSINESS && user.uid !== userId) {
+    return response.status(StatusCodes.FORBIDDEN).json({
+      message: 'You do not have permission to access this endpoint.'
+    });
+  }
+
+  const profile = await getProfileById(userId);
+  if (!hasProfile(profile)) {
+    return response.status(StatusCodes.NOT_FOUND).json({
+      message: 'User has no profile.'
+    });
+  }
+
+  const offers = await Promise.all(
+    profile.offers.map(async (jobId) => {
+      const job = (await jobsRef.doc(jobId).get()) as GenericDocument<Job>;
+
+      if (
+        user.profile.role === UserRole.BUSINESS &&
+        job.data().businessId !== user.uid
+      ) {
+        return null;
+      }
+
+      const populatedJob = await getJobWithUsers(job);
+      if (Object.keys(populatedJob).includes('message')) return null;
+
+      return populatedJob;
+    })
+  );
+
+  return response
+    .status(StatusCodes.OK)
+    .json(offers.filter((offer) => offer !== null));
+};
+
+export const getUserApplications = async (
+  request: Request,
+  response: Response
+) => {
+  const business = request.user;
+  const userId = request.params.id ?? '';
+
+  const jobs = await jobsRef.get();
+  const jobDocs = jobs.docs as GenericDocument<Job>[];
+
+  const applications = await Promise.all(
+    jobDocs
+      .filter(
+        (job) =>
+          job.data().businessId === business.uid &&
+          job.data().applicants.includes(userId)
+      )
+      .map(async (job) => {
+        const { skills, ...jobData } = job.data();
+        return {
+          id: job.id,
+          ...jobData,
+          skills: await formatSkills(skills)
+        };
+      })
+  );
+
+  return response.status(StatusCodes.OK).json(applications);
+};
+
+export const getOffersByBusiness = async (
+  request: Request,
+  response: Response
+) => {
+  return await auth.listUsers().then(async (results) => {
+    const business = request.user;
+    const offers: any[] = [];
+
+    for (const user of results.users) {
+      const profile = await getProfileById(user.uid);
+
+      offers.push(
+        ...(
+          await Promise.all(
+            profile.offers.map(async (jobId) => {
+              const job = (await jobsRef
+                .doc(jobId)
+                .get()) as GenericDocument<Job>;
+
+              const populatedJob = (await getJobWithUsers(job)) as any;
+              if (Object.keys(populatedJob).includes('message')) return null;
+              console.log(populatedJob.business.uid, 'job');
+              console.log(business.uid, 'user');
+              if (populatedJob.business.uid !== business.uid) return null;
+
+              console.log('here');
+              return populatedJob as any;
+            })
+          )
+        ).filter((job) => job !== null)
+      );
+    }
+
+    return response.status(StatusCodes.OK).json(offers);
   });
 };

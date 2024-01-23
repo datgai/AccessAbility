@@ -40,11 +40,14 @@
         </div>
 
         @if (userStore.user?.profile?.role === userStore.UserRole.BUSINESS) {
-          @if (containsBusiness()) {
+          @if (
+            businessData().jobOffers().length === 0 &&
+            businessData().jobsApplied().length > 0
+          ) {
             <h2 class="text-3xl font-bold">Positions Applied</h2>
 
             <form (ngSubmit)="submitOfferForm()">
-              @for (job of jobsApplied(); track job.id) {
+              @for (job of businessData().jobsApplied(); track job.id) {
                 @if (job.businessId === userStore.user?.uid) {
                   <input
                     hidden
@@ -102,7 +105,7 @@
         }
         @if (user()!.profile.impairments) {
           <div>
-            <h2 class="text-2xl text-blue-100 font-semibold">Impairements</h2>
+            <h2 class="text-2xl text-blue-100 font-semibold">Impairments</h2>
             <p>{{ user()!.profile.impairments.join(", ") }}</p>
           </div>
         }
@@ -111,7 +114,7 @@
             [summaryInfo]="[
               {
                 title: 'Jobs Applied',
-                stats: jobsApplied().length.toString()
+                stats: '0'
               },
               {
                 title: 'Job Offers',

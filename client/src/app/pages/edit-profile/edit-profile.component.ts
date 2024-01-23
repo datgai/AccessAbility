@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Timestamp } from '@angular/fire/firestore';
 import {
   FormBuilder,
   FormControl,
@@ -55,7 +54,7 @@ export class EditProfileComponent implements OnInit {
     private skillsService: SkillsService,
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
-    private auth: Auth = inject(Auth),
+    private auth: Auth,
     private toastr: ToastrService,
     private router: Router,
     public userStore: UserStoreService,
@@ -86,12 +85,6 @@ export class EditProfileComponent implements OnInit {
         this.userStore.user = user;
       },
       complete: () => {
-        const timestamp = new Timestamp(
-          // @ts-ignore
-          this.user()!.profile.dateOfBirth._seconds,
-          // @ts-ignore
-          this.user()!.profile.dateOfBirth._nanoseconds,
-        );
         this.preview().previewUrl = this.user()!.profile.profilePictureUrl;
         this.form = this.formBuilder.group({
           email: new FormControl<string>(this.user()!.email!, [
@@ -102,23 +95,29 @@ export class EditProfileComponent implements OnInit {
             this.user()!.profile.firstName,
             Validators.required,
           ),
-          lastName: new FormControl<string>(this.user()!.profile.lastName),
-          gender: new FormControl<UserGender>(this.user()!.profile.gender),
+          lastName: new FormControl<string>(
+            this.user()!.profile.lastName ?? '',
+          ),
+          gender: new FormControl<UserGender>(
+            this.user()!.profile.gender ?? '',
+          ),
           dateOfBirth: new FormControl<string>(
-            timestamp.toDate().toISOString().split('T')[0],
+            new Date(this.user()!.profile.dateOfBirth)
+              .toISOString()
+              .split('T')[0],
           ),
           phoneNumber: new FormControl<string>(
-            this.user()!.profile.phoneNumber,
+            this.user()!.profile.phoneNumber ?? '',
           ),
           impairments: new FormControl<string[]>(
-            this.user()!.profile.impairments,
+            this.user()!.profile.impairments ?? '',
           ),
           skills: new FormControl<string[]>(this.user()!.profile.skills),
           offers: new FormControl<string[]>(this.user()!.profile.offers),
-          city: new FormControl<string>(this.user()!.profile.city),
-          state: new FormControl<string>(this.user()!.profile.state),
-          address: new FormControl<string>(this.user()!.profile.address),
-          bio: new FormControl<string>(this.user()!.profile.bio),
+          city: new FormControl<string>(this.user()!.profile.city ?? ''),
+          state: new FormControl<string>(this.user()!.profile.state ?? ''),
+          address: new FormControl<string>(this.user()!.profile.address ?? ''),
+          bio: new FormControl<string>(this.user()!.profile.bio ?? ''),
           avatar: new FormControl<File | null>(null),
         });
       },

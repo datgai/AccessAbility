@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { EMPTY, expand, tap } from 'rxjs';
+import { EMPTY, expand } from 'rxjs';
 import { LoaderComponent } from '../../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../../components/mini-info-card/mini-info-card.component';
 import { SummaryCardComponent } from '../../../components/summary-card/summary-card.component';
-import { JobInfo, JobService } from '../../../services/job.service';
+import { JobDetails, JobService } from '../../../services/job.service';
 import { UserStoreService } from '../../../services/user-store.service';
 
 @Component({
@@ -23,11 +23,11 @@ import { UserStoreService } from '../../../services/user-store.service';
   styleUrl: './user-view.component.css',
 })
 export class UserViewComponent implements OnInit {
-  public jobs = signal<JobInfo[]>([]);
+  public jobs = signal<JobDetails[]>([]);
   public jobAppliedIds = signal<string[]>([]);
   public searchTerm = new FormControl<string>('');
 
-  private nextPageToken: string = '';
+  public nextPageToken = signal<string>('');
 
   constructor(
     private jobService: JobService,
@@ -37,54 +37,44 @@ export class UserViewComponent implements OnInit {
   ngOnInit(): void {
     // Load intial jobs
     this.jobService
-      .formatJobList(
-        this.jobService
-          .getJobList(this.nextPageToken)
-          .pipe(
-            tap((response) => (this.nextPageToken = response.nextPageToken)),
-          ),
-      )
-      .subscribe({
-        next: (jobResponse) => this.jobs.set(jobResponse),
-        error: (err) => console.error(err),
-      });
-
-    // Get all jobs user applied to
-    let nextPageToken: string | undefined = '';
-    this.jobService
-      .getJobList(nextPageToken)
+      .getJobList(this.nextPageToken())
       .pipe(
         expand((response) =>
           typeof response.nextPageToken === 'undefined'
             ? EMPTY
-            : this.jobService.getJobList(nextPageToken),
+            : this.jobService.getJobList(this.nextPageToken()),
         ),
       )
       .subscribe({
         next: (response) => {
+          if (this.jobs().length < 10) {
+            this.jobs.set(response.jobs.slice(0, 10));
+          }
+          this.nextPageToken.set(response.nextPageToken);
+
+          // Get all jobs
           response.jobs.forEach((job) => {
-            if (job.applicants?.includes(this.userStore.user?.uid ?? '')) {
+            if (
+              job.applicants.some(
+                (applicant) => applicant.uid === this.userStore.user?.uid,
+              )
+            ) {
               if (this.jobAppliedIds().includes(job.id)) return;
               this.jobAppliedIds().push(job.id);
             }
           });
-          nextPageToken = response.nextPageToken;
         },
       });
   }
 
   onSubmit() {
     this.jobService
-      .formatJobList(
-        this.jobService
-          .getJobList(this.nextPageToken, this.searchTerm.value ?? '')
-          .pipe(
-            tap((response) => (this.nextPageToken = response.nextPageToken)),
-          ),
-      )
+      .getJobList(this.nextPageToken(), this.searchTerm.value ?? '')
       .subscribe({
-        next: (jobResponse) => this.jobs.set(jobResponse),
-        error: (err) => console.error(err),
+        next: (response) => {
+          this.jobs.set(response.jobs);
+          this.nextPageToken.set(response.nextPageToken);
+        },
       });
   }
 }

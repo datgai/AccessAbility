@@ -8,11 +8,11 @@
     [summaryInfo]="[
       {
         title: 'Applications',
-        stats: jobApplicationIds().length.toString()
+        stats: numApplicants().toString()
       },
       {
         title: 'Job Offers',
-        stats: numOffers().toString()
+        stats: numOffersGiven().toString()
       },
       {
         title: 'Workers',
@@ -36,24 +36,11 @@
   <div
     class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2"
   >
-    @if (applications().length === 0) {
-      <app-loader class="col-span-full" />
-    } @else {
-      @for (
-        application of applications();
-        track application.applicantDetails.uid
-      ) {
-        <app-mini-info-card
-          infoLink="/user/{{ application.applicantDetails.uid }}"
-          infoImageUrl="{{
-            application.applicantDetails.profile.profilePictureUrl
-          }}"
-          infoTitle="{{ application.applicantDetails.profile.firstName }}"
-          infoName="{{ application.jobDetails.position }}"
-          infoType="{{ application.jobDetails.type }}"
-        />
-      }
-    }
+    <app-applicants
+      class="col-span-full"
+      [fromPage]="false"
+      (onLoad)="setStats($event)"
+    />
   </div>
 
   <a

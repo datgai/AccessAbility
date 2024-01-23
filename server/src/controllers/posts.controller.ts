@@ -1,17 +1,27 @@
 import { Request, Response } from 'express';
+import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
-import { Post } from '../../../shared/src/types/post';
+import { Comment, Post } from '../../../shared/src/types/post';
 import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
 import { getError, saveImage, upload } from '../services/uploader.service';
 import { getMissingParameters } from '../utils/param.util';
+import { formatPost } from '../utils/post.util';
 
 export const getPosts = async (request: Request, response: Response) => {
-  const posts = await postsRef.get();
+  const token = request.params.token ?? ' ';
 
-  return response
-    .status(StatusCodes.OK)
-    .json(posts.docs.map((post) => ({ id: post.id, ...post.data() })));
+  const posts = await postsRef
+    .orderBy(firestore.FieldPath.documentId())
+    .startAfter(token)
+    .limit(10)
+    .get();
+  const docs = posts.docs as GenericDocument<Post>[];
+
+  return response.status(StatusCodes.OK).json({
+    posts: await Promise.all(docs.map(async (post) => await formatPost(post))),
+    nextPageToken: docs.length === 10 ? docs.at(-1)?.id : undefined
+  });
 };
 
 export const createPost = async (request: Request, response: Response) => {
@@ -77,17 +87,23 @@ export const createPost = async (request: Request, response: Response) => {
       comments: [],
       thumbnailUrl: thumbnailUrl,
       isDonation: body.isDonation ?? false,
-      postId: '',
-      date: ''
+      createdAt: new Date()
     };
 
     return await postsRef
-      .add(postDetails)
+      .add({
+        ...postDetails,
+        createdAt: firestore.Timestamp.fromDate(postDetails.createdAt)
+      })
       .then(async (post) => {
-        const postData = await post.get();
+        const postData = (await post.get()) as GenericDocument<Post>;
+        const { authorId, createdAt, ...data } = postData.data();
+
         return response.status(StatusCodes.CREATED).json({
           id: postData.id,
-          ...postData.data()
+          author: user,
+          createdAt: (createdAt as unknown as firestore.Timestamp).toDate(),
+          ...data
         });
       })
       .catch((error) => {
@@ -139,5 +155,83 @@ export const deletePostById = async (request: Request, response: Response) => {
         message: 'Something went wrong while trying to delete the post.',
         error: err
       });
+    });
+};
+
+export const getPostById = async (request: Request, response: Response) => {
+  const id = request.params.id ?? '';
+
+  return await postsRef
+    .doc(id)
+    .get()
+    .then(async (post) => {
+      if (!post.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Post you are looking for cannot be found.'
+        });
+      }
+
+      const postDoc = post as GenericDocument<Post>;
+      return response.status(StatusCodes.OK).json(await formatPost(postDoc));
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to find the job.',
+        error: err
+      });
+    });
+};
+
+export const addComment = async (request: Request, response: Response) => {
+  const content = request.body.content as string | undefined;
+  if (!content) {
+    return response.status(StatusCodes.BAD_REQUEST).json({
+      message: 'No content provided for comment.'
+    });
+  }
+
+  const user = request.user;
+  const id = request.params.id ?? '';
+
+  const comment: Comment = {
+    authorId: user.uid,
+    content,
+    createdAt: new Date()
+  };
+
+  return await postsRef
+    .doc(id)
+    .get()
+    .then(async (post) => {
+      if (!post.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Post you are trying to comment on cannot be found.'
+        });
+      }
+
+      const postDoc = post as GenericDocument<Post>;
+
+      return await postsRef
+        .doc(id)
+        .set({
+          ...postDoc.data(),
+          comments: [
+            {
+              ...comment,
+              createdAt: firestore.Timestamp.fromDate(comment.createdAt)
+            },
+            ...postDoc.data().comments
+          ]
+        })
+        .then(() => {
+          return response.status(StatusCodes.OK).json({
+            message: 'Successfully added comment.'
+          });
+        })
+        .catch(() => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: 'Something went wrong adding comment.'
+          });
+        });
     });
 };
