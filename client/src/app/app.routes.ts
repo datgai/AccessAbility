@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ApplicantsComponent } from './pages/applicants/applicants.component';
 import { CreateJobComponent } from './pages/create-job/create-job.component';
+import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { EditProfileComponent } from './pages/edit-profile/edit-profile.component';
 import { ForumComponent } from './pages/forum/forum.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -10,9 +11,9 @@ import { JobsComponent } from './pages/jobs/jobs.component';
 import { LoginComponent } from './pages/login/login.component';
 import { MyJobsComponent } from './pages/my-jobs/my-jobs.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { PostDetailsComponent } from './pages/post-details/post-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { PostDetailsComponent } from './pages/post-details/post-details.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -25,10 +26,10 @@ export const routes: Routes = [
   { path: 'job-listing', component: JobListingComponent },
   { path: 'my-jobs', component: MyJobsComponent },
   { path: 'create-job', component: CreateJobComponent },
-  { path: 'forum', component: ForumComponent },
   { path: 'user/:id', component: ProfileComponent },
   { path: 'edit-profile', component: EditProfileComponent },
   { path: 'forum', component: ForumComponent },
-  { path: 'post-details/:id', component: PostDetailsComponent },
+  { path: 'post/:id', component: PostDetailsComponent },
+  { path: 'create-post', component: CreatePostComponent },
   { path: '**', component: NotFoundComponent },
 ];

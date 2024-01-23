@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { FirebaseError } from '@angular/fire/app';
 
 import {
@@ -12,7 +12,6 @@ import {
 import { catchError, from, throwError } from 'rxjs';
 import { UserProfile } from '../../../../shared/src/types/user';
 import { environment } from '../../environments/environment';
-import { UserStoreService } from './user-store.service';
 
 interface AuthenticationParams {
   email: string;
@@ -24,9 +23,8 @@ interface AuthenticationParams {
 })
 export class AuthenticationService {
   constructor(
-    private auth: Auth = inject(Auth),
+    private auth: Auth,
     private http: HttpClient,
-    private userStore: UserStoreService,
   ) {}
 
   login(params: AuthenticationParams) {

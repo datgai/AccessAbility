@@ -1,38 +1,58 @@
-import { Component, signal } from '@angular/core';
-import { EMPTY, expand, from } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  signal,
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { EMPTY, expand } from 'rxjs';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { MiniInfoCardComponent } from '../../components/mini-info-card/mini-info-card.component';
 import { JobDetails, JobService } from '../../services/job.service';
-import {
-  UserResponse,
-  UserStoreService,
-} from '../../services/user-store.service';
-import { UserService } from '../../services/user.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-applicants',
   standalone: true,
-  imports: [MiniInfoCardComponent, LoaderComponent],
+  imports: [MiniInfoCardComponent, LoaderComponent, CommonModule],
   templateUrl: './applicants.component.html',
   styleUrl: './applicants.component.css',
 })
 export class ApplicantsComponent {
-  public jobApplicationIds = signal<string[]>([]);
-  public applications = signal<
-    {
-      jobDetails: JobDetails;
-      applicantDetails: UserResponse;
-    }[]
-  >([]);
-  public numOffers = signal<number>(0);
+  public jobs = signal<JobDetails[]>([]);
+  private numApplicants = signal<number>(0);
+  private numOffersGiven = signal<number>(0);
+
+  public totalApplicants = computed<number>(() => {
+    return this.jobs().reduce((acc, cur) => {
+      acc += cur.applicants.length;
+      return acc;
+    }, 0);
+  });
+
+  @Input({ required: false })
+  public fromPage = true;
+
+  @Output()
+  public onLoad = new EventEmitter<{
+    numApplicants: number;
+  }>();
 
   constructor(
     private jobService: JobService,
-    private userService: UserService,
+    private router: Router,
     public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
+    if (this.userStore.user?.profile.role !== UserRole.BUSINESS) {
+      this.router.navigate(['404']);
+    }
+
     let nextPageToken: string | undefined = '';
     this.jobService
       .getJobList(nextPageToken)
@@ -46,32 +66,22 @@ export class ApplicantsComponent {
       .subscribe({
         next: (response) => {
           response.jobs.forEach((job) => {
-            if (job.businessId !== this.userStore.user?.uid) return;
-            // Load number of applications
-            this.jobApplicationIds().push(...job.applicants);
+            if (job.business.uid !== this.userStore.user?.uid) return;
 
-            // Load applicants
-            from(job.applicants).subscribe({
-              next: (applicantId) => {
-                this.userService.getUser(applicantId).subscribe({
-                  next: (user) => {
-                    // Get number of offers the busines has given
-                    if (user.profile.offers.includes(job.id)) {
-                      this.numOffers.set(this.numOffers() + 1);
-                    }
+            // Get number of applications the business has
+            this.numApplicants.set(
+              this.numApplicants() + job.applicants.length,
+            );
 
-                    this.applications().push({
-                      jobDetails: job,
-                      applicantDetails: user,
-                    });
-                  },
-                });
-              },
-            });
+            this.jobs().push(job);
           });
 
           nextPageToken = response.nextPageToken;
         },
+        complete: () =>
+          this.onLoad.emit({
+            numApplicants: this.numApplicants(),
+          }),
       });
   }
 }

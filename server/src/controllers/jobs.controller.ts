@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { firestore } from 'firebase-admin';
+import { FirebaseError, firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
 import { Job, JobLocationType, JobType } from '../../../shared/src/types/job';
 import { jobsRef, profilesRef, skillsRef } from '../database';
+import { formatJobsList, getJobWithUsers } from '../utils/job.util';
 import { getMissingParameters } from '../utils/param.util';
 
 export const createJob = async (request: Request, response: Response) => {
@@ -41,11 +42,13 @@ export const createJob = async (request: Request, response: Response) => {
   return await jobsRef
     .add(jobDetails)
     .then(async (job) => {
-      const jobData = await job.get();
+      const jobData = (await job.get()) as GenericDocument<Job>;
+      const { businessId, ...data } = jobData.data();
 
       return response.status(StatusCodes.CREATED).json({
         id: jobData.id,
-        ...jobData.data()
+        business: user,
+        ...data
       });
     })
     .catch((err) => {
@@ -72,8 +75,8 @@ export const getJobList = async (request: Request, response: Response) => {
       .get();
 
     return response.status(StatusCodes.OK).json({
-      jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-      nextPageToken: jobs.docs.at(-1)?.id
+      jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
+      nextPageToken: jobs.size === 10 ? jobs.docs.at(-1)?.id : undefined
     });
   }
 
@@ -109,20 +112,23 @@ export const getJobList = async (request: Request, response: Response) => {
         })
       );
 
-      const jobs = bizJobs
-        .map((job) => job.docs.map((doc) => ({ id: doc.id, ...doc.data() })))
-        .reduce((acc, job) => acc.concat(job), []);
+      jobs = await formatJobsList(
+        bizJobs
+          .map((job) => job.docs)
+          .reduce((acc, cur) => acc.concat(cur), []) as GenericDocument<Job>[]
+      );
 
       return response.status(StatusCodes.OK).json({
         jobs: jobs,
-        nextPageToken: jobs.at(-1)?.id
+        nextPageToken:
+          jobs.length === 10 ? (jobs.at(-1) as any)?.id || undefined : undefined
       });
     }
   }
 
   return response.status(StatusCodes.OK).json({
-    jobs: jobs.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
-    nextPageToken: jobs.docs.at(-1)?.id
+    jobs: await formatJobsList(jobs.docs as GenericDocument<Job>[]),
+    nextPageToken: jobs.size === 10 ? jobs.docs.at(-1)?.id : length
   });
 };
 
@@ -139,10 +145,15 @@ export const getJobById = async (request: Request, response: Response) => {
         });
       }
 
-      return response.status(StatusCodes.OK).json({
-        id: job.id,
-        ...job.data()
-      });
+      return await getJobWithUsers(job as GenericDocument<Job>)
+        .then((jobData) => response.status(StatusCodes.OK).json(jobData))
+        .catch((error: FirebaseError) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:
+              'Something went wrong while trying to find the business of this job listing.',
+            error
+          });
+        });
     })
     .catch((err) => {
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

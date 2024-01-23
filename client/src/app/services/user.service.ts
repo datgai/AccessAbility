@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '@angular/fire/auth';
+import { Job } from '../../../../shared/src/types/job';
 import { UserProfile } from '../../../../shared/src/types/user';
 import { environment } from '../../environments/environment';
+import { JobDetails } from './job.service';
 
 export type UserDetails = User & { profile: UserProfile };
 
@@ -21,5 +23,25 @@ export class UserService {
       `${environment.baseUrl}/user/${userId}`,
       { offerId },
     );
+  }
+
+  getUserOffers(token: string, userId: string) {
+    return this.http.get<JobDetails[]>(
+      `${environment.baseUrl}/user/${userId}/offers`,
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
+
+  getUserApplications(token: string, userId: string) {
+    return this.http.get<(Job & { id: string })[]>(
+      `${environment.baseUrl}/user/${userId}/applications`,
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
+
+  getOffersByBusiness(token: string) {
+    return this.http.get<JobDetails[]>(`${environment.baseUrl}/user/offers`, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
   }
 }
