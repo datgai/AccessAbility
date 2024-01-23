@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Post } from '../../../../../shared/src/types/post'
-import {RouterModule} from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { PostDetails } from '../../services/forum.service';
 
 @Component({
@@ -9,22 +8,22 @@ import { PostDetails } from '../../services/forum.service';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './post.component.html',
-  styleUrl: './post.component.css'
+  styleUrl: './post.component.css',
 })
 export class PostComponent implements OnInit {
-  @Input() post!: Post;
+  @Input() post!: PostDetails;
 
-  postId: string = ''
-  postAuthor: string = ''
+  postId: string = '';
+  postAuthor: string = '';
 
   ngOnInit(): void {
-    this.postId = ((this.post as PostDetails).id)
+    this.postId = this.post.id;
   }
 
   formatDate(date: Date): string {
     const dateObj = new Date(date);
     const formattedDate = dateObj.toISOString().split('T')[0];
-    return formattedDate
+    return formattedDate;
   }
 
   truncatedContent(): string {

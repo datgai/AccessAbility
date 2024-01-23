@@ -12,7 +12,7 @@
 
         <div class="container flex justify-between mx-auto">
             <div class="w-full ">
-                @for(post of postList; track post.authorId ) {
+                @for(post of postList; track post.author.uid ) {
                     <app-post [post]="post"></app-post>
                 }
             </div>

@@ -1,10 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { PostComponent } from '../../components/post/post.component';
-import { UserStoreService } from '../../services/user-store.service'
-import { Post } from '../../../../../shared/src/types/post'
 import { CommonModule } from '@angular/common';
-import { ForumService } from '../../services/forum.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PostComponent } from '../../components/post/post.component';
+import { ForumService, PostDetails } from '../../services/forum.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-forum',
@@ -15,7 +14,7 @@ import { RouterModule } from '@angular/router';
 })
 
 export class ForumComponent implements OnInit{
-  postList: Post[] = [];
+  postList: PostDetails[] = [];
   forumService: ForumService = inject(ForumService);
 
   constructor(public userStore: UserStoreService) {}

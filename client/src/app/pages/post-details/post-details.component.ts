@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Post } from '../../../../../shared/src/types/post';
 import { CommentComponent } from '../../components/comment/comment.component';
-import { ForumService } from '../../services/forum.service';
+import { ForumService, PostDetails } from '../../services/forum.service';
 
 @Component({
   selector: 'app-post-details',
@@ -13,7 +12,7 @@ import { ForumService } from '../../services/forum.service';
   styleUrl: './post-details.component.css',
 })
 export class PostDetailsComponent implements OnInit {
-  public post = signal<Post | undefined>(undefined);
+  public post = signal<PostDetails | undefined>(undefined);
 
   constructor(
     private forumService: ForumService,
@@ -34,6 +33,8 @@ export class PostDetailsComponent implements OnInit {
         console.error('Error loading post:', error);
       },
     });
+
+    console.log(this.post());
 
     return;
   }
