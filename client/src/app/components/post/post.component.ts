@@ -26,7 +26,7 @@ export class PostComponent implements OnInit {
     return formattedDate;
   }
 
-  truncatedContent(): string {
+  truncateContent(): string {
     const maxLength = 80;
     return this.post.content.length > maxLength
       ? this.post.content.substring(0, maxLength) + '...'
