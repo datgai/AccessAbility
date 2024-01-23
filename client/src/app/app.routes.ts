@@ -15,6 +15,7 @@ import { PostDetailsComponent } from './pages/post-details/post-details.componen
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ResourcesComponent } from './pages/resources/resources.component';
+import { ResourceDetailsComponent } from './pages/resource-details/resource-details.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -33,5 +34,6 @@ export const routes: Routes = [
   { path: 'post/:id', component: PostDetailsComponent },
   { path: 'create-post', component: CreatePostComponent },
   { path: 'resources', component: ResourcesComponent },
+  { path: 'resources/:id', component: ResourceDetailsComponent },
   { path: '**', component: NotFoundComponent },
 ];
