@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Job } from '../../../../shared/src/types/job';
 import { environment } from '../../environments/environment';
-import { UserDetails, UserService } from './user.service';
+import { UserDetails } from './user.service';
 
 export type JobDetails = Omit<Job, 'businessId' | 'applicants'> & {
   id: string;
@@ -19,10 +19,7 @@ export interface JobResponse {
   providedIn: 'root',
 })
 export class JobService {
-  constructor(
-    private http: HttpClient,
-    private userService: UserService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getJobList(token?: string, filter: string = '') {
     return this.http.get<JobResponse>(
