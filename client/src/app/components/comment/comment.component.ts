@@ -12,4 +12,8 @@ import { PopulatedComment } from '../../services/forum.service';
 })
 export class CommentComponent {
   @Input({ required: true }) comment!: PopulatedComment;
+
+  formatDate(date: Date | undefined): string {
+    return (date ? new Date(date) : new Date()).toLocaleString();
+  }
 }
