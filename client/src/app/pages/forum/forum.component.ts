@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { PostComponent } from '../../components/post/post.component';
@@ -14,7 +14,7 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './forum.component.css',
 })
 export class ForumComponent implements OnInit {
-  postList: PostDetails[] = [];
+  public postList = signal<PostDetails[]>([]);
   forumService: ForumService = inject(ForumService);
 
   constructor(public userStore: UserStoreService) {}
@@ -25,9 +25,7 @@ export class ForumComponent implements OnInit {
 
   loadPosts() {
     this.forumService.getPosts().subscribe({
-      next: (response) => {
-        this.postList = response.posts;
-      },
+      next: (response) => this.postList.set(response.posts),
       error: (err) => console.error(err),
     });
   }
