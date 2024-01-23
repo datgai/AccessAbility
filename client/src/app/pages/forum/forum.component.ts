@@ -22,10 +22,6 @@ export class ForumComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadPosts();
-  }
-
-  loadPosts() {
     this.forumService.getPosts().subscribe({
       next: (response) => this.posts.set(response.posts),
       error: (err) => console.error(err),
