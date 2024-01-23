@@ -14,6 +14,7 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './forum.component.css',
 })
 export class ForumComponent implements OnInit {
+  public loading = signal<boolean>(true);
   public posts = signal<PostDetails[]>([]);
 
   constructor(
@@ -24,6 +25,7 @@ export class ForumComponent implements OnInit {
   ngOnInit(): void {
     this.forumService.getPosts().subscribe({
       next: (response) => this.posts.set(response.posts),
+      complete: () => this.loading.set(false),
       error: (err) => console.error(err),
     });
   }

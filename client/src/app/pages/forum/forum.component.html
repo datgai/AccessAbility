@@ -12,7 +12,7 @@
     }
   </div>
 
-  @if (posts().length === 0) {
+  @if (loading()) {
     <div class="mt-6">
       <app-loader />
     </div>
@@ -20,8 +20,12 @@
     <div class="overflow-x-hidden">
       <div class="container flex justify-between mx-auto">
         <div class="w-full">
-          @for (post of posts(); track post.author.uid) {
-            <app-post [post]="post"></app-post>
+          @if (posts().length === 0) {
+            <p>No posts found</p>
+          } @else {
+            @for (post of posts(); track post.author.uid) {
+              <app-post [post]="post"></app-post>
+            }
           }
         </div>
       </div>
