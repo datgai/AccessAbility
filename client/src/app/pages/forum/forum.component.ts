@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { PostComponent } from '../../components/post/post.component';
@@ -15,9 +15,11 @@ import { UserStoreService } from '../../services/user-store.service';
 })
 export class ForumComponent implements OnInit {
   public posts = signal<PostDetails[]>([]);
-  forumService: ForumService = inject(ForumService);
 
-  constructor(public userStore: UserStoreService) {}
+  constructor(
+    public userStore: UserStoreService,
+    private forumService: ForumService,
+  ) {}
 
   ngOnInit(): void {
     this.loadPosts();
