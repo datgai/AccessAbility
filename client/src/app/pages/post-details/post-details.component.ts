@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
 import { ToastrService } from 'ngx-toastr';
 import { CommentComponent } from '../../components/comment/comment.component';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import { ForumService, PostDetails } from '../../services/forum.service';
 
 @Component({
@@ -23,6 +24,7 @@ import { ForumService, PostDetails } from '../../services/forum.service';
     MarkdownPipe,
     FormsModule,
     ReactiveFormsModule,
+    LoaderComponent,
   ],
   templateUrl: './post-details.component.html',
   styleUrl: './post-details.component.css',
