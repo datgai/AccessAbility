@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
 import { CommentComponent } from '../../components/comment/comment.component';
 import { ForumService, PostDetails } from '../../services/forum.service';
 
 @Component({
   selector: 'app-post-details',
   standalone: true,
-  imports: [CommonModule, CommentComponent],
+  imports: [CommonModule, CommentComponent, MarkdownModule, MarkdownPipe],
   templateUrl: './post-details.component.html',
   styleUrl: './post-details.component.css',
 })
