@@ -34,8 +34,6 @@ export class PostDetailsComponent implements OnInit {
       },
     });
 
-    console.log(this.post());
-
     return;
   }
 
