@@ -76,4 +76,12 @@ export class ForumService {
       `${environment.baseUrl}/post/${postId}`,
     );
   }
+
+  addComment(postId: string, token: string, comment: string) {
+    return this.http.patch<{ message: string }>(
+      `${environment.baseUrl}/post/${postId}`,
+      { content: comment },
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
 }
