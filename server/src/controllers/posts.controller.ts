@@ -216,11 +216,11 @@ export const addComment = async (request: Request, response: Response) => {
         .set({
           ...postDoc.data(),
           comments: [
-            ...postDoc.data().comments,
             {
               ...comment,
               createdAt: firestore.Timestamp.fromDate(comment.createdAt)
-            }
+            },
+            ...postDoc.data().comments
           ]
         })
         .then(() => {
