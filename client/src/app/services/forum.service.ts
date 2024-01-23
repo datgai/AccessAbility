@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { from, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -27,7 +27,7 @@ export interface PostResponse {
 export class ForumService {
   constructor(
     private http: HttpClient,
-    private auth: Auth = inject(Auth),
+    private auth: Auth,
   ) {}
 
   createPost(body: {

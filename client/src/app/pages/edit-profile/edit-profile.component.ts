@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import {
   FormBuilder,
@@ -54,7 +54,7 @@ export class EditProfileComponent implements OnInit {
     private skillsService: SkillsService,
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
-    private auth: Auth = inject(Auth),
+    private auth: Auth,
     private toastr: ToastrService,
     private router: Router,
     public userStore: UserStoreService,
