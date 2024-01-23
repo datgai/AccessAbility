@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../../../../../shared/src/types/post';
 import { CommentComponent } from '../../components/comment/comment.component';
 import { ForumService } from '../../services/forum.service';
@@ -13,26 +13,29 @@ import { ForumService } from '../../services/forum.service';
   styleUrl: './post-details.component.css',
 })
 export class PostDetailsComponent implements OnInit {
-  public postId: string = '';
+  public post = signal<Post | undefined>(undefined);
 
-  forumService = inject(ForumService);
-  post: Post | undefined;
+  constructor(
+    private forumService: ForumService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
 
-  constructor(private route: ActivatedRoute) {}
+  ngOnInit() {
+    const postId = this.route.snapshot.paramMap.get('id');
+    if (!postId) return this.router.navigate(['404']);
 
-  ngOnInit(): void {
-    const params = this.route.snapshot.params;
-    this.postId = params['id'];
-
-    this.forumService.getPostById(this.postId).subscribe({
+    this.forumService.getPostById(postId).subscribe({
       next: (post) => {
-        this.post = post;
+        this.post.set(post);
         console.log('Post loaded successfully:', this.post);
       },
       error: (error) => {
         console.error('Error loading post:', error);
       },
     });
+
+    return;
   }
 
   formatDate(date: Date | undefined): string {
