@@ -12,7 +12,7 @@
     }
   </div>
 
-  @if (postList().length === 0) {
+  @if (posts().length === 0) {
     <div class="mt-6">
       <app-loader />
     </div>
@@ -20,7 +20,7 @@
     <div class="overflow-x-hidden">
       <div class="container flex justify-between mx-auto">
         <div class="w-full">
-          @for (post of postList(); track post.author.uid) {
+          @for (post of posts(); track post.author.uid) {
             <app-post [post]="post"></app-post>
           }
         </div>

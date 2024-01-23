@@ -14,7 +14,7 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './forum.component.css',
 })
 export class ForumComponent implements OnInit {
-  public postList = signal<PostDetails[]>([]);
+  public posts = signal<PostDetails[]>([]);
   forumService: ForumService = inject(ForumService);
 
   constructor(public userStore: UserStoreService) {}
@@ -25,7 +25,7 @@ export class ForumComponent implements OnInit {
 
   loadPosts() {
     this.forumService.getPosts().subscribe({
-      next: (response) => this.postList.set(response.posts),
+      next: (response) => this.posts.set(response.posts),
       error: (err) => console.error(err),
     });
   }
