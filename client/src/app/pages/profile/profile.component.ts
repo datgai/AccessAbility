@@ -16,7 +16,8 @@ import {
   UserResponse,
   UserStoreService,
 } from '../../services/user-store.service';
-import { UserService } from '../../services/user.service';
+import { UserDetails, UserService } from '../../services/user.service';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-profile',
@@ -53,6 +54,7 @@ export class ProfileComponent implements OnInit {
     private toastr: ToastrService,
     public userStore: UserStoreService,
     private auth: Auth,
+    private chatService: ChatService,
   ) {}
 
   ngOnInit() {
@@ -100,6 +102,10 @@ export class ProfileComponent implements OnInit {
     });
 
     return;
+  }
+
+  createChat(otherUser: any){
+    this.chatService.createChat(otherUser).subscribe();
   }
 
   submitOfferForm() {

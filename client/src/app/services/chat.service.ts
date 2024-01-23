@@ -1,37 +1,74 @@
 import { Injectable } from '@angular/core';
-import { Firestore, addDoc, collection } from 'firebase/firestore';
-import { Observable, concatMap, map, take } from 'rxjs';
-import { UserService } from './user.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { UserResponse } from './user-store.service';
+import { UserDetails } from './user.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { catchError, from, switchMap, throwError } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
+
+export interface Chat {
+  cid: string;
+  lastMessage?:string;
+  lastMessageDate?:Date;
+  userIds: string[];
+  users: UserDetails[];
+
+  //only for display
+  chatPic?: string;
+  chatName?: string;
+}
+
+export interface ChatDetails{
+  userIds: string[];
+  users:UserDetails[]
+}
+
+export interface Message{
+  text: string;
+  senderId: string;
+  sentDate: Date;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  constructor(private firestore: Firestore,private userService: UserService,private route: ActivatedRoute,private router: Router,) { }
+  constructor(private http: HttpClient,private auth: Auth,) { }
 
-  createChat(otherUser : UserResponse) : Observable<string>{
-    const ref = collection(this.firestore, 'chats');
-    const id = this.route.snapshot.paramMap.get('id');
+  createChat(otherUser:UserDetails){
+    const currentUser = this.auth.currentUser;
 
-    return this.userService.getUser(id!).pipe(
-      take(1),
-      concatMap(user => addDoc(ref, {
-        userIds: [user?.uid, otherUser?.uid],
-        users:[
-          {
-            displayName: user?.profile.firstName ?? 'Unknown',
-            photoURL: user?.photoURL??''
-          },
-          {
-            displayName: otherUser?.profile.firstName ?? 'Unknown',
-            photoURL: otherUser?.photoURL??''
-          }
-        ]
-      })),
-      map(ref => ref.id)
-    )
+    if (!currentUser) {
+      return throwError(() => 'Current user is undefined.');
+    }
 
+    return from(currentUser.getIdToken()).pipe(
+      switchMap((token) => {
+        if (!token) {
+          return throwError(() => 'Authentication token is missing.');
+        }
+        const headers = new HttpHeaders().set(
+          'Authorization',
+          `Bearer ${token}`,
+        );
+        return this.http.post<ChatDetails>(
+          `${environment.baseUrl}/chat`,
+          otherUser,
+          { headers },
+        );
+      }),
+      catchError((error) => {
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  addChatNameAndPic(currentUserId: string, chats:Chat[]): Chat[]{
+    chats.forEach(chat => {
+      const otherIndex = chat.userIds.indexOf(currentUserId) === 0 ? 1 :0;
+      const {displayName, photoURL} = chat.users[otherIndex];
+      chat.chatName = displayName || '';
+      chat.chatPic = photoURL|| '';
+    })
+    return chats
   }
 }
