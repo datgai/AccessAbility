@@ -7,6 +7,7 @@ import { cacheControl } from './middleware/cache.middleware';
 import authRoute from './routes/auth.routes';
 import jobsRoute from './routes/jobs.routes';
 import postsRoute from './routes/posts.routes';
+import resourcesRoute from './routes/resources.routes';
 import skillsRoute from './routes/skills.routes';
 import testRoute from './routes/test.routes';
 import usersRoute from './routes/users.routes';
@@ -39,6 +40,7 @@ app.use('/api', usersRoute);
 app.use('/api', postsRoute);
 app.use('/api', jobsRoute);
 app.use('/api', skillsRoute);
+app.use('/api', resourcesRoute);
 
 // Serve static files
 app.use(
