@@ -7,6 +7,7 @@ export const populateResource = async (resource: GenericDocument<Resource>) => {
   const author = await getUserAndProfile(authorId);
 
   return {
+    id: resource.id,
     author,
     ...resourceData,
     price: price / 100,

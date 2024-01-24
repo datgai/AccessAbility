@@ -2,34 +2,46 @@
   <h1 class="text-5xl font-bold text-black">Resources</h1>
 
   <div class="mt-6">
-    <div class="px-5 py-6 mx-auto bg-white rounded-lg shadow-md">
-      <img
-        class="w-full max-h-64 object-cover"
-        src="../../../assets/hero-bg.png"
-        alt="image of two guys fitst bumping"
-      />
+    @for (resource of resources(); track resource.id) {
+      <div class="px-5 py-6 mx-auto bg-white rounded-lg shadow-md">
+        @if (resource.thumbnailUrl) {
+          <img
+            class="w-full max-h-64 object-cover"
+            src="{{ resource.thumbnailUrl }}"
+            alt="image of two guys fitst bumping"
+          />
+        }
 
-      <div class="mt-2">
-        <h1 class="font-bold text-gray-700 text-3xl">Title</h1>
-        <p class="mt-2 text-xl text-gray-600 max-w-full break-words">
-          Description
-        </p>
-      </div>
-
-      <div class="flex items-center justify-between mt-4">
-        <a href="/resources/1" class="text-blue-500 hover:underline"
-          >Read more</a
-        >
-        <div>
+        <div class="mt-2">
           <div class="flex items-center justify-between text-slate-500">
+            <h2 class="font-bold text-gray-700 text-3xl">
+              {{ resource.title }}
+            </h2>
             <div class="flex space-x-4 md:space-x-8">
-              <div
-                class="flex cursor-pointer items-center transition hover:text-slate-600"
-              ></div>
+              <span
+                class="text-lg text-white bg-green-500 font-bold px-2 py-1 rounded-full"
+              >
+                RM {{ resource.price }}
+              </span>
             </div>
           </div>
+          <p class="mt-2 text-xl text-gray-600 max-w-full break-words">
+            <span
+              class="unreset [&>p]:my-0"
+              [innerHTML]="resource.description | markdown | async"
+            >
+            </span>
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between mt-4">
+          <a
+            routerLink="/resource/{{ resource.id }}"
+            class="text-blue-500 hover:underline"
+            >Read more</a
+          >
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

@@ -34,6 +34,6 @@ export const routes: Routes = [
   { path: 'post/:id', component: PostDetailsComponent },
   { path: 'create-post', component: CreatePostComponent },
   { path: 'resources', component: ResourcesComponent },
-  { path: 'resources/:id', component: ResourceDetailsComponent },
+  { path: 'resource/:id', component: ResourceDetailsComponent },
   { path: '**', component: NotFoundComponent },
 ];

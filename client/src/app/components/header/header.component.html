@@ -2,23 +2,20 @@
   <div
     class="text-white container mx-auto flex flex-wrap p-0 md:p-5 flex-col md:flex-row items-center sm:flex"
   >
-    <div
-      class="flex font-medium items-center text-white w-full md:w-auto"
-    >
-        <img
-          src="assets/header-logo.png"
-          class="w-40 h-15 p-2 hidden md:flex"
-          alt="Header Logo"
-        />
+    <div class="flex font-medium items-center text-white w-full md:w-auto">
+      <img
+        src="assets/header-logo.png"
+        class="w-40 h-15 p-2 hidden md:flex"
+        alt="Header Logo"
+      />
 
-        <img
-          src="assets/footer-logo.png"
-          class="w-20 h-15 p-2 md:hidden"
-          alt="Header Logo"
-        />
+      <img
+        src="assets/footer-logo.png"
+        class="w-20 h-15 p-2 md:hidden"
+        alt="Header Logo"
+      />
 
-        <p class="text-xl font-bold md:hidden"> {{ displayName }} </p>
-        
+      <p class="text-xl font-bold md:hidden">{{ displayName }}</p>
     </div>
     <nav
       class="md:mr-auto md:ml-4 md:py-1 md:pl-4 hidden md:flex flex-wrap items-center text-base justify-center"
@@ -32,10 +29,7 @@
       >
         Profile
       </a>
-      <a
-        class="mr-5 hover:text-gray-900"
-        routerLink="/resources"
-      >
+      <a class="mr-5 hover:text-gray-900" routerLink="/resources">
         Resources
       </a>
     </nav>
@@ -109,11 +103,11 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Home</span
         >
-    </a>
+      </a>
       <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-        routerLink="/jobs"
+        routerLink="/resources"
       >
         <img
           src="/assets/Resources.png"
@@ -121,9 +115,9 @@
         />
         <span
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-          >Jobs</span
+          >Resources</span
         >
-  </a>
+      </a>
       <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
@@ -137,7 +131,7 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Forum</span
         >
-</a>
+      </a>
       <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
@@ -151,7 +145,7 @@
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
           >Profile</span
         >
-</a>
+      </a>
     </div>
   </div>
 </header>
