@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
+import path from 'path';
 import { Comment, Post } from '../../../shared/src/types/post';
 import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
@@ -66,7 +67,7 @@ export const createPost = async (request: Request, response: Response) => {
       try {
         thumbnailUrl = await saveImage(
           baseUrl,
-          'thumbnails',
+          path.join('thumbnails', 'posts'),
           buffer,
           originalName
         );
