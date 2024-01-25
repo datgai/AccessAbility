@@ -51,6 +51,27 @@
       </div>
     </div>
 
+    @if (
+      userStore.user?.profile?.role === userStore.UserRole.ADMIN &&
+      !resource()?.verified
+    ) {
+      <form
+        class="mt-5 -mb-8 flex gap-2 text-gray-700 max-w-screen-md mx-auto text-lg leading-relaxed"
+        (ngSubmit)="onVerification($event)"
+      >
+        <input
+          type="submit"
+          value="Verify"
+          class="px-4 py-2 rounded-md text-white bg-blue-100 hover:bg-blue-200 cursor-pointer"
+        />
+        <input
+          type="submit"
+          value="Reject"
+          class="px-4 py-2 rounded-md text-white bg-red-700 hover:bg-red-800 cursor-pointer"
+        />
+      </form>
+    }
+
     <div
       class="px-4 lg:px-0 mt-12 text-gray-700 max-w-screen-md mx-auto text-lg leading-relaxed"
     >
