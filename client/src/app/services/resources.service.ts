@@ -23,4 +23,9 @@ export class ResourcesService {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     });
   }
+  getResourceById(id: string, token: string) {
+    return this.http.get(`${environment.baseUrl}/resource/${id}`, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
+  }
 }
