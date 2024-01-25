@@ -14,7 +14,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PostDetailsComponent } from './pages/post-details/post-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
-import { ChatComponent } from './pages/chat/chat.component';
+import { MessagesComponent } from './pages/messages/messages.component';
+import { ChatsComponent } from './pages/chats/chats.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -32,6 +33,7 @@ export const routes: Routes = [
   { path: 'forum', component: ForumComponent },
   { path: 'post/:id', component: PostDetailsComponent },
   { path: 'create-post', component: CreatePostComponent },
-  { path: 'chat', component:ChatComponent} ,
+  { path: 'chat/:id', component:MessagesComponent} ,
+  { path: 'chats', component:ChatsComponent} ,
   { path: '**', component: NotFoundComponent },
 ];
