@@ -50,4 +50,11 @@ export class ResourceDetailsComponent implements OnInit {
   formatDate(date: Date | undefined): string {
     return (date ? new Date(date) : new Date()).toLocaleDateString();
   }
+
+  get price() {
+    if (!this.resource()) return 'FREE';
+    return this.resource()!.price === 0
+      ? 'FREE'
+      : `RM ${this.resource()?.price}`;
+  }
 }
