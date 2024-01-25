@@ -15,21 +15,20 @@ export const getResources = async (request: Request, response: Response) => {
 
   let resources;
 
-  // if (user.profile.role !== UserRole.ADMIN) {
-  //   resources = await resourcesRef
-  //     .orderBy('verified')
-  //     .where('verified', '==', true)
-  //     .orderBy(firestore.FieldPath.documentId())
-  //     .startAfter(token)
-  //     .limit(10)
-  //     .get();
-  // } else {
-  resources = await resourcesRef
-    .orderBy(firestore.FieldPath.documentId())
-    .startAfter(token)
-    .limit(10)
-    .get();
-  // }
+  if (user.profile.role !== UserRole.ADMIN) {
+    resources = await resourcesRef
+      .where('verified', '==', true)
+      .orderBy(firestore.FieldPath.documentId())
+      .startAfter(token)
+      .limit(10)
+      .get();
+  } else {
+    resources = await resourcesRef
+      .orderBy(firestore.FieldPath.documentId())
+      .startAfter(token)
+      .limit(10)
+      .get();
+  }
 
   const resourcesDocs = resources.docs as GenericDocument<Resource>[];
   return response.status(StatusCodes.OK).json({
@@ -53,17 +52,14 @@ export const getResourcesByAuthorId = async (
 
   if (user.profile.role !== UserRole.ADMIN) {
     resources = await resourcesRef
-      .orderBy('authorId')
       .where('authorId', '==', authorId)
+      .where('verified', '==', true)
       .orderBy(firestore.FieldPath.documentId())
       .startAfter(token)
-      .orderBy('verified')
-      .where('verified', '==', true)
       .limit(10)
       .get();
   } else {
     resources = await resourcesRef
-      .orderBy('authorId')
       .where('authorId', '==', authorId)
       .orderBy(firestore.FieldPath.documentId())
       .startAfter(token)
