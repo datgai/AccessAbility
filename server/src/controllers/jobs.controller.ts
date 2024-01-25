@@ -179,7 +179,7 @@ export const deleteJobById = async (request: Request, response: Response) => {
       return await job.ref
         .delete()
         .then(() => {
-          return response.status(StatusCodes.NO_CONTENT).json({
+          return response.status(StatusCodes.OK).json({
             message: 'Job successfully deleted.'
           });
         })

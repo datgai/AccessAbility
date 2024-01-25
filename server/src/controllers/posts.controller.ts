@@ -140,7 +140,7 @@ export const deletePostById = async (request: Request, response: Response) => {
       return await post.ref
         .delete()
         .then(() => {
-          return response.status(StatusCodes.NO_CONTENT).json({
+          return response.status(StatusCodes.OK).json({
             message: 'Post successfully deleted.'
           });
         })

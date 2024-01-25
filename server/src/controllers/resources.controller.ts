@@ -309,7 +309,7 @@ export const deleteResourceById = async (
       return await resource.ref
         .delete()
         .then(() => {
-          return response.status(StatusCodes.NO_CONTENT).json({
+          return response.status(StatusCodes.OK).json({
             message: 'Resource successfully deleted.'
           });
         })
