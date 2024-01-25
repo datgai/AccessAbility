@@ -166,7 +166,10 @@ export const createResource = async (request: Request, response: Response) => {
 
         return response
           .status(StatusCodes.CREATED)
-          .json(await populateResource(resource));
+          .json({
+            author: user,
+            ...resource.data(),
+          });
       })
       .catch((error) => {
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
