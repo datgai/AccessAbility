@@ -32,4 +32,12 @@ export class ResourcesService {
       },
     );
   }
+
+  createResource(token: string, body: FormData) {
+    return this.http.post<ResourceDetails>(
+      `${environment.baseUrl}/resource`,
+      body,
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
 }
