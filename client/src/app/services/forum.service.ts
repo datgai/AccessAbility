@@ -19,6 +19,7 @@ export type PostDetails = Omit<Post, 'authorId' | 'comments'> & {
 
 export interface PostResponse {
   posts: PostDetails[];
+  nextPageToken?: string;
 }
 
 @Injectable({
