@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createResource,
+  deleteResourceById,
   editResource,
   getResourceById,
   getResources,
@@ -19,5 +20,6 @@ router.get('/resources/:token?', isAuthenticated, getResources);
 router.get('/resource/:id?', isAuthenticated, getResourceById);
 router.post('/resource', isAuthenticated, createResource);
 router.patch('/resource/:id', isAuthenticated, editResource);
+router.delete('/resource/:id', isAuthenticated, deleteResourceById);
 
 export default router;

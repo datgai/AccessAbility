@@ -278,3 +278,53 @@ export const editResource = async (request: Request, response: Response) => {
       });
   });
 };
+
+export const deleteResourceById = async (
+  request: Request,
+  response: Response
+) => {
+  const id = request.params.id ?? '';
+
+  return await resourcesRef
+    .doc(id)
+    .get()
+    .then(async (resource) => {
+      if (!resource.exists) {
+        return response.status(StatusCodes.NOT_FOUND).json({
+          message: 'Resource you are trying to delete cannot be found.'
+        });
+      }
+
+      const user = request.user;
+      if (
+        user.profile.role !== UserRole.ADMIN &&
+        (resource.data() as Resource).authorId !== user.uid
+      ) {
+        return response.status(StatusCodes.FORBIDDEN).json({
+          message:
+            'You are not allowed to delete a resource that you did not create.'
+        });
+      }
+
+      return await resource.ref
+        .delete()
+        .then(() => {
+          return response.status(StatusCodes.NO_CONTENT).json({
+            message: 'Resource successfully deleted.'
+          });
+        })
+        .catch((err) => {
+          return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message:
+              'Something went wrong while trying to delete the resource.',
+            error: err
+          });
+        });
+    })
+    .catch((err) => {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: 'Something went wrong while trying to delete the resource.',
+        error: err
+      });
+    });
+};
