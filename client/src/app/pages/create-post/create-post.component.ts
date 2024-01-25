@@ -10,6 +10,7 @@ import {
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ForumService } from '../../services/forum.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-create-post',
@@ -28,6 +29,7 @@ export class CreatePostComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private auth: Auth,
+    public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
