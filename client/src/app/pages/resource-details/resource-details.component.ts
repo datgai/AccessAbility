@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MarkdownModule, MarkdownPipe } from 'ngx-markdown';
+import { ToastrService } from 'ngx-toastr';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import {
   ResourceDetails,
@@ -30,6 +32,7 @@ export class ResourceDetailsComponent implements OnInit {
     private auth: Auth,
     private route: ActivatedRoute,
     private router: Router,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit() {
@@ -41,6 +44,10 @@ export class ResourceDetailsComponent implements OnInit {
       const token = await user.getIdToken();
       this.resourcesService.getResourceById(resourceId, token).subscribe({
         next: (resource) => this.resource.set(resource),
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 403) return this.router.navigate(['404']);
+          return this.toastr.error(error.error.message || error.message);
+        },
       });
     });
 
@@ -53,7 +60,7 @@ export class ResourceDetailsComponent implements OnInit {
 
   get price() {
     if (!this.resource()) return 'FREE';
-    return this.resource()!.price === 0
+    return String(this.resource()!.price) === '0.00'
       ? 'FREE'
       : `RM ${this.resource()?.price}`;
   }
