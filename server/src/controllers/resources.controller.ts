@@ -93,8 +93,8 @@ export const getResourceById = async (request: Request, response: Response) => {
 
   if (
     !resource.data().verified &&
-    (user.profile.role !== UserRole.ADMIN ||
-      resource.data().authorId !== user.uid)
+    user.profile.role !== UserRole.ADMIN &&
+    resource.data().authorId !== user.uid
   ) {
     return response.status(StatusCodes.FORBIDDEN).json({
       message: 'This resource is not yet verified and thus cannot be accessed.'
