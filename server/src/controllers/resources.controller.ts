@@ -91,7 +91,11 @@ export const getResourceById = async (request: Request, response: Response) => {
     });
   }
 
-  if (!resource.data().verified && user.profile.role !== UserRole.ADMIN) {
+  if (
+    !resource.data().verified &&
+    (user.profile.role !== UserRole.ADMIN ||
+      resource.data().authorId !== user.uid)
+  ) {
     return response.status(StatusCodes.FORBIDDEN).json({
       message: 'This resource is not yet verified and thus cannot be accessed.'
     });
@@ -164,12 +168,11 @@ export const createResource = async (request: Request, response: Response) => {
       .then(async (reference) => {
         const resource = (await reference.get()) as GenericDocument<Resource>;
 
-        return response
-          .status(StatusCodes.CREATED)
-          .json({
-            author: user,
-            ...resource.data(),
-          });
+        return response.status(StatusCodes.CREATED).json({
+          id: resource.id,
+          author: user,
+          ...resource.data()
+        });
       })
       .catch((error) => {
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
