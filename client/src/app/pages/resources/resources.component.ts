@@ -47,4 +47,8 @@ export class ResourcesComponent implements OnInit {
       });
     });
   }
+
+  getPrice(resource: ResourceDetails) {
+    return String(resource.price) === '0.00' ? 'FREE' : `RM ${resource.price}`;
+  }
 }
