@@ -40,4 +40,12 @@ export class ResourcesService {
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
     );
   }
+
+  editResource(token: string, id: string, body: FormData) {
+    return this.http.patch<{ message: string }>(
+      `${environment.baseUrl}/resource/${id}`,
+      body,
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
 }
