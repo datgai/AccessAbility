@@ -79,7 +79,11 @@ export const createPost = async (request: Request, response: Response) => {
     }
 
     body.isDonation =
-      user.profile.role === UserRole.ADMIN ? body.isDonation : false;
+      user.profile.role === UserRole.ADMIN
+        ? body.isDonation
+          ? String(body.isDonation) === 'true'
+          : false
+        : false;
 
     const postDetails: Post = {
       authorId: user.uid,
