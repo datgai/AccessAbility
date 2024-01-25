@@ -48,4 +48,11 @@ export class ResourcesService {
       { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
     );
   }
+
+  deleteResource(token: string, id: string) {
+    return this.http.delete<{ message: string }>(
+      `${environment.baseUrl}/resource/${id}`,
+      { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`) },
+    );
+  }
 }
