@@ -64,7 +64,7 @@ export class CreatePostComponent implements OnInit {
 
     const token = await this.auth.currentUser?.getIdToken();
     if (!token) {
-      return this.toastr.error('You are not authorised to create a resource.');
+      return this.toastr.error('You are not authorised to create a post.');
     }
 
     this.forumService.createPost(token, formData).subscribe({
