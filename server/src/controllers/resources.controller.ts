@@ -166,7 +166,7 @@ export const createResource = async (request: Request, response: Response) => {
 
         return response
           .status(StatusCodes.CREATED)
-          .json(populateResource(resource));
+          .json(await populateResource(resource));
       })
       .catch((error) => {
         return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
