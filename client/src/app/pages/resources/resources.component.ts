@@ -8,6 +8,7 @@ import {
   ResourceDetails,
   ResourcesService,
 } from '../../services/resources.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-resources',
@@ -30,6 +31,7 @@ export class ResourcesComponent implements OnInit {
   constructor(
     private resourcesService: ResourcesService,
     private auth: Auth,
+    public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
