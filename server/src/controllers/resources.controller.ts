@@ -211,7 +211,7 @@ export const editResource = async (request: Request, response: Response) => {
 
     // Only the resource author and admins can edit the resource
     if (
-      resource.data().authorId !== user.uid ||
+      resource.data().authorId !== user.uid &&
       user.profile.role !== UserRole.ADMIN
     ) {
       return response.status(StatusCodes.FORBIDDEN).json({
@@ -245,7 +245,9 @@ export const editResource = async (request: Request, response: Response) => {
     // Only admins can change verified status
     const verifiedStatus =
       user.profile.role === UserRole.ADMIN
-        ? body.verified ?? resource.data().verified
+        ? body.verified
+          ? String(body.verified) === 'true'
+          : resource.data().verified
         : resource.data().verified;
 
     const resourceData: Resource = {
