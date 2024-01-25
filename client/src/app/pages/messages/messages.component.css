@@ -1,0 +1,17 @@
+.container{
+    display:flex;
+    height: calc(100vh - 200px);
+}
+
+.messages-header{
+    display:flex;
+    margin-bottom: 8px;
+}
+
+.messages{
+    width:100%;
+    margin:16px;
+    border-radius: 16px;
+    padding:24px;
+    background-color: whitesmoke;
+}
