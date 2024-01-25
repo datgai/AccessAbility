@@ -1,48 +1,76 @@
-import { Component } from '@angular/core';
-import { FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { ForumService } from '../../services/forum.service';
+import { Component, OnInit, signal } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ForumService } from '../../services/forum.service';
 
 @Component({
   selector: 'app-create-post',
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './create-post.component.html',
-  styleUrl: './create-post.component.css'
+  styleUrl: './create-post.component.css',
 })
-export class CreatePostComponent {
-
-  createPostForm: FormGroup = new FormGroup(
-    {
-      postTitle: new FormControl('', [Validators.required]),
-      postContent: new FormControl('', [Validators.required]),
-      thumbnailUrl: new FormControl(''),
-      isDonation: new FormControl(false, [Validators.required])
-  }
-  );
+export class CreatePostComponent implements OnInit {
+  public form!: FormGroup;
+  public thumbnail = signal<File | null>(null);
 
   constructor(
-    private forumService: ForumService, 
-    private router: Router
+    private formBuilder: FormBuilder,
+    private forumService: ForumService,
+    private router: Router,
+    private toastr: ToastrService,
+    private auth: Auth,
   ) {}
 
-  onSubmit() {
-    const { postTitle, postContent, thumbnailUrl, isDonation } = this.createPostForm.value;
-
-    const postBody = {
-      title: postTitle,
-      content: postContent,
-      image: thumbnailUrl,
-      isDonation: isDonation, 
-    };
-    
-    this.forumService.createPost(postBody).subscribe({
-      next:(post) => {
-        console.log('Post created successfully:', post);
-        this.router.navigate(['/forum']); 
-      },
-      error: (err) => console.error('Error creating post:', err)
+  ngOnInit(): void {
+    this.form = this.formBuilder.group({
+      title: new FormControl<string>('', Validators.required),
+      content: new FormControl<string>('', Validators.required),
+      thumbnail: new FormControl<File | null>(null),
+      isDonation: new FormControl<boolean>(false),
     });
   }
 
+  onThumbnailSelect(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    const file = files && files.length > 0 ? files[0] : null;
+    this.thumbnail.set(file);
+  }
+
+  async onSubmit() {
+    if (!this.form.valid) {
+      return this.toastr.error('Missing inputs.');
+    }
+
+    const formData = new FormData();
+
+    Object.keys(this.form.value).forEach((key) => {
+      if (this.form.value[key] !== '') {
+        formData.append(key, this.form.value[key]);
+      }
+    });
+
+    if (this.thumbnail()) formData.set('thumbnail', this.thumbnail()!);
+
+    const token = await this.auth.currentUser?.getIdToken();
+    if (!token) {
+      return this.toastr.error('You are not authorised to create a resource.');
+    }
+
+    this.forumService.createPost(token, formData).subscribe({
+      next: (post) => this.router.navigate(['/post', post.id]),
+      error: (err) => console.error('Error creating post:', err),
+      complete: () => this.toastr.success('Post created successfully.'),
+    });
+
+    return;
+  }
 }
