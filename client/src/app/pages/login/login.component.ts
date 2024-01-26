@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { AuthenticationService } from '../../services/authentication.service';
 import { UserStoreService } from '../../services/user-store.service';
 import { LoginService } from './services/login.service';
@@ -72,9 +73,18 @@ export class LoginComponent implements OnInit {
             },
             error: (error: HttpErrorResponse) => {
               if (error.status === 404) {
+                // Basic template data for profile creation
+                const formData = new FormData();
+                formData.set('firstName', 'User');
+                formData.set('role', UserRole.USER);
+                formData.set(
+                  'dateOfBirth',
+                  new Date().toISOString().split('T')[0],
+                );
+
                 // User does not have a profile so create it
                 this.authenticationService
-                  .editOrCreateProfile(userToken, new FormData())
+                  .editOrCreateProfile(userToken, formData)
                   .subscribe({
                     next: (res) => {
                       localStorage.setItem(
