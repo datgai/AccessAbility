@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { UserDetails } from './user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable, catchError, from, map, switchMap, throwError } from 'rxjs';
+import { catchError, from, switchMap, throwError } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
-import { Firestore, collection, collectionChanges, collectionData, orderBy, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, getDocs, orderBy, query, where } from '@angular/fire/firestore';
 
 export interface ChatDetails {
   id: string;
@@ -61,9 +61,21 @@ export class ChatService {
     );
   }
 
+  getOtherUserIndex (userId : string, usersIdArray : string[]){
+    if (usersIdArray.indexOf(userId) == 1) {
+      return 0;
+    } else {
+      return 1;
+    }
+  }
+
   getChats = (userId: string) => {
-    const ChatsQuery = query(collection(this.firestore, 'chats'), where('userIds','array-contains',userId), orderBy('lastMessageDate','asc'));
+    const ChatsQuery = query(collection(this.firestore, 'chats'), where('userIds','array-contains',userId), orderBy('lastMessageDate','desc'));
     return collectionData(ChatsQuery,{ idField: 'id'});
+  }
+
+  getChatById(chatId: string){
+    return this.http.get<ChatDetails>(`${environment.baseUrl}/chat/${chatId}`)
   }
 
   getMessages = (chatId: string) => {

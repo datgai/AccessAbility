@@ -1,14 +1,6 @@
-.container{
-    display:flex;
-    height: calc(100vh - 200px);
-}
 
-.messages-header{
-    display:flex;
-    margin-bottom: 8px;
-}
 
-.messages{
+.messages-box{
     width:100%;
     margin:16px;
     border-radius: 16px;

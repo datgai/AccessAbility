@@ -1,9 +1,8 @@
-<div class="container">
-    <div class="chat-list">
-        <div class="chat-search">
-            <div class="w-full">
-                  <div *ngFor="let chat of (chats$ | async) as chats;">
-                    <app-chat-card  [chat]="chat"> </app-chat-card>
+<div class="chats-box flex min-h-80">
+    <div class="chat-list bg-white rounded-lg shadow-md w-full">
+          <div class="w-full">
+               <div *ngFor="let chat of (chats$ | async) as chats;">
+                <app-chat-card  [chat]="chat"> </app-chat-card>
               </div>
         </div>
     </div>

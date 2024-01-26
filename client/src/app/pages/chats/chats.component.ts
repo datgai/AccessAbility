@@ -6,7 +6,6 @@ import { ChatCardComponent } from '../../components/chat-card/chat-card.componen
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
-
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -16,7 +15,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ChatsComponent implements OnInit {
   public loading = signal<boolean>(true);
-  
   public chats$ = this.chatService.getChats(this.userStore.user?.uid!) as Observable<ChatDetails[]>;
 
   constructor(
@@ -24,6 +22,10 @@ export class ChatsComponent implements OnInit {
     public userStore: UserStoreService
   ){
 
+  }
+
+  getOtherUserIndex(userId : string, usersIdArray : string[]){
+    return this.chatService.getOtherUserIndex(userId, usersIdArray);
   }
 
   ngOnInit() {
