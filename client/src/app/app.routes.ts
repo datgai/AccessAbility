@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { ApplicantsComponent } from './pages/applicants/applicants.component';
 import { CreateJobComponent } from './pages/create-job/create-job.component';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { CreateResourceComponent } from './pages/create-resource/create-resource.component';
 import { EditProfileComponent } from './pages/edit-profile/edit-profile.component';
 import { ForumComponent } from './pages/forum/forum.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -14,6 +15,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PostDetailsComponent } from './pages/post-details/post-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { ResourceDetailsComponent } from './pages/resource-details/resource-details.component';
+import { ResourcesComponent } from './pages/resources/resources.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -31,5 +34,8 @@ export const routes: Routes = [
   { path: 'forum', component: ForumComponent },
   { path: 'post/:id', component: PostDetailsComponent },
   { path: 'create-post', component: CreatePostComponent },
+  { path: 'resources', component: ResourcesComponent },
+  { path: 'resource/:id', component: ResourceDetailsComponent },
+  { path: 'create-resource', component: CreateResourceComponent },
   { path: '**', component: NotFoundComponent },
 ];

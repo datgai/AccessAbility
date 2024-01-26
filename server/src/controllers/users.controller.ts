@@ -301,11 +301,8 @@ export const getOffersByBusiness = async (
 
               const populatedJob = (await getJobWithUsers(job)) as any;
               if (Object.keys(populatedJob).includes('message')) return null;
-              console.log(populatedJob.business.uid, 'job');
-              console.log(business.uid, 'user');
               if (populatedJob.business.uid !== business.uid) return null;
 
-              console.log('here');
               return populatedJob as any;
             })
           )
