@@ -1,142 +1,92 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, signal } from '@angular/core';
 import { sendEmailVerification } from '@angular/fire/auth';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DpDatePickerModule } from 'ng2-date-picker';
+import { ToastrService } from 'ngx-toastr';
 import { map } from 'rxjs';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { AuthenticationService } from '../../services/authentication.service';
+import { UserStoreService } from '../../services/user-store.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, DpDatePickerModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
-  public registrationForm!: FormGroup;
-  public componentTitle: string = 'Create An Account';
-  public errorMessage: string = '';
-  public isJobSeeker: Boolean = true;
+  public form!: FormGroup;
+  public errorMessage = signal<string>('');
 
   constructor(
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private router: Router,
+    private toastr: ToastrService,
+    public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
-    this.buildForm();
-  }
-
-  buildForm(): void {
-    this.registrationForm = this.formBuilder.group({
-      email: new FormControl('', [Validators.email, Validators.required]),
-      password: new FormControl('', [
+    this.form = this.formBuilder.group({
+      email: new FormControl<string>('', [
+        Validators.required,
+        Validators.email,
+      ]),
+      password: new FormControl<string>('', [
         Validators.required,
         Validators.minLength(6),
       ]),
-      confirmationPassword: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
+      confirmationPassword: new FormControl<string>('', Validators.required),
+      firstName: new FormControl<string>('', Validators.required),
+      role: new FormControl<UserRole>(UserRole.USER, Validators.required),
+      dateOfBirth: new FormControl<string>('', Validators.required),
     });
-
-    this.isJobSeeker ? this.addJobSeekerControls() : this.addEmployerControls();
   }
 
-  addJobSeekerControls(): void {
-    this.registrationForm.addControl(
-      'firstName',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'lastName',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'dob',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'profilePic',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'mobileNumber',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'impairments',
-      new FormControl('', [Validators.required]),
-    );
-  }
-
-  addEmployerControls(): void {
-    this.registrationForm.addControl(
-      'companyName',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'registrationNumber',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'companyPhoneNo',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'city',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'state',
-      new FormControl('', [Validators.required]),
-    );
-    this.registrationForm.addControl(
-      'address',
-      new FormControl('', [Validators.required]),
-    );
-  }
-
-  onRoleChange(event: any): void {
-    this.isJobSeeker = event.target.value === 'jobseeker';
-    this.buildForm();
-  }
-
-  checkEmptyFields(): boolean {
-    return Object.values(this.registrationForm.value).some(
+  hasEmptyFields(): boolean {
+    return Object.values(this.form.value).some(
       (value) => value === '' || value === null,
     );
   }
 
   onSubmit(): void {
-    const { email, password, confirmationPassword } =
-      this.registrationForm.value;
-
-    if (this.checkEmptyFields()) {
-      this.errorMessage = 'All fields are required';
+    if (this.hasEmptyFields()) {
+      this.errorMessage.set('All fields are required');
       return;
     }
 
-    if (!this.registrationForm.controls['email'].valid) {
-      this.errorMessage = 'Invalid email format';
-      return;
+    const { email, password, confirmationPassword, ...formData } =
+      this.form.value;
+
+    if (this.form.controls['email'].errors) {
+      if (this.form.controls['email'].errors['email']) {
+        this.errorMessage.set('Invalid email format');
+        return;
+      }
     }
 
-    if (!this.registrationForm.controls['password'].valid) {
-      this.errorMessage = 'Password must be at least 6 characters';
-      return;
+    if (this.form.controls['password'].errors) {
+      const err = this.form.controls['password'].errors['minlength'];
+
+      if (err.actualLength < err.requiredLength) {
+        this.errorMessage.set('Password must be at least 6 characters');
+        return;
+      }
     }
 
     if (password !== confirmationPassword) {
-      this.errorMessage = 'Passwords do not match';
+      this.errorMessage.set('Passwords do not match');
       return;
     }
 
@@ -151,14 +101,20 @@ export class RegisterComponent {
           const userToken = await user.getIdToken();
 
           this.authenticationService
-            .editOrCreateProfile(userToken, new FormData())
+            .editOrCreateProfile(userToken, formData)
             .subscribe({
-              complete: async () => await sendEmailVerification(user),
+              error: (error: HttpErrorResponse) => {
+                this.toastr.error(error.error.message ?? error.message);
+              },
+              complete: async () => {
+                await sendEmailVerification(user);
+                this.toastr.success('Verification email sent.');
+              },
             });
         },
         error: (error: Error) => console.log(error.message),
         complete: () => this.router.navigate(['login']),
       });
-    this.registrationForm.reset();
+    this.form.reset();
   }
 }
