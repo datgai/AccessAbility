@@ -7,6 +7,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import { ChatCardComponent } from "../../components/chat-card/chat-card.component";
+import { Auth } from '@angular/fire/auth';
 
 @Component({
     selector: 'app-messages',
@@ -29,14 +30,10 @@ export class MessagesComponent implements OnInit{
   constructor(
     private chatService:ChatService,
     public userStore: UserStoreService,    
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private auth:Auth
   ){
-    const chatId = this.route.snapshot.paramMap.get('id');
-    this.chatService.getChatById(chatId!).subscribe({
-      next: (response) => this.chat.set(response),
-      complete: () => this.loading.set(false),
-      error: (err) => console.error(err),
-    });
+
   }
 
   sendMessage(chatId: string){
@@ -57,6 +54,17 @@ export class MessagesComponent implements OnInit{
   }
 
   ngOnInit() {
-    
+    const chatId = this.route.snapshot.paramMap.get('id');
+
+    this.auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+      const token = await user.getIdToken();
+      
+      this.chatService.getChatById(token,chatId!).subscribe({
+        next: (response) => this.chat.set(response),
+        complete: () => this.loading.set(false),
+        error: (err) => console.error(err),
+      });
+    })
   }
 }

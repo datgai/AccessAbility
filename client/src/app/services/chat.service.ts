@@ -74,8 +74,8 @@ export class ChatService {
     return collectionData(ChatsQuery,{ idField: 'id'});
   }
 
-  getChatById(chatId: string){
-    return this.http.get<ChatDetails>(`${environment.baseUrl}/chat/${chatId}`)
+  getChatById(token:string,chatId: string){
+    return this.http.get<ChatDetails>(`${environment.baseUrl}/chat/${chatId}`,  { headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)})
   }
 
   getMessages = (chatId: string) => {
