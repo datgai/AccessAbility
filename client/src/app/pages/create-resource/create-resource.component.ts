@@ -4,40 +4,39 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { ForumService } from '../../services/forum.service';
-import { UserStoreService } from '../../services/user-store.service';
+import { ResourcesService } from '../../services/resources.service';
 
 @Component({
-  selector: 'app-create-post',
+  selector: 'app-create-resource',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './create-post.component.html',
-  styleUrl: './create-post.component.css',
+  imports: [FormsModule, ReactiveFormsModule],
+  templateUrl: './create-resource.component.html',
+  styleUrl: './create-resource.component.css',
 })
-export class CreatePostComponent implements OnInit {
+export class CreateResourceComponent implements OnInit {
   public form!: FormGroup;
   public thumbnail = signal<File | null>(null);
 
   constructor(
     private formBuilder: FormBuilder,
-    private forumService: ForumService,
+    private resourceService: ResourcesService,
+    private auth: Auth,
     private router: Router,
     private toastr: ToastrService,
-    private auth: Auth,
-    public userStore: UserStoreService,
   ) {}
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       title: new FormControl<string>('', Validators.required),
-      content: new FormControl<string>('', Validators.required),
+      description: new FormControl<string>('', Validators.required),
+      price: new FormControl<number>(0, Validators.required),
       thumbnail: new FormControl<File | null>(null),
-      isDonation: new FormControl<boolean>(false),
     });
   }
 
@@ -64,15 +63,17 @@ export class CreatePostComponent implements OnInit {
 
     const token = await this.auth.currentUser?.getIdToken();
     if (!token) {
-      return this.toastr.error('You are not authorised to create a post.');
+      return this.toastr.error('You are not authorised to create a resource.');
     }
 
-    this.forumService.createPost(token, formData).subscribe({
-      next: (post) => this.router.navigate(['/post', post.id]),
-      error: (err) => console.error('Error creating post:', err),
-      complete: () => this.toastr.success('Post created successfully.'),
-    });
+    this.resourceService.createResource(token, formData).subscribe({
+      next: (resource) => this.router.navigate(['resource', resource.id]),
 
+      complete: () =>
+        this.toastr.success(
+          'Created resource successfully. Awaiting admin verification.',
+        ),
+    });
     return;
   }
 }

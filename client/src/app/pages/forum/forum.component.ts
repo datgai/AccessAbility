@@ -16,6 +16,7 @@ import { UserStoreService } from '../../services/user-store.service';
 export class ForumComponent implements OnInit {
   public loading = signal<boolean>(true);
   public posts = signal<PostDetails[]>([]);
+  public nextPageToken = signal<string | undefined>('');
 
   constructor(
     public userStore: UserStoreService,
@@ -24,7 +25,10 @@ export class ForumComponent implements OnInit {
 
   ngOnInit(): void {
     this.forumService.getPosts().subscribe({
-      next: (response) => this.posts.set(response.posts),
+      next: (response) => {
+        this.posts.set(response.posts);
+        this.nextPageToken.set(response.nextPageToken);
+      },
       complete: () => this.loading.set(false),
       error: (err) => console.error(err),
     });

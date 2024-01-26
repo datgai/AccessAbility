@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { firestore } from 'firebase-admin';
 import { StatusCodes } from 'http-status-codes';
+import path from 'path';
 import { Comment, Post } from '../../../shared/src/types/post';
 import { UserRole } from '../../../shared/src/types/user';
 import { postsRef } from '../database';
@@ -66,7 +67,7 @@ export const createPost = async (request: Request, response: Response) => {
       try {
         thumbnailUrl = await saveImage(
           baseUrl,
-          'thumbnails',
+          path.join('thumbnails', 'posts'),
           buffer,
           originalName
         );
@@ -78,7 +79,11 @@ export const createPost = async (request: Request, response: Response) => {
     }
 
     body.isDonation =
-      user.profile.role === UserRole.ADMIN ? body.isDonation : false;
+      user.profile.role === UserRole.ADMIN
+        ? body.isDonation
+          ? String(body.isDonation) === 'true'
+          : false
+        : false;
 
     const postDetails: Post = {
       authorId: user.uid,
@@ -139,7 +144,7 @@ export const deletePostById = async (request: Request, response: Response) => {
       return await post.ref
         .delete()
         .then(() => {
-          return response.status(StatusCodes.NO_CONTENT).json({
+          return response.status(StatusCodes.OK).json({
             message: 'Post successfully deleted.'
           });
         })

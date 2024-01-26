@@ -1,8 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { from, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
 import { Comment, Post } from '../../../../shared/src/types/post';
 import { environment } from '../../environments/environment';
 import { UserDetails } from './user.service';
@@ -19,6 +17,7 @@ export type PostDetails = Omit<Post, 'authorId' | 'comments'> & {
 
 export interface PostResponse {
   posts: PostDetails[];
+  nextPageToken?: string;
 }
 
 @Injectable({
@@ -30,37 +29,10 @@ export class ForumService {
     private auth: Auth,
   ) {}
 
-  createPost(body: {
-    title: string;
-    content: string;
-    image: string;
-    isDonation: boolean;
-  }) {
-    const currentUser = this.auth.currentUser;
-
-    if (!currentUser) {
-      return throwError(() => 'Current user is undefined.');
-    }
-
-    return from(currentUser.getIdToken()).pipe(
-      switchMap((token) => {
-        if (!token) {
-          return throwError(() => 'Authentication token is missing.');
-        }
-        const headers = new HttpHeaders().set(
-          'Authorization',
-          `Bearer ${token}`,
-        );
-        return this.http.post<PostDetails>(
-          `${environment.baseUrl}/post`,
-          body,
-          { headers },
-        );
-      }),
-      catchError((error) => {
-        return throwError(() => error);
-      }),
-    );
+  createPost(token: string, body: FormData) {
+    return this.http.post<PostDetails>(`${environment.baseUrl}/post`, body, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
   }
 
   getPosts() {

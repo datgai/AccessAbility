@@ -1,6 +1,6 @@
 <div class="py-5 flex flex-col items-center justify-center">
   <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
-    Create a post
+    Create a Resource
   </h1>
   <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -14,27 +14,45 @@
           name="title"
           rows="1"
           class="w-full border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
-          placeholder="Enter post title here"
+          placeholder="Enter resource title here"
         ></textarea>
       </div>
 
       <div class="mb-6">
-        <label for="content" class="block text-gray-700 text-sm font-bold mb-2">
-          Content:
+        <label for="price" class="block text-gray-700 text-sm font-bold mb-2">
+          Price:
+        </label>
+        <input
+          id="price"
+          type="number"
+          formControlName="price"
+          name="price"
+          class="w-full border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+          step="0.01"
+          placeholder="0.00"
+        />
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="description"
+          class="block text-gray-700 text-sm font-bold mb-2"
+        >
+          Description:
         </label>
         <textarea
-          id="content"
-          formControlName="content"
-          name="content"
+          id="description"
+          formControlName="description"
+          name="description"
           rows="4"
           class="w-full border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
-          placeholder="What's on your mind?"
+          placeholder="Enter resource description here"
         ></textarea>
       </div>
 
       <div class="mb-6">
         <label
-          for="fileAttachment"
+          for="thumbnail"
           class="block text-gray-700 text-sm font-bold mb-2"
         >
           Thumbnail:
@@ -71,41 +89,12 @@
         </div>
       </div>
 
-      @if (userStore.user?.profile?.role === userStore.UserRole.ADMIN) {
-        <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Is this post for raising donations?
-          </label>
-          <label class="relative inline-flex items-center mb-5 cursor-pointer">
-            <input
-              type="checkbox"
-              formControlName="isDonation"
-              value="false"
-              class="sr-only peer"
-              #checkbox
-            />
-            <div
-              class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-            ></div>
-            <span
-              class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >
-              @if (form.get("isDonation")?.value) {
-                <p>Yes</p>
-              } @else {
-                <p>No</p>
-              }
-            </span>
-          </label>
-        </div>
-      }
-
       <div class="flex items-center justify-between">
         <button
           type="submit"
           class="flex justify-center items-center bg-blue-500 hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue text-white py-2 px-4 rounded-md transition duration-300 gap-2"
         >
-          Post
+          Create Resource
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="19"
