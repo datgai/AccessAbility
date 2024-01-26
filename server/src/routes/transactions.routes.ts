@@ -4,7 +4,7 @@ import { isAuthenticated } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/transactions', getTransactions); //get transactions of current user
-router.post('/transact', isAuthenticated, createTransaction); //create transaction
+router.get('/transactions/:id', getTransactions); //get transactions of current user id
+router.post('/transact/:id', isAuthenticated,createTransaction); //create transaction
 
 export default router;

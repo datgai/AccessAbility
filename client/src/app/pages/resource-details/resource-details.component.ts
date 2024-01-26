@@ -13,6 +13,9 @@ import {
   ResourcesService,
 } from '../../services/resources.service';
 import { UserStoreService } from '../../services/user-store.service';
+import { GooglePayButtonModule } from '@google-pay/button-angular';
+import { TransactionService } from '../../services/transaction.service';
+import { Transaction } from '../../../../../shared/src/types/transaction';
 
 @Component({
   selector: 'app-resource-details',
@@ -25,21 +28,34 @@ import { UserStoreService } from '../../services/user-store.service';
     LoaderComponent,
     FormsModule,
     ReactiveFormsModule,
+    GooglePayButtonModule,
   ],
   templateUrl: './resource-details.component.html',
   styleUrl: './resource-details.component.css',
 })
 export class ResourceDetailsComponent implements OnInit {
   public resource = signal<ResourceDetails | undefined>(undefined);
+  public transactions:Transaction[] = [];
+  public resourceId = this.route.snapshot.paramMap.get('id');
 
   constructor(
     private resourcesService: ResourcesService,
+    private transactionService : TransactionService,
     private auth: Auth,
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService,
     public userStore: UserStoreService,
-  ) {}
+  ) {
+    this.auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+      const token = await user.getIdToken();
+      
+      this.transactionService.getTransactions(token,this.userStore.user!.uid).subscribe({
+        next: transactions => this.transactions = transactions,
+        error: (err) => console.error(err),
+      })});
+  }
 
   ngOnInit() {
     const resourceId = this.route.snapshot.paramMap.get('id');
@@ -57,12 +73,20 @@ export class ResourceDetailsComponent implements OnInit {
         },
       });
     });
-
     return;
   }
 
   formatDate(date: Date | undefined): string {
     return (date ? new Date(date) : new Date()).toLocaleDateString();
+  }
+
+  checkItemBought(transactions:Transaction[], itemId:string){
+    for (var transaction of transactions){
+      if(transaction.itemId == itemId){
+        return true;
+      }
+    }
+    return false;
   }
 
   async onVerification(event: SubmitEvent) {
@@ -100,4 +124,31 @@ export class ResourceDetailsComponent implements OnInit {
       ? 'FREE'
       : `RM ${this.resource()?.price}`;
   }
+
+  onLoadPaymentData = (
+    event: Event): void => {
+      const eventDetail = event as CustomEvent<google.payments.api.PaymentData>;
+      console.log('load payment data', eventDetail.detail);
+      // window.location.reload();
+    }
+
+    onPaymentDataAuthorized: google.payments.api.PaymentAuthorizedHandler = (
+      paymentData
+    ) => {
+      console.log('payment authorized', paymentData);
+      
+      this.auth.onAuthStateChanged(async (user) => {
+        if (!user) return;
+        const token = await user.getIdToken();
+        
+        this.transactionService.createTransaction(token,this.route.snapshot.paramMap.get('id')!).subscribe()
+      });
+      return {
+        transactionState: 'SUCCESS'
+      }
+    }
+
+    onError = (event: ErrorEvent): void => {
+      console.error('error', event.error);
+    }
 }

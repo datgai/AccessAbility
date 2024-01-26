@@ -23,7 +23,7 @@ export const isAuthenticated = async (
       };
       next();
     })
-    .catch(() => {
+    .catch((e) => {
       return response.status(StatusCodes.UNAUTHORIZED).json({
         message: 'You are not authorized to access this endpoint.'
       });

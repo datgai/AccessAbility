@@ -13,6 +13,8 @@ import { ToastrService } from 'ngx-toastr';
 import { CommentComponent } from '../../components/comment/comment.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { ForumService, PostDetails } from '../../services/forum.service';
+import { TransactionService } from '../../services/transaction.service';
+import { GooglePayButtonModule } from '@google-pay/button-angular';
 
 @Component({
   selector: 'app-post-details',
@@ -25,6 +27,7 @@ import { ForumService, PostDetails } from '../../services/forum.service';
     FormsModule,
     ReactiveFormsModule,
     LoaderComponent,
+    GooglePayButtonModule
   ],
   templateUrl: './post-details.component.html',
   styleUrl: './post-details.component.css',
@@ -35,6 +38,7 @@ export class PostDetailsComponent implements OnInit {
 
   constructor(
     private forumService: ForumService,
+    private transactionService: TransactionService,
     private route: ActivatedRoute,
     private router: Router,
     private auth: Auth,
@@ -58,6 +62,36 @@ export class PostDetailsComponent implements OnInit {
   formatDate(date: Date | undefined): string {
     return (date ? new Date(date) : new Date()).toLocaleDateString();
   }
+
+  // CheckPaid(): boolean {
+  //   return (date ? new Date(date) : new Date()).toLocaleDateString();
+  // }
+
+  onLoadPaymentData = (
+    event: Event): void => {
+      const eventDetail = event as CustomEvent<google.payments.api.PaymentData>;
+      console.log('Load Payment Data', eventDetail.detail);
+      
+    }
+
+    onPaymentDataAuthorized: google.payments.api.PaymentAuthorizedHandler = (
+      paymentData
+    ) => {
+      console.log('Payment Authorized', paymentData);
+      this.auth.onAuthStateChanged(async (user) => {
+        if (!user) return;
+        const token = await user.getIdToken();
+        
+        this.transactionService.createTransaction(token,this.route.snapshot.paramMap.get('id')!).subscribe()
+      });
+      return {
+        transactionState: 'SUCCESS'
+      };
+    }
+
+    onError = (event: ErrorEvent): void => {
+      console.error('error', event.error);
+    }
 
   onSubmit() {
     this.auth.onAuthStateChanged(async (user) => {

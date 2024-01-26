@@ -5,11 +5,11 @@ import { transactionRef } from '../database';
 
 export const createTransaction = async (request: Request, response: Response) => {
     const user = request.user;
-    const item =  request.body;
+    const itemId = request.params.id ?? '';
 
     const transactionDetails:Transaction = {
         userId: user.uid,
-        itemId: item
+        itemId: itemId
       };
       return await transactionRef
       .add(transactionDetails)
@@ -30,10 +30,11 @@ export const createTransaction = async (request: Request, response: Response) =>
 
 export const getTransactions = async (request: Request, response: Response) => {
     const user = request.user;
+    const userId = request.params.id ?? '';
 
     let transactions;
     transactions = await transactionRef
-    .where('userId', '==',user.uid)
+    .where('userId', '==',userId)
     .get();
 
     const docs = transactions.docs as GenericDocument<Transaction>[];
