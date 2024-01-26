@@ -4,21 +4,6 @@ import { chatsRef } from '../database';
 import { Chat, Message } from '../../../shared/src/types/chat';
 import { firestore } from 'firebase-admin';
 
-export const getChats = async (request: Request, response: Response) => {
-  const id = request.params.id ?? '';
-  const token = request.params.token ?? ' ';
-
-  let chats;
-    chats = await chatsRef
-      .where('userIds','array-contains',id)
-      .limit(50)
-      .get();
-      const docs = chats.docs as GenericDocument<Chat>[];
-
-return response.status(StatusCodes.OK).json(
-    chats.docs.map((chat) => ({ id: chat.id, ...chat.data()})));
-};
-
 export const getChatById = async (request: Request, response: Response) => {
   const id = request.params.id ?? '';
 
@@ -79,21 +64,6 @@ export const createChat = async (request: Request, response: Response) => {
         });
       });
   };
-
-export const getMessages =  async (request: Request, response: Response) => {
-  const id = request.params.id ?? '';
-
-  let messages;
-  messages = await chatsRef
-    .doc(id)
-    .collection('message')
-    .orderBy("sentDate","asc")
-    .get();
-    const docs = messages.docs as GenericDocument<Chat>[];
-
-return response.status(StatusCodes.OK).json(
-    messages.docs.map((message) => ({ id: message.id, ...message.data()})));
-}
 
 export const sendMessage  = async (request: Request, response: Response) => {
   const user = request.user.uid;

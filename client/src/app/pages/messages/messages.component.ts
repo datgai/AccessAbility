@@ -16,9 +16,6 @@ import { Observable } from 'rxjs';
 })
 export class MessagesComponent implements OnInit{
   public loading = signal<boolean>(true);
-  public chat = signal<ChatDetails | undefined>(undefined);
-  public messages = signal<Message[]>([]);
-  
 
   chatId: string = '';
   
@@ -31,26 +28,6 @@ export class MessagesComponent implements OnInit{
     public userStore: UserStoreService,    
     private route:ActivatedRoute
   ){
-    const chatId = this.route.snapshot.paramMap.get('id');
-    
-    this.chatService.getChatById(chatId!).subscribe({
-      next: (response) => this.chat.set(response),
-      complete: () => this.loading.set(false),
-      error: (err) => console.error(err),
-    });
-  
-  }
-
-  ngOnInit() {
-    this.chatId = this.route.snapshot.paramMap.get('id')!
-  }
-
-  updateMessages(chatId = this.route.snapshot.paramMap.get('id')){
-    this.chatService.getMessages$(chatId!).subscribe({
-      next: (response) => this.messages.set(response),
-      complete: () => this.loading.set(false),
-      error: (err) => console.error(err),
-    }); 
   }
 
   sendMessage(chatId: string){

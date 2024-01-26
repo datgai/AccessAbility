@@ -16,7 +16,6 @@ export class ChatCardComponent implements OnInit {
   chatLastMessageDate: String = '';
 
   ngOnInit(): void {
-    this.chatId = this.chat.id;
   }
   
 }

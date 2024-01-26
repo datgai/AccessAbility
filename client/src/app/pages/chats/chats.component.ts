@@ -16,7 +16,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ChatsComponent implements OnInit {
   public loading = signal<boolean>(true);
-  public chats = signal<ChatDetails[]>([]);
   
   public chats$ = this.chatService.getChats(this.userStore.user?.uid!) as Observable<ChatDetails[]>;
 
@@ -24,11 +23,6 @@ export class ChatsComponent implements OnInit {
     private chatService:ChatService,
     public userStore: UserStoreService
   ){
-    this.chatService.getChats(this.userStore.user?.uid!).subscribe({
-      next: (response) => this.chats.set(response),
-      complete: () => this.loading.set(false),
-      error: (err) => console.error(err),
-    });
 
   }
 

@@ -61,14 +61,6 @@ export class ChatService {
     );
   }
 
-
-
-  getChatById(chatId: string){
-    return this.http.get<ChatDetails>(`${environment.baseUrl}/chat/${chatId}`)
-  }
-
-  getMessages$(chatId: string) : Observable<Message[]>{
-    return this.http.get<Message[]>( `${environment.baseUrl}/message/${chatId}`)
   getChats = (userId: string) => {
     const ChatsQuery = query(collection(this.firestore, 'chats'), where('userIds','array-contains',userId), orderBy('lastMessageDate','asc'));
     return collectionData(ChatsQuery,{ idField: 'id'});
