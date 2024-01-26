@@ -1,0 +1,20 @@
+<div>
+  <a [routerLink]="['/chat', this.chat.id]" class="flex flex-row py-4 px-2 justify-center items-center border-b-2 text-gray-900 hover:bg-blue-100 hover:text-white">
+  <div class="w-1/4">
+    <img  class="object-cover h-12 w-12 rounded-full" [src]="chat.users[getOtherUserIndex(UserId,this.chat.userIds)].photoURL" alt="logo of {{ chat.users[getOtherUserIndex(UserId,this.chat.userIds)].displayName }}"/>
+  </div>
+  <div class="w-full flex flex-col">
+    <div class="text-lg font-semibold">{{chat.users[getOtherUserIndex(UserId,this.chat.userIds)].displayName}}</div>
+    <span class="">{{chat.lastMessage}}</span>
+    <span class="">On {{formatDate(chat.lastMessageDate)}}</span>
+  </div>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-narrow-right" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M5 12l14 0" />
+      <path d="M15 16l4 -4" />
+      <path d="M15 8l4 4" />
+    </svg>
+  </div>
+  </a>
+</div>

@@ -15,6 +15,8 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { PostDetailsComponent } from './pages/post-details/post-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { MessagesComponent } from './pages/messages/messages.component';
+import { ChatsComponent } from './pages/chats/chats.component';
 import { ResourceDetailsComponent } from './pages/resource-details/resource-details.component';
 import { ResourcesComponent } from './pages/resources/resources.component';
 
@@ -34,6 +36,8 @@ export const routes: Routes = [
   { path: 'forum', component: ForumComponent },
   { path: 'post/:id', component: PostDetailsComponent },
   { path: 'create-post', component: CreatePostComponent },
+  { path: 'chat/:id', component:MessagesComponent} ,
+  { path: 'chats', component:ChatsComponent} ,
   { path: 'resources', component: ResourcesComponent },
   { path: 'resource/:id', component: ResourceDetailsComponent },
   { path: 'create-resource', component: CreateResourceComponent },

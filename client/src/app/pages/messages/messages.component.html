@@ -1,0 +1,73 @@
+<div class="container">
+    <div class="messages-box mb-auto flex flex-col">
+
+      @if( chat()?.userIds?.includes(UserId)){
+        <div class="messages-header flex flex-row">
+          <div class="mx-4">
+            <img class="object-cover h-12 w-12 rounded-full" [src]="chat()!.users[getOtherUserIndex(UserId,this.chat()!.userIds)].photoURL"/>
+          </div>
+          <div class="w-full flex flex-col">
+            <div class="text-lg font-semibold">{{chat()!.users[getOtherUserIndex(UserId,this.chat()!.userIds)].displayName}}</div>
+            <span class="">{{chat()?.lastMessage}}</span>
+        </div>
+      </div>
+
+      <div  class="messages flex-3 mb-2 min-h-80">
+        <div *ngFor="let message of (messages$ | async) as messages;">
+          @if(message.id != undefined){
+            @if (message.senderId == UserId){
+              <div class="flex w-full mt-1 space-x-3 max-w-xs ml-auto justify-end">
+                  <div class="flex flex-row bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
+                    <p class="text-sm">{{message.text}}</p>
+                  </div>
+                  <span class="text-xs text-gray-500 leading-none">{{formatDate(message.sentDate)}}</span>
+                </div>
+            } @else {
+              <div class="flex flex-row flex-grow h-full p-4 overflow-auto">
+                <div class="flex w-full mt-2 space-x-3 max-w-xs">
+                  <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
+                    <img  class="object-cover h-12 w-12 rounded-full" [src]="chat()!.users[getOtherUserIndex(UserId,chat()!.userIds)].photoURL"/>
+                  </div>
+                  <div>
+                    <div class="bg-gray-300 p-3 rounded-r-lg rounded-bl-lg">
+                      <p class="text-sm">{{message.text}}</p>
+                    </div>
+                    <span class="text-xs text-gray-500 leading-none">{{formatDate(message.sentDate)}}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          } @else {
+            <p> Looks empty here... Say Hi!</p>
+          }
+        </div>
+      </div>
+           
+            <form #messageForm="ngForm" (ngSubmit)="sendMessage(chatId);">
+              <label
+                for="default-search"
+                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
+                Search
+              </label>
+              <div class="flex w-full items-end">
+                <div class="relative mr-4 w-full text-left">
+                  <input
+              type="text"
+              id="message-field"
+              name="message-field"
+              placeholder="Send Message..."
+              class="w-full bg-gray-100 bg-opacity-50 rounded focus:ring-2 focus:ring-indigo-200 focus:bg-transparent border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+              [formControl]="messageInput"/>
+                </div>
+                <button
+                  class="inline-flex text-white bg-blue-100 border-0 py-2 px-6 focus:bg-blue-200 hover:bg-blue-200 rounded text-lg"
+                >
+                  Send
+                </button>
+              </div>
+            </form>
+      } @else {
+        <p> You Shouldn't be here!</p>
+      }
+    </div>
+</div>
