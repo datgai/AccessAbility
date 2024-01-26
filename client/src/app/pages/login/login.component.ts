@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
+import { UserRole } from '../../../../../shared/src/types/user';
 import { AuthenticationService } from '../../services/authentication.service';
 import { UserStoreService } from '../../services/user-store.service';
 import { LoginService } from './services/login.service';
@@ -23,8 +24,7 @@ import { LoginService } from './services/login.service';
 })
 export class LoginComponent implements OnInit {
   public loginForm!: FormGroup;
-  public componentTitle: string = 'Sign Into Your Account';
-  public errorMessage: string = '';
+  public errorMessage = signal<string>('');
 
   constructor(
     private formBulder: FormBuilder,
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
     const { email, password } = this.loginForm.value;
 
     if (!email || !password) {
-      this.errorMessage = 'All fields are required';
+      this.errorMessage.set('All fields are required');
       return;
     }
 
@@ -72,9 +72,18 @@ export class LoginComponent implements OnInit {
             },
             error: (error: HttpErrorResponse) => {
               if (error.status === 404) {
+                // Basic template data for profile creation
+                const formData = new FormData();
+                formData.set('firstName', 'User');
+                formData.set('role', UserRole.USER);
+                formData.set(
+                  'dateOfBirth',
+                  new Date().toISOString().split('T')[0],
+                );
+
                 // User does not have a profile so create it
                 this.authenticationService
-                  .editOrCreateProfile(userToken, new FormData())
+                  .editOrCreateProfile(userToken, formData)
                   .subscribe({
                     next: (res) => {
                       localStorage.setItem(
@@ -92,13 +101,13 @@ export class LoginComponent implements OnInit {
         error: (error: Error) => {
           switch (error?.message) {
             case 'Firebase: Error (auth/invalid-email).':
-              this.errorMessage = 'Invalid email format';
+              this.errorMessage.set('Invalid email format');
               break;
             case 'Firebase: Error (auth/invalid-credential).':
-              this.errorMessage = 'Invalid email or password';
+              this.errorMessage.set('Invalid email or password');
               break;
             default:
-              this.errorMessage = 'Login failed: An unknown error occurred.';
+              this.errorMessage.set('Login failed: An unknown error occurred.');
           }
         },
       });

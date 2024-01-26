@@ -15,13 +15,15 @@ import { provideMarkdown } from 'ngx-markdown';
 import { provideToastr } from 'ngx-toastr';
 import { environment } from '../environments/environment';
 import { routes } from './app.routes';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(
-      provideFirebaseApp(() => initializeApp(environment.firebase)),
+      provideFirebaseApp(() => initializeApp(environment.firebase))
     ),
+    importProvidersFrom(provideFirestore(() => getFirestore())),
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideAnalytics(() => getAnalytics())),
     provideHttpClient(withFetch()),

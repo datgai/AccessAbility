@@ -47,7 +47,6 @@ export class EditProfileComponent implements OnInit {
   });
 
   public form!: FormGroup;
-  public dateOfBirth = '';
 
   constructor(
     private userService: UserService,
