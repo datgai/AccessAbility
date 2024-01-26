@@ -21,10 +21,10 @@ export class MessagesComponent implements OnInit{
   
 
   chatId: string = '';
+  
   otherUser: UserDetails | undefined
-
   public messageInput = new FormControl<string>('');
-  public messages$ = this.chatService.loadMessages(this.route.snapshot.paramMap.get('id')!) as Observable<Message[]>;
+  public messages$ = this.chatService.getMessages(this.route.snapshot.paramMap.get('id')!) as Observable<Message[]>;
 
   constructor(
     private chatService:ChatService,
@@ -62,4 +62,7 @@ export class MessagesComponent implements OnInit{
     return new Date(date.seconds * 1000).toLocaleString();
   }
 
+  ngOnInit() {
+    this.chatId = this.route.snapshot.paramMap.get('id')!;
+  }
 }

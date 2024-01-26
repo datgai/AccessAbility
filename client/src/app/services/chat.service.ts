@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { UserDetails } from './user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable, catchError, from, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, from, map, switchMap, throwError } from 'rxjs';
 import { Auth } from '@angular/fire/auth';
-import { Firestore, collection, collectionData, orderBy, query } from '@angular/fire/firestore';
+import { Firestore, collection, collectionChanges, collectionData, orderBy, query, where } from '@angular/fire/firestore';
 
 export interface ChatDetails {
   id: string;
@@ -17,7 +17,6 @@ export interface ChatDetails {
   chatPic?: string;
   chatName?: string;
 }
-
 
 export interface Message{
   id:string;
@@ -62,9 +61,6 @@ export class ChatService {
     );
   }
 
-  getChats(userId: string){
-    return this.http.get<ChatDetails[]>(`${environment.baseUrl}/chats/${userId}`)
-  }
 
 
   getChatById(chatId: string){
@@ -73,14 +69,14 @@ export class ChatService {
 
   getMessages$(chatId: string) : Observable<Message[]>{
     return this.http.get<Message[]>( `${environment.baseUrl}/message/${chatId}`)
+  getChats = (userId: string) => {
+    const ChatsQuery = query(collection(this.firestore, 'chats'), where('userIds','array-contains',userId), orderBy('lastMessageDate','asc'));
+    return collectionData(ChatsQuery,{ idField: 'id'});
   }
 
-  loadMessages = (chatId: string) => {
-    // Create the query to load the last 12 messages and listen for new ones.
+  getMessages = (chatId: string) => {
     const recentMessagesQuery = query(collection(this.firestore, 'chats', chatId, 'message'), orderBy('sentDate', 'asc'));
-    // Start listening to the query.
-    console.log(collectionData(recentMessagesQuery));
-    return collectionData(recentMessagesQuery);
+    return collectionData(recentMessagesQuery,{ idField: 'id'});
   }
   
   sendMessage(chatId: string,message:String){

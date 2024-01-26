@@ -1,11 +1,10 @@
 <div class="container">
     <div class="messages-header">
         <img src="" alt="">
-        {{chat()!.users[1].displayName}}
     </div>
     <div class="messages">
             <div *ngFor="let message of (messages$ | async) as messages;">
-              {{message.text}} {{formatDate(message.sentDate)}} {{message.senderId}}
+              {{message.text}} {{formatDate(message.sentDate)}} {{message.senderId}} {{message.id}}
             </div>
         <form #messageForm="ngForm" (ngSubmit)="sendMessage(chatId);">
             <label

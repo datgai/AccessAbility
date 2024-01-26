@@ -49,6 +49,7 @@ export const createChat = async (request: Request, response: Response) => {
   const otherUser = request.body;
 
   const chatDetails:Chat = {
+    lastMessageDate:firestore.Timestamp.fromDate(new Date()).toDate(),
     userIds: [user?.uid, otherUser?.uid],
     users:[
       {

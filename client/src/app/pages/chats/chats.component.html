@@ -1,15 +1,9 @@
 <div class="container">
     <div class="chat-list">
         <div class="chat-search">
-            <!-- <input type="text" placeholder="Search for users..." [formControl] = "searchControl"> -->
             <div class="w-full">
-                @if (chats().length === 0) {
-                  <p>No posts found</p>
-                } @else {
-                  @for (chat of chats(); track chat.id){
+                  <div *ngFor="let chat of (chats$ | async) as chats;">
                     <app-chat-card  [chat]="chat"> </app-chat-card>
-                  }
-                }
               </div>
         </div>
     </div>
