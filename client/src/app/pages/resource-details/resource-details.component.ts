@@ -35,8 +35,9 @@ import { Transaction } from '../../../../../shared/src/types/transaction';
 })
 export class ResourceDetailsComponent implements OnInit {
   public resource = signal<ResourceDetails | undefined>(undefined);
-  public transactions:Transaction[] = [];
+  public transactions = signal<Transaction[]>([]);
   public resourceId = this.route.snapshot.paramMap.get('id');
+  public hasBought = signal<boolean>(false)
 
   constructor(
     private resourcesService: ResourcesService,
@@ -51,10 +52,8 @@ export class ResourceDetailsComponent implements OnInit {
       if (!user) return;
       const token = await user.getIdToken();
       
-      this.transactionService.getTransactions(token,this.userStore.user!.uid).subscribe({
-        next: transactions => this.transactions = transactions,
-        error: (err) => console.error(err),
-      })});
+      
+    });
   }
 
   ngOnInit() {
@@ -72,21 +71,21 @@ export class ResourceDetailsComponent implements OnInit {
           return this.toastr.error(error.error.message || error.message);
         },
       });
+
+      this.transactionService.getTransactions(token,this.userStore.user!.uid).subscribe({
+        next: transactions => {
+          this.transactions.set(transactions)
+          this.hasBought.set(transactions.some(t => t.itemId === resourceId))
+      },
+        error: (err) => console.error(err),
+      })
     });
+
     return;
   }
 
   formatDate(date: Date | undefined): string {
     return (date ? new Date(date) : new Date()).toLocaleDateString();
-  }
-
-  checkItemBought(transactions:Transaction[], itemId:string){
-    for (var transaction of transactions){
-      if(transaction.itemId == itemId){
-        return true;
-      }
-    }
-    return false;
   }
 
   async onVerification(event: SubmitEvent) {
@@ -141,7 +140,18 @@ export class ResourceDetailsComponent implements OnInit {
         if (!user) return;
         const token = await user.getIdToken();
         
-        this.transactionService.createTransaction(token,this.route.snapshot.paramMap.get('id')!).subscribe()
+        this.transactionService.createTransaction(token,this.route.snapshot.paramMap.get('id')!).subscribe({
+          complete:() => {
+            this.transactionService.getTransactions(token,this.userStore.user!.uid).subscribe({
+              next: transactions => {
+                this.transactions.set(transactions)
+                this.hasBought.set(transactions.some(t => t.itemId === this.resourceId))
+            },
+              error: (err) => console.error(err),
+            })
+          }
+        }
+        )
       });
       return {
         transactionState: 'SUCCESS'
