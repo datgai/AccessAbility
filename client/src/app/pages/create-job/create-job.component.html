@@ -14,29 +14,31 @@
             </div>
 
             <div class="mb-6">
-                <label for="locationType" class="block text-gray-700 text-sm font-bold mb-2">
+                <label for="jobLocationType" class="block text-gray-700 text-sm font-bold mb-2">
                     Loation Type:
                 </label>
-                <select id="location-type" name="locationType" formControlName="locationType"
-                    class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500">
-                    <option>On-site</option>
-                    <option>Hybrid</option>
-                    <option>Remote</option>
+
+                <select 
+                    name="jobLocationType"
+                    formControlName="jobLocationType"
+                    class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+                >
+                    @for (jobLocationType of jobLocationTypeKeys; track $index) {
+                        <option [value]="jobLocationType"> {{ jobLocationType }} </option>
+                    }
                 </select>
+
             </div>
 
             <div class="mb-6">
-                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">
+                <label for="jobType" class="block text-gray-700 text-sm font-bold mb-2">
                     Job Type:
                 </label>
-                <select id="job-type" name="type" formControlName="type"
+                <select id="jobType" name="jobType" formControlName="jobType"
                     class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500">
-                    <option>Full-time</option>
-                    <option>Part-time</option>
-                    <option>Contract</option>
-                    <option>Internship</option>
-                    <option>Apprenticeship</option>
-                    <option>Seasonal</option>
+                    @for (jobType of jobTypeKeys; track $index) {
+                        <option [value]="jobType"> {{ jobType }} </option>
+                    }
                 </select>
             </div>
 

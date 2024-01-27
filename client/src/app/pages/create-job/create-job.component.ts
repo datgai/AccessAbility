@@ -26,6 +26,12 @@ export class CreateJobComponent implements OnInit{
   public form!: FormGroup;
   public allowedSkills: string[] = [];
 
+  public jobType: JobType = JobType.FULL_TIME; 
+  public jobTypeKeys = Object.values(JobType)
+
+  public jobLocationType: JobLocationType = JobLocationType.ON_SITE;
+  public jobLocationTypeKeys = Object.values(JobLocationType)
+
   constructor(
     private formBuilder: FormBuilder,
     private jobService: JobService,
@@ -46,8 +52,8 @@ export class CreateJobComponent implements OnInit{
     
     this.form = this.formBuilder.group({
       position: new FormControl<string>('', Validators.required),
-      type: new FormControl<JobType>(JobType.FULL_TIME, Validators.required),
-      locationType: new FormControl<JobLocationType>(JobLocationType.ON_SITE, Validators.required),
+      jobType: new FormControl<JobType>(JobType.FULL_TIME, Validators.required),
+      jobLocationType: new FormControl<JobLocationType>(JobLocationType.ON_SITE, Validators.required),
       description: new FormControl<string>('', Validators.required),
       skills: new FormControl<string[]>([], Validators.required)
     });
