@@ -43,7 +43,7 @@ export class PostDetailsComponent implements OnInit {
     private router: Router,
     private auth: Auth,
     private toastr: ToastrService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     const postId = this.route.snapshot.paramMap.get('id');
@@ -69,29 +69,32 @@ export class PostDetailsComponent implements OnInit {
 
   onLoadPaymentData = (
     event: Event): void => {
-      const eventDetail = event as CustomEvent<google.payments.api.PaymentData>;
-      console.log('Load Payment Data', eventDetail.detail);
-      
-    }
+    const eventDetail = event as CustomEvent<google.payments.api.PaymentData>;
+    console.log('Load Payment Data', eventDetail.detail);
 
-    onPaymentDataAuthorized: google.payments.api.PaymentAuthorizedHandler = (
-      paymentData
-    ) => {
-      console.log('Payment Authorized', paymentData);
-      this.auth.onAuthStateChanged(async (user) => {
-        if (!user) return;
-        const token = await user.getIdToken();
-        
-        this.transactionService.createTransaction(token,this.route.snapshot.paramMap.get('id')!).subscribe()
-      });
-      return {
-        transactionState: 'SUCCESS'
-      };
-    }
+  }
 
-    onError = (event: ErrorEvent): void => {
-      console.error('error', event.error);
-    }
+  onPaymentDataAuthorized: google.payments.api.PaymentAuthorizedHandler = (
+    paymentData
+  ) => {
+    console.log('Payment Authorized', paymentData);
+    this.auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+      const token = await user.getIdToken();
+
+      this.transactionService.createTransaction(token, this.route.snapshot.paramMap.get('id')!).subscribe({
+        complete: () => this.toastr.success('Successfully donated.'),
+        error: () => this.toastr.error("Donation failed.")
+      })
+    });
+    return {
+      transactionState: 'SUCCESS'
+    };
+  }
+
+  onError = (event: ErrorEvent): void => {
+    console.error('error', event.error);
+  }
 
   onSubmit() {
     this.auth.onAuthStateChanged(async (user) => {
