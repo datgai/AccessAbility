@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Job } from '../../../../shared/src/types/job';
 import { environment } from '../../environments/environment';
@@ -20,6 +20,12 @@ export interface JobResponse {
 })
 export class JobService {
   constructor(private http: HttpClient) {}
+
+  createJob(token: string, body: FormData) {
+    return this.http.post<JobDetails>(`${environment.baseUrl}/job`, body, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    });
+  }
 
   getJobList(token?: string, filter: string = '') {
     return this.http.get<JobResponse>(
