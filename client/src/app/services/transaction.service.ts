@@ -18,7 +18,6 @@ constructor(private http: HttpClient,
     }
   
   createTransaction(token:string,itemId : string){
-    console.log(token);
         return this.http.post<Transaction>(
           `${environment.baseUrl}/transact/${itemId}`,{},{ headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)}
         );
