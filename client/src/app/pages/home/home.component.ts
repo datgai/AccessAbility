@@ -6,11 +6,12 @@ import { UserStoreService } from '../../services/user-store.service';
 import { BusinessViewComponent } from '../../views/home/business-view/business-view.component';
 import { LandingViewComponent } from '../../views/home/landing-view/landing-view.component';
 import { UserViewComponent } from '../../views/home/user-view/user-view.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [LandingViewComponent, UserViewComponent, BusinessViewComponent],
+  imports: [LandingViewComponent, UserViewComponent, BusinessViewComponent, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

@@ -1,9 +1,19 @@
 <section
   class="flex flex-col bg-neutral-300 bg-opacity-50 px-5 py-5 rounded-md mb-5"
 >
+  <div class="flex flex-row items-center justify-between">
   <h2 class="text-4xl font-bold mb-2">
     Hello there, {{ userStore.user?.profile?.firstName }}.
   </h2>
+
+  <a routerLink="/create-job">
+    <button
+          class="flex mb-4 text-white font-bold bg-blue-500 py-2 px-8 focus:outline-none hover:bg-blue-700 rounded text-lg ml-auto"
+        >
+      Create New Job
+    </button>
+  </a>
+</div>
   <app-summary-card
     [summaryInfo]="[
       {
@@ -25,7 +35,7 @@
     routerLink="/user/{{ userStore.user?.uid }}"
     class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
   >
-    More... 🡒
+    More... 
   </a>
 </section>
 
@@ -47,6 +57,6 @@
     routerLink="/applicants"
     class="text-blue-100 hover:text-blue-200 focus:text-blue-200 text-lg font-bold self-end"
   >
-    More... 🡒
+    More... 
   </a>
 </section>

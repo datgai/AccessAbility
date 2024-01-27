@@ -4,7 +4,7 @@
     color: white;
   }
 </style>
-<section>
+<section class="mb-16">
   <div class="flex justify-between items-center">
     <h1 class="text-5xl font-bold mb-2">Profile</h1>
     @if (user()?.uid == this.userStore.user?.uid ) {
@@ -155,7 +155,7 @@
               class="text-lg font-bold text-blue-100 hover:text-blue-200 focus:text-blue-200 place-self-end"
               (click)="openModal.set(true)"
             >
-              More... 🡒
+              More... 
             </button>
           }
         </div>
