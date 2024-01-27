@@ -1,1 +1,93 @@
-<p>create-job works!</p>
+<div class="py-5 flex flex-col items-center justify-center mb-16">
+    <h1 class="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">
+        Create a job listing
+    </h1>
+    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="mb-6">
+                <label for="title" class="block text-gray-700 text-sm font-bold mb-2">
+                    Position:
+                </label>
+                <textarea id="title" formControlName="position" name="title" rows="1"
+                    class="w-full border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+                    placeholder="Enter position title here"></textarea>
+            </div>
+
+            <div class="mb-6">
+                <label for="locationType" class="block text-gray-700 text-sm font-bold mb-2">
+                    Loation Type:
+                </label>
+
+                <select 
+                    name="locationType"
+                    formControlName="locationType"
+                    class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+                >
+                    @for (locationType of jobLocationTypeKeys; track $index) {
+                        <option [value]="locationType"> {{ locationType }} </option>
+                    }
+                </select>
+
+            </div>
+
+            <div class="mb-6">
+                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">
+                    Job Type:
+                </label>
+                <select id="type" name="type" formControlName="type"
+                    class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500">
+                    @for (type of jobTypeKeys; track $index) {
+                        <option [value]="type"> {{ type }} </option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <div class="col-span-3 sm:col-span-full">
+                    <label
+                      for="skills"
+                      class="block text-gray-700 text-sm font-bold mb-2"
+                    >
+                      Skills:
+                    </label>
+                    <div class="mt-2">
+                        <tag-input
+                          class="w-full bg-white border-2 rounded-md px-4 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+                          inputId="skills"
+                          theme="minimal"
+                          placeholder="+ Skill"
+                          [addOnPaste]="true"
+                          [onlyFromAutocomplete]="true"
+                          [modelAsStrings]="true"
+                          formControlName="skills"
+                        >
+                          <tag-input-dropdown
+                            [autocompleteItems]="allowedSkills"
+                            [showDropdownIfEmpty]="true"
+                          >
+                          </tag-input-dropdown>
+                        </tag-input>
+                      </div>
+                  </div>
+            </div>
+
+            <div class="mb-6">
+                <label for="description" class="block text-gray-700 text-sm font-bold mb-2">
+                    Description:
+                </label>
+                <textarea id="description" formControlName="description" name="description" rows="4"
+                    class="w-full border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
+                    placeholder="Enter resource description here"></textarea>
+            </div>
+
+            <div class="flex items-center justify-center">
+                <button type="submit"
+                    class="flex justify-center items-center bg-blue-500 hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue text-white py-2 px-4 rounded-md transition duration-300 gap-2">
+                    Post Job
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M24 9h-9v-9h-6v9h-9v6h9v9h6v-9h9z" fill="#FFFFFF"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+

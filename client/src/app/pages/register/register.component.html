@@ -1,162 +1,140 @@
 <div class="p-8 mb-16">
-
   <div class="text-center m-8">
-    <h1 class="text-2xl font-semibold text-gray-800">{{ componentTitle }}</h1>
+    <h1 class="text-2xl font-semibold text-gray-800">Create An Account</h1>
   </div>
 
-  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="max-w-sm mx-auto">
-
-
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="max-w-sm mx-auto">
     <div class="mb-5">
-      <span class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">I am a</span>
-      <div class="flex justify-around">
-        <label>
-          <input type="radio" name="role" value="jobseeker" (change)="onRoleChange($event)" checked> Job Seeker
-        </label>
-        <label>
-          <input type="radio" name="role" value="employer" (change)="onRoleChange($event)"> Employer
-        </label>
+      <span class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">
+        I am a
+      </span>
+      <div class="flex justify-around gap-2">
+        <div class="w-full">
+          <input
+            hidden
+            class="peer/user"
+            type="radio"
+            id="user"
+            [value]="userStore.UserRole.USER"
+            formControlName="role"
+          />
+          <label
+            for="user"
+            class="cursor-pointer p-8 block rounded-md font-bold text-center bg-neutral-300 text-blue-100 hover:bg-blue-100 hover:text-neutral-300 peer-checked/user:bg-blue-100 peer-checked/user:text-neutral-300"
+          >
+            Job Seeker
+          </label>
+        </div>
+        <div class="w-full">
+          <input
+            hidden
+            class="peer/business"
+            type="radio"
+            id="business"
+            [value]="userStore.UserRole.BUSINESS"
+            formControlName="role"
+          />
+          <label
+            for="business"
+            class="cursor-pointer p-8 block rounded-md font-bold text-center bg-neutral-300 text-blue-100 hover:bg-blue-100 hover:text-neutral-300 peer-checked/business:bg-blue-100 peer-checked/business:text-neutral-300"
+          >
+            Employer
+          </label>
+        </div>
       </div>
-    </div>    
-
-    @if(isJobSeeker) {
+    </div>
 
     <div class="mb-5">
-      <label for="firstName" class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">First Name</label>
-      <input id="firstName"
+      <label
+        for="firstName"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
+      >
+        First Name
+      </label>
+      <input
+        id="firstName"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        type="text" formControlName="firstName" />
+        type="text"
+        formControlName="firstName"
+        placeholder="Steve"
+      />
     </div>
 
     <div class="mb-5">
-      <label for="lastName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Last Name</label>
-      <input id="lastName"
+      <label
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
+      >
+        Date of Birth
+      </label>
+      <input
+        type="text"
+        id="dob"
+        name="dob"
+        theme="dp-material"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        type="text" formControlName="lastName" />
-    </div>
-    
-    <div class="mb-5">
-      <span class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Gender</span>
-      <div class="flex justify-between">
-        <label>
-          <input type="radio" name="gender" value="female"> Female
-        </label>
-        <label>
-          <input type="radio" name="gender" value="male"> Male
-        </label>
-        <label>
-          <input type="radio" name="gender" value="others"> Others
-        </label>
-      </div>
+        formControlName="dateOfBirth"
+        placeholder="YYYY-MM-DD"
+        [dpDayPicker]="{ format: 'YYYY-MM-DD' }"
+      />
     </div>
 
     <div class="mb-5">
-      <label class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Date of Birth</label>
-      <input type="date"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        formControlName="dob" />
-    </div>
-
-    <div class="mb-5">
-      <label for="profilePic" class="block mb-2 text-sm font-medium text-gray-900  dark:text-gray">Profile
-        Picture</label>
-      <input id="profilePic" type="file"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        formControlName="profilePic" accept="image/*" />
-    </div>
-
-    <div class="mb-5">
-      <label for="mobileNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Mobile
-        Number</label>
-      <input id="mobileNumber"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        type="tel" pattern="[0-9]*" formControlName="mobileNumber" />
-    </div>
-
-    <div class="mb-5">
-      <label for="impairments" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Impairments</label>
-      <textarea id="impairments"
-        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        formControlName="impairments" rows="4"></textarea>
-    </div>
-
-    } @else {
-      
-      <div class="mb-5">
-        <label for="companyName" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Company Name</label>
-        <input id="companyName"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type="text" formControlName="companyName" />
-      </div>
-
-      <div class="mb-5">
-        <label for="registrationNumber" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Company Registration Number</label>
-        <input id="registrationNumber"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type="text" formControlName="registrationNumber" />
-      </div>
-
-      <div class="mb-5">
-        <label for="companyPhoneNo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"> Contact
-          Number</label>
-        <input id="companyPhoneNo"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type="tel" pattern="[0-9]*" formControlName="companyPhoneNo" />
-      </div>
-    
-      <div class="mb-5">
-        <label for="city" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">City</label>
-        <input id="city"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400  dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type="text" formControlName="city" />
-      </div>
-
-      <div class="mb-5">
-        <label for="state" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">State</label>
-        <input id="state"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type="text" formControlName="state" />
-      </div>
-
-      <div class="mb-5">
-        <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Address</label>
-        <textarea id="address"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          formControlName="address" rows="2"></textarea>
-      </div>
-    }
-
-    <div class="mb-5">
-      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Email</label>
-      <input id="email"
+      <label
+        for="email"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
+      >
+        Email
+      </label>
+      <input
+        id="email"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        type="email" formControlName="email" />
+        type="email"
+        formControlName="email"
+        placeholder="steve@company.com"
+      />
     </div>
 
     <div class="mb-5">
-      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Password</label>
-      <input id="password" type="password"
+      <label
+        for="password"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
+      >
+        Password
+      </label>
+      <input
+        id="password"
+        type="password"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        formControlName="password" />
+        formControlName="password"
+      />
     </div>
 
     <div class="mb-5">
-      <label for="confirmationPassword" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray">Confirm Password</label>
-      <input id="confirmationPassword" type="password"
+      <label
+        for="confirmationPassword"
+        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray"
+      >
+        Confirm Password
+      </label>
+      <input
+        id="confirmationPassword"
+        type="password"
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        formControlName="confirmationPassword" />
+        formControlName="confirmationPassword"
+      />
     </div>
 
-    @if(errorMessage) {
-    <div class="my-4 text-red-500 text-center">{{ errorMessage }}</div>
+    @if (errorMessage()) {
+      <div class="my-4 text-red-500 text-center">{{ errorMessage() }}</div>
     }
 
     <div class="text-center">
-      <button type="submit"
-        class="text-white bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-slate-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Register</button>
+      <button
+        type="submit"
+        class="text-white bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-slate-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+      >
+        Register
+      </button>
     </div>
-
-
   </form>
-
 </div>

@@ -12,6 +12,7 @@ import skillsRoute from './routes/skills.routes';
 import testRoute from './routes/test.routes';
 import usersRoute from './routes/users.routes';
 import transactionRoute from './routes/transactions.routes';
+import chatsRoute from './routes/chats.routes';
 import { UPLOADS_FOLDER } from './services/uploader.service';
 
 // Load environment variables
@@ -41,6 +42,7 @@ app.use('/api', usersRoute);
 app.use('/api', postsRoute);
 app.use('/api', jobsRoute);
 app.use('/api', skillsRoute);
+app.use('/api',chatsRoute);
 app.use('/api', resourcesRoute);
 app.use('/api', transactionRoute);
 

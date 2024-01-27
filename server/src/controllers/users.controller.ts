@@ -96,9 +96,12 @@ export const editOrCreateProfile = async (
       });
     }
 
-    if (!Object.values(UserGender).includes(body.gender as UserGender)) {
+    if (
+      body.gender &&
+      !Object.values(UserGender).includes(body.gender as UserGender)
+    ) {
       return response.status(StatusCodes.BAD_REQUEST).json({
-        message: 'Unknown gender provided. Role must be one of UserGender.'
+        message: 'Unknown gender provided. Gender must be one of UserGender.'
       });
     }
 
@@ -147,7 +150,7 @@ export const editOrCreateProfile = async (
         user.profile?.impairments ??
         [],
       skills:
-        (body.skills as unknown as string[]).map((skill) =>
+        ((body.skills as unknown as string[]) || undefined)?.map((skill) =>
           skill.toLowerCase()
         ) ??
         user.profile?.skills ??
