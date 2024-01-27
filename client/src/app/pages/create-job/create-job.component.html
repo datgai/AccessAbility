@@ -57,12 +57,11 @@
                           theme="minimal"
                           placeholder="+ Skill"
                           [addOnPaste]="true"
-                          [onlyFromAutocomplete]="true"
                           [modelAsStrings]="true"
                           formControlName="skills"
                         >
                           <tag-input-dropdown
-                            [autocompleteItems]="allowedSkills"
+                            [autocompleteItems]="skills"
                             [showDropdownIfEmpty]="true"
                           >
                           </tag-input-dropdown>
