@@ -14,30 +14,30 @@
             </div>
 
             <div class="mb-6">
-                <label for="jobLocationType" class="block text-gray-700 text-sm font-bold mb-2">
+                <label for="locationType" class="block text-gray-700 text-sm font-bold mb-2">
                     Loation Type:
                 </label>
 
                 <select 
-                    name="jobLocationType"
-                    formControlName="jobLocationType"
+                    name="locationType"
+                    formControlName="locationType"
                     class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500"
                 >
-                    @for (jobLocationType of jobLocationTypeKeys; track $index) {
-                        <option [value]="jobLocationType"> {{ jobLocationType }} </option>
+                    @for (locationType of jobLocationTypeKeys; track $index) {
+                        <option [value]="locationType"> {{ locationType }} </option>
                     }
                 </select>
 
             </div>
 
             <div class="mb-6">
-                <label for="jobType" class="block text-gray-700 text-sm font-bold mb-2">
+                <label for="type" class="block text-gray-700 text-sm font-bold mb-2">
                     Job Type:
                 </label>
-                <select id="jobType" name="jobType" formControlName="jobType"
+                <select id="type" name="type" formControlName="type"
                     class="w-full bg-white border-2 rounded-md px-4 py-2 leading-5 transition duration-150 ease-in-out sm:text-sm sm:leading-5 resize-none focus:outline-none focus:border-blue-500">
-                    @for (jobType of jobTypeKeys; track $index) {
-                        <option [value]="jobType"> {{ jobType }} </option>
+                    @for (type of jobTypeKeys; track $index) {
+                        <option [value]="type"> {{ type }} </option>
                     }
                 </select>
             </div>

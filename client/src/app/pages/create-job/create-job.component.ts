@@ -22,11 +22,11 @@ import { SkillsService } from '../../services/skills.service';
   templateUrl: './create-job.component.html',
   styleUrl: './create-job.component.css'
 })
-export class CreateJobComponent implements OnInit{
+export class CreateJobComponent implements OnInit {
   public form!: FormGroup;
   public allowedSkills: string[] = [];
 
-  public jobType: JobType = JobType.FULL_TIME; 
+  public jobType: JobType = JobType.FULL_TIME;
   public jobTypeKeys = Object.values(JobType)
 
   public jobLocationType: JobLocationType = JobLocationType.ON_SITE;
@@ -40,7 +40,7 @@ export class CreateJobComponent implements OnInit{
     private toastr: ToastrService,
     private auth: Auth,
     public userStore: UserStoreService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
 
@@ -49,42 +49,46 @@ export class CreateJobComponent implements OnInit{
         this.allowedSkills = skills.map((skill) => skill.name);
       },
     });
-    
+
     this.form = this.formBuilder.group({
       position: new FormControl<string>('', Validators.required),
-      jobType: new FormControl<JobType>(JobType.FULL_TIME, Validators.required),
-      jobLocationType: new FormControl<JobLocationType>(JobLocationType.ON_SITE, Validators.required),
+      type: new FormControl<JobType>(JobType.FULL_TIME, Validators.required),
+      locationType: new FormControl<JobLocationType>(JobLocationType.ON_SITE, Validators.required),
       description: new FormControl<string>('', Validators.required),
-      skills: new FormControl<string[]>([], Validators.required)
+      skills: new FormControl<string[]>([], Validators.required),
+      applicants: new FormControl<string[]>([])
     });
+
+    console.log(this.form.value)
   }
 
-  async onSubmit(){
+  async onSubmit() {
 
     if (!this.form.valid) {
       return this.toastr.error('Missing inputs.');
     }
-
-    const formData = new FormData();
-
-    Object.keys(this.form.value).forEach((key) => {
-      if (this.form.value[key] !== '') {
-        formData.append(key, this.form.value[key]);
-      }
-    });
 
     const token = await this.auth.currentUser?.getIdToken();
     if (!token) {
       return this.toastr.error('You are not authorised to create a job.');
     }
 
-    this.jobService.createJob(token, formData).subscribe({
-      next: (job) => this.router.navigate(['job', job.id]),
-
-      complete: () =>
-        this.toastr.success(
-          'Created job successfully. Awaiting admin verification.',
-        ),
+  
+    
+  const jobData = this.form.value
+  console.log(jobData)
+    
+    this.jobService.createJob(token, jobData).subscribe({
+      next: (job) => {
+        this.router.navigate(['/jobs', job.id]);
+        this.form.reset();
+        this.toastr.success('Created job successfully.');
+      },
+      error: (err) => {
+        // Handle error during job creation (you may customize this part)
+        console.error('Error creating job:', err);
+        this.toastr.error('Error creating job. Please try again.');
+      },
     });
     return;
   }
