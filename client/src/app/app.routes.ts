@@ -42,6 +42,7 @@ export const routes: Routes = [
   { path: 'resources', component: ResourcesComponent },
   { path: 'resource/:id', component: ResourceDetailsComponent },
   { path: 'create-resource', component: CreateResourceComponent },
+  { path: 'create-jobs', component: CreateJobComponent },
   { path: 'transaction/:id', component:TransactionComponent},
   { path: '**', component: NotFoundComponent },
 ];
