@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -12,8 +12,9 @@ import { UserStoreService } from '../../services/user-store.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-
-  displayName: string = this.userStore.user?.profile.firstName.toUpperCase() || ''
+  public displayName = computed(
+    () => this.userStore.user?.profile.firstName.toUpperCase() || '',
+  );
 
   constructor(
     public userStore: UserStoreService,
