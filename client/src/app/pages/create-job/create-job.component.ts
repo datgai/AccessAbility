@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { ForumService } from '../../services/forum.service';
 import { UserStoreService } from '../../services/user-store.service';
 import { TagInputModule } from 'ngx-chips';
 import { JobService } from '../../services/job.service';
