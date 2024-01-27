@@ -19,6 +19,7 @@ import { MessagesComponent } from './pages/messages/messages.component';
 import { ChatsComponent } from './pages/chats/chats.component';
 import { ResourceDetailsComponent } from './pages/resource-details/resource-details.component';
 import { ResourcesComponent } from './pages/resources/resources.component';
+import { TransactionComponent } from './pages/transaction/transaction.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -41,5 +42,6 @@ export const routes: Routes = [
   { path: 'resources', component: ResourcesComponent },
   { path: 'resource/:id', component: ResourceDetailsComponent },
   { path: 'create-resource', component: CreateResourceComponent },
+  { path: 'transaction/:id', component:TransactionComponent},
   { path: '**', component: NotFoundComponent },
 ];

@@ -23,13 +23,57 @@
         <h2 class="text-4xl font-semibold text-gray-100 leading-tight">
           {{ post()?.title }}
         </h2>
-        <div class="mt-3">
-          <p class="font-semibold text-gray-200 text-sm">
-            Written by {{ post()?.author?.profile?.firstName }}
-          </p>
-          <p class="font-semibold text-gray-400 text-xs">
-            Posted on {{ formatDate(post()?.createdAt) }}
-          </p>
+        <div class="mt-3 flex justify-between items-end">
+          <div>
+            <p class="font-semibold text-gray-200 text-sm">
+              Written by {{ post()?.author?.profile?.firstName }}
+            </p>
+            <p class="font-semibold text-gray-400 text-xs">
+              Posted on {{ formatDate(post()?.createdAt) }}
+            </p>
+          </div>
+          <div class="flex flex-col">
+            <google-pay-button 
+              environment = "TEST"
+              buttonType ="donate"
+              buttonColor="white"
+              [paymentRequest]="{
+                apiVersion: 2,
+                apiVersionMinor: 0,
+                allowedPaymentMethods: [
+                  {
+                    type: 'CARD',
+                    parameters: {
+                      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                      allowedCardNetworks: ['AMEX', 'VISA', 'MASTERCARD']
+                    },
+                    tokenizationSpecification: {
+                      type: 'PAYMENT_GATEWAY',
+                      parameters: {
+                        gateway: 'example',
+                        gatewayMerchantId: 'exampleGatewayMerchantId'
+                      }
+                    }
+                  }
+                ],
+                merchantInfo: {
+                  merchantId: '12345678901234567890',
+                  merchantName: post()?.author?.profile?.firstName 
+                },
+                transactionInfo: {
+                  totalPriceStatus: 'FINAL',
+                  totalPriceLabel: 'Total',
+                  totalPrice: '5.00',
+                  currencyCode: 'MYR',
+                  countryCode: 'MY'
+                },
+                callbackIntents: ['PAYMENT_AUTHORIZATION']
+              }"
+              (loadpaymentdata) = "onLoadPaymentData($event)"
+              (error) = "onError($event)"
+              [paymentAuthorizedCallback] = "onPaymentDataAuthorized">>       
+              </google-pay-button>
+            </div>
         </div>
       </div>
     </div>
