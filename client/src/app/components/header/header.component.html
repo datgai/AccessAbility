@@ -92,78 +92,80 @@
   <div
     class="fixed bottom-0 left-0 z-50 w-full h-16 bg-blue-100 border-t border-gray-200 block sm:hidden"
   >
-    <a
-      type="button"
-      class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-      routerLink="/"
-    >
-      <img
-        src="/assets/Home.png"
-        class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
-      />
-      <span
-        class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-        >Home</span
-      >
-    </a>
-    <a
-      type="button"
-      class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-      routerLink="/resources"
-    >
-      <img
-        src="/assets/Resources.png"
-        class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
-      />
-      <span
-        class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-        >Resources</span
-      >
-    </a>
-    <a
-      type="button"
-      class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-      routerLink="/forum"
-    >
-      <img
-        src="/assets/Forum.png"
-        class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
-      />
-      <span
-        class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-        >Forum</span
-      >
-    </a>
-    @if (userStore.isAuthenticated()) {
+    <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
       <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-        routerLink="/user/{{ userStore.user?.uid }}"
+        routerLink="/"
       >
         <img
-          src="/assets/Profile.png"
+          src="/assets/Home.png"
           class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
         />
         <span
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-          >Profile</span
+          >Home</span
         >
       </a>
-    } @else {
       <a
         type="button"
         class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
-        routerLink="/login"
+        routerLink="/resources"
       >
         <img
-          src="/assets/Profile.png"
+          src="/assets/Resources.png"
           class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
         />
         <span
           class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
-          >Profile</span
+          >Resources</span
         >
       </a>
-    }
+      <a
+        type="button"
+        class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
+        routerLink="/forum"
+      >
+        <img
+          src="/assets/Forum.png"
+          class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
+        />
+        <span
+          class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
+          >Forum</span
+        >
+      </a>
+      @if (userStore.isAuthenticated()) {
+        <a
+          type="button"
+          class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
+          routerLink="/user/{{ userStore.user?.uid }}"
+        >
+          <img
+            src="/assets/Profile.png"
+            class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
+          />
+          <span
+            class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
+            >Profile</span
+          >
+        </a>
+      } @else {
+        <a
+          type="button"
+          class="inline-flex flex-col items-center justify-center px-5 border-gray-200 border-x group"
+          routerLink="/login"
+        >
+          <img
+            src="/assets/Profile.png"
+            class="opacity-75 active:opacity-100 focus:opacity-100 group-hover:opacity-100"
+          />
+          <span
+            class="text-sm text-white text-opacity-75 active:text-opacity-100 focus:text-opacity-100 group-hover:text-opacity-100"
+            >Profile</span
+          >
+        </a>
+      }
+    </div>
   </div>
 </header>
