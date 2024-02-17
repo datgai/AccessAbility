@@ -58,7 +58,7 @@ First, clone this repository. In order to get this running, both the backend and
 <h3> For Client </h3>
 
 1. Navigate into the client folder.
-2. Run `npm install` to download the dependencies.
+2. Run `yarn install` to download the dependencies.
 3. Configure the environment settings in `environment.ts` according to the config from your own firebase app.
 4. Run `ng serve`.
    
