@@ -1,0 +1,42 @@
+FROM node:20-alpine AS build
+
+WORKDIR /usr/src/app/clientbuild
+
+# Leverage a cache mount to /root/.npm to speed up subsequent builds.
+# Leverage a bind mounts to package.json and package-lock.json to avoid having to copy them into
+# into this layer.
+RUN --mount=type=bind,source=client/package.json,target=package.json \
+    --mount=type=bind,source=client/package-lock.json,target=package-lock.json \
+    --mount=type=cache,target=/root/.npm \
+    npm ci
+
+# Install angular cli globally
+RUN npm install -g @angular/cli
+
+# Copy files
+COPY client .
+COPY shared ../shared
+
+RUN npm run build --omit=dev
+
+# Main
+FROM node:20-alpine
+
+WORKDIR /usr/src/app/client
+
+# Copy package.json so that package manager commands can be used.
+COPY client/package.json .
+
+# Install angular cli globally
+RUN npm install -g @angular/cli
+
+# Copy built files that are necessary
+COPY --from=build /usr/src/app/clientbuild/dist ./dist
+COPY --from=build /usr/src/app/clientbuild/node_modules ./node_modules
+COPY --from=build /usr/src/app/shared ../shared
+COPY client .
+
+EXPOSE 4200
+
+# Run the build
+CMD [ "npm", "start" ]
