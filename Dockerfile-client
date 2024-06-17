@@ -20,23 +20,8 @@ COPY shared ../shared
 RUN npm run build --omit=dev
 
 # Main
-FROM node:20-alpine
-
-WORKDIR /usr/src/app/client
-
-# Copy package.json so that package manager commands can be used.
-COPY client/package.json .
-
-# Install angular cli globally
-RUN npm install -g @angular/cli
-
+FROM nginx:latest
 # Copy built files that are necessary
-COPY --from=build /usr/src/app/clientbuild/dist ./dist
-COPY --from=build /usr/src/app/clientbuild/node_modules ./node_modules
-COPY --from=build /usr/src/app/shared ../shared
-COPY client .
+COPY --from=build /usr/src/app/clientbuild/dist /usr/share/nginx/html
 
-EXPOSE 4200
-
-# Run the build
-CMD [ "npm", "start" ]
+EXPOSE 80
