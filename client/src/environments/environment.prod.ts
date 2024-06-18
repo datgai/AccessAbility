@@ -8,6 +8,6 @@ export const environment = {
     messagingSenderId: '461099321',
     measurementId: 'G-28Y1H7YXFT',
   },
-  baseUrl: 'https://accessibility.spimy.dev/api',
+  baseUrl: 'https://accessability.app/api',
   production: true,
 };

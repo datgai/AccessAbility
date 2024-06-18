@@ -1,0 +1,21 @@
+name: accessability
+services:
+  server:
+    build: 
+      context: .
+      dockerfile: Dockerfile-server
+    container_name: server
+    env_file:
+      - server/.env
+    ports:
+      - 3000:3000
+
+  client:
+    build: 
+      context: .
+      dockerfile: Dockerfile-client
+    container_name: client
+    ports:
+      - 80:80
+    links:
+      - server
